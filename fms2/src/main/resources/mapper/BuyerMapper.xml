@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fms2.fms2.buyer.mapper.BuyerMapper">
+   <select id="getBuyers"
+           parameterType="com.fms2.fms2.buyer.domain.Buyer"
+           resultType="com.fms2.fms2.buyer.domain.Buyer">
+       select * from buyers
+       <where>
+           <if test='buyerName != null &amp;&amp; !buyerName.trim().equals("")'>
+               buyerName = #{buyerName}
+           </if>
+       </where>
+   </select>
+
+    <select id="getBuyerNameList"
+            resultType="String">
+       select DISTINCT buyerName from buyers
+   </select>
+
+    <select id="getBuyerNameListForCombo"
+            parameterType="com.fms2.fms2.buyer.domain.Buyer"
+            resultType="com.fms2.fms2.buyer.domain.Buyer">
+       select DISTINCT buyerName from buyers
+   </select>
+
+    <select id="getRows"
+            parameterType="com.fms2.fms2.buyer.domain.Buyer"
+            resultType="_int">
+       select count(*) from buyers
+        <where>
+            <if test='buyerName != null &amp;&amp; !buyerName.trim().equals("")'>
+                buyerName = #{buyerName}
+            </if>
+        </where>
+   </select>
+
+    <insert id="addBuyer" parameterType="com.fms2.fms2.buyer.domain.Buyer">
+        insert into buyers(buyerName,warehouse)
+        values (#{buyerName},#{warehouse})
+    </insert>
+
+    <select id="contains" parameterType="com.fms2.fms2.buyer.domain.Buyer" resultType="_int">
+        select count(*) from buyers
+        where  warehouse = #{warehouse}
+
+    </select>
+
+    <delete id="deleteBuyer" parameterType="com.fms2.fms2.buyer.domain.Buyer">
+        delete from buyers
+        where warehouse = #{warehouse}
+    </delete>
+</mapper>

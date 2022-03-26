@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" type="text/css" href="static/extJS/ext-theme-classic-all.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/global.css" />
+    <script src="static/extJS/ext-all-debug.js"></script>
+
+    <!--代码部分-->
+    <script type="text/javascript">
+        Ext.onReady(function () {
+            Ext.create('Ext.container.Viewport', {
+                layout: 'border',
+                items: [
+                    Ext.create('Ext.panel.Panel', {
+                        height: 150,
+                        region: 'north',
+                        border: false,
+                        contentEl: 'company',
+                        bodyStyle: 'background-color:#0B5792',
+                    }),
+                    Ext.create('Ext.panel.Panel', {
+                        region: 'center',
+                        contentEl: 'login',
+                    }),
+                    Ext.create('Ext.panel.Panel', {
+                        height: 150,
+                        region: 'south',
+                        border: false,
+                        bodyStyle: 'background-color:#0B5792',
+                    }),
+                ],
+            });
+            Ext.create('Ext.form.Panel', {
+                width: 260,
+                height: 150,
+                border: false,
+                buttonAlign: 'left',
+                renderTo: 'loginForm',
+                bodyStyle: 'text-align:left',
+                items: [
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: '账号',
+                        name: 'userName',
+                        allowBlank: false,
+                        labelPad: 0,
+                        labelWidth: 30,
+                        Width: 200,
+                        Height: 30,
+                        margin: '20',
+                        enableKeyEvents: true,
+                        listeners: {
+                            keypress: function (text, e) {
+                                if (e.getKey() == e.ENTER || e.getKey() == e.DOWN) {
+                                    Ext.getCmp('password').focus();
+                                }
+                            }
+                        }
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: '密码',
+                        name: 'password',
+                        inputType: 'password',
+                        margin: '20',
+                        allowBlank: false,
+                        labelPad: 0,
+                        labelWidth: 30,
+                        Width: 200,
+                        Height: 30,
+                        id: 'password',
+                        enableKeyEvents: true,
+                        listeners: {
+                            keypress: function (text, e) {
+                                if (e.getKey() == e.ENTER) {
+                                    var form = this.up('form').getForm();
+                                    if (form.isValid()) {
+                                        form.submit({
+                                            waitMsg: '正在登录......',
+                                            url: 'login/checkLogin',//表单提交的url
+                                            success: function (basicForm, action) {
+                                                if (action.result.success) {
+                                                    document.location.href='../static/MyApp/index.html';
+                                                }
+                                            },
+                                            failure: function (basicForm, action) {
+                                                switch (action.failureType) {
+                                                    case Ext.form.action.Action.SERVER_INVALID:
+                                                        Ext.Msg.alert('ERROR', action.result.data);
+                                                        break;
+                                                    default:
+                                                        Ext.Msg.alert('ERROR', '通讯失败!稍后再试');
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                ],
+                buttons: [
+                    {
+                        text: '登录',
+                        margin: '0 0 0 40',
+                        handler: function () {
+                            var form = this.up('form').getForm();
+                            if (form.isValid()) {
+                                form.submit({
+                                    waitMsg: '正在登录......',
+                                    url: 'login/checkLogin',//表单提交的url
+                                    success: function (basicForm, action) {
+                                        if (action.result.success) {
+                                            document.location.href='../static/MyApp/index.html';
+                                        }
+                                    },
+                                    failure: function (basicForm, action) {
+                                        switch (action.failureType) {
+                                            case Ext.form.action.Action.SERVER_INVALID:
+                                                Ext.Msg.alert('ERROR', action.result.data);
+                                                break;
+                                            default:
+                                                Ext.Msg.alert('ERROR', '通讯失败!稍后再试');
+                                        }
+                                    }
+                                });
+                            }
+                        },
+                    },
+                    {
+                        text: '重置',
+                        margin: '0 0 0 20',
+                        handler: function (button) {
+                            button.up('form').getForm().reset();
+                        }
+                    },
+                ]
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="company" style="text-align:center; margin-top:76px; color:#FFF; font-size:36px; font-family:'宋体'">
+</div>
+<div id="login" style="text-align:center">
+    <img src="static/images/LOGIN_r3_c4.png" height="70px"/>
+    <div id="loginForm" align="center"></div>
+</div>
+</body>
+
+</html>

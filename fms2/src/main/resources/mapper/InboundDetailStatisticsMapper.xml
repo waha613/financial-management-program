@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fms2.fms2.inventoryStatistics.mapper.InboundDetailStatisticsMapper">
+    <select id="getAllInboundDetailStatistics"
+            parameterType="com.fms2.fms2.inventoryStatistics.domain.InboundDetailStatistics"
+            resultType="com.fms2.fms2.inventoryStatistics.domain.InboundDetailStatistics">
+        select supplier,
+
+        <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+            warehouse,
+        </if>
+
+        <if test='productID!=null &amp;&amp; !productID.trim().equals("")'>
+            productID,
+        </if>
+
+        SUM(inboundQuantity) AS inboundQuantity,
+        SUM(amountOfThisPurchase) AS amountOfThisPurchase,
+        sum(purchaseFee) AS purchaseFee ,
+        sum(actualPayment) AS actualPayment
+        from inbound_details
+        <where>
+            <if test='supplier!=null &amp;&amp; !supplier.trim().equals("")'>
+                and supplier = #{supplier}
+            </if>
+
+            <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+                and warehouse = #{warehouse}
+            </if>
+
+            <if test='productID!=null &amp;&amp; !productID.trim().equals("")'>
+                and productID = #{productID}
+            </if>
+
+            <if test='inboundStartDate!=null &amp;&amp; !inboundStartDate.trim().equals("")'>
+                and inboundDate >= #{inboundStartDate}
+            </if>
+
+            <if test='inboundEndDate!=null &amp;&amp; !inboundEndDate.trim().equals("")'>
+                and inboundDate &lt;= #{inboundEndDate}
+            </if>
+        </where>
+        group by
+        <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+            warehouse,
+        </if>
+
+        <if test='productID!=null &amp;&amp; !productID.trim().equals("")'>
+            productID,
+        </if>
+
+        supplier
+
+    </select>
+</mapper>
