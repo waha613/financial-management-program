@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fms2.fms2.receivableAndPayable.mapper.AccountReceivableMapper">
+    <select id="getAccountsReceivable"
+            parameterType="com.fms2.fms2.receivableAndPayable.page.AccountReceivablePage"
+            resultType="com.fms2.fms2.receivableAndPayable.domain.AccountReceivable">
+        select * from account_Receivable
+        <where>
+            <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+                and warehouse = #{warehouse}
+            </if>
+
+            <if test='receiveStartDate!=null &amp;&amp; !receiveStartDate.trim().equals("")'>
+                and receiveDate >= #{receiveStartDate}
+            </if>
+
+            <if test='receiveEndDate!=null &amp;&amp; !receiveEndDate.trim().equals("")'>
+                and receiveDate &lt;= #{receiveEndDate}
+            </if>
+
+            <if test='receiveMethod!=null &amp;&amp; !receiveMethod.trim().equals("")'>
+                and receiveMethod = #{receiveMethod}
+            </if>
+
+        </where>
+        order by ${sort} ${dir}
+        limit #{begin},#{limit}
+    </select>
+
+    <select id="getRows"
+            parameterType="com.fms2.fms2.receivableAndPayable.page.AccountReceivablePage"
+            resultType="_int">
+        select count(*) from account_Receivable
+        <where>
+            <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+                and warehouse = #{warehouse}
+            </if>
+
+            <if test='receiveStartDate!=null &amp;&amp; !receiveStartDate.trim().equals("")'>
+                and receiveDate >= #{receiveStartDate}
+            </if>
+
+            <if test='receiveEndDate!=null &amp;&amp; !receiveEndDate.trim().equals("")'>
+                and receiveDate &lt;= #{receiveEndDate}
+            </if>
+
+            <if test='receiveMethod!=null &amp;&amp; !receiveMethod.trim().equals("")'>
+                and receiveMethod = #{receiveMethod}
+            </if>
+        </where>
+    </select>
+    <insert id="addAccountReceivable"
+            parameterType="com.fms2.fms2.receivableAndPayable.domain.AccountReceivable">
+        insert into account_Receivable(warehouse,receiveDate,actualSales,receiveMethod,comment)
+        values (#{warehouse},#{receiveDate},#{actualSales},#{receiveMethod},#{comment})
+    </insert>
+
+    <update id="updateAccountReceivable"
+            parameterType="com.fms2.fms2.receivableAndPayable.domain.AccountReceivable">
+        update account_Receivable
+        <set>
+            <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+                warehouse = #{warehouse},
+            </if>
+
+            <if test='receiveDate!=null'>
+                receiveDate = #{receiveDate},
+            </if>
+
+            <if test='actualSales!=null'>
+                actualSales = #{actualSales},
+            </if>
+
+            <if test='receiveMethod!=null &amp;&amp; !receiveMethod.trim().equals("")'>
+                receiveMethod = #{receiveMethod},
+            </if>
+
+            <if test='comment!=null &amp;&amp; !comment.trim().equals("")'>
+                comment = #{comment},
+            </if>
+        </set>
+        where receiveId = #{receiveId};
+    </update>
+
+    <delete id="deleteAccountReceivable"
+            parameterType="com.fms2.fms2.receivableAndPayable.domain.AccountReceivable">
+        delete from account_Receivable where receiveId = #{receiveId};
+    </delete>
+
+    <select id="getAllAccountsPayable"
+            parameterType="com.fms2.fms2.receivableAndPayable.domain.AccountReceivable"
+            resultType="com.fms2.fms2.receivableAndPayable.domain.AccountReceivable">
+        select * from account_Receivable
+        <where>
+            <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+                and warehouse = #{warehouse}
+            </if>
+
+            <if test='receiveStartDate!=null &amp;&amp; !receiveStartDate.trim().equals("")'>
+                and receiveDate >= #{receiveStartDate}
+            </if>
+
+            <if test='receiveEndDate!=null &amp;&amp; !receiveEndDate.trim().equals("")'>
+                and receiveDate &lt;= #{receiveEndDate}
+            </if>
+
+            <if test='receiveMethod!=null &amp;&amp; !receiveMethod.trim().equals("")'>
+                and receiveMethod = #{receiveMethod}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getAllAccountsReceivableStatistics"
+            parameterType="com.fms2.fms2.receivableAndPayable.page.AccountReceivablePage"
+            resultType="com.fms2.fms2.receivableAndPayable.domain.AccountReceivable">
+        select warehouse,
+
+        <if test='receiveMethod!=null &amp;&amp; !receiveMethod.trim().equals("")'>
+            receiveMethod,
+        </if>
+        sum(actualSales) AS actualSales
+        from account_Receivable
+        <where>
+            <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+                and warehouse = #{warehouse}
+            </if>
+
+            <if test='receiveStartDate!=null &amp;&amp; !receiveStartDate.trim().equals("")'>
+                and receiveDate >= #{receiveStartDate}
+            </if>
+
+            <if test='receiveEndDate!=null &amp;&amp; !receiveEndDate.trim().equals("")'>
+                and receiveDate &lt;= #{receiveEndDate}
+            </if>
+
+            <if test='receiveMethod!=null &amp;&amp; !receiveMethod.trim().equals("")'>
+                and receiveMethod = #{receiveMethod}
+            </if>
+        </where>
+        group by
+        <if test='receiveMethod!=null &amp;&amp; !receiveMethod.trim().equals("")'>
+            receiveMethod,
+        </if>
+        warehouse
+
+    </select>
+</mapper>

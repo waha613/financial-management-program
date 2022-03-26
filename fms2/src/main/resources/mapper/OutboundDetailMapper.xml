@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fms2.fms2.outboundDetails.mapper.OutboundDetailMapper">
+    <select id="getOutboundDetails"
+            parameterType="com.fms2.fms2.outboundDetails.page.OutboundDetailPage"
+            resultType="com.fms2.fms2.outboundDetails.domain.OutboundDetail">
+        select * from outbound_details
+        <where>
+
+            <if test='outboundStartDate!=null &amp;&amp; !outboundStartDate.trim().equals("")'>
+                and outboundDate >= #{outboundStartDate}
+            </if>
+
+            <if test='outboundEndDate!=null &amp;&amp; !outboundEndDate.trim().equals("")'>
+                and outboundDate &lt;= #{outboundEndDate}
+            </if>
+
+            <if test='productID!=null &amp;&amp; !productID.trim().equals("")'>
+                and productID = #{productID}
+            </if>
+
+            <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+                and warehouse = #{warehouse}
+            </if>
+
+        </where>
+        order by ${sort} ${dir}
+        limit #{begin},#{limit}
+    </select>
+
+    <select id="getRows"
+            parameterType="com.fms2.fms2.outboundDetails.page.OutboundDetailPage"
+            resultType="_int">
+        select count(*) from outbound_details
+        <where>
+
+            <if test='outboundStartDate!=null &amp;&amp; !outboundStartDate.trim().equals("")'>
+                and outboundDate >= #{outboundStartDate}
+            </if>
+
+            <if test='outboundEndDate!=null &amp;&amp; !outboundEndDate.trim().equals("")'>
+                and outboundDate &lt;= #{outboundEndDate}
+            </if>
+
+            <if test='productID!=null &amp;&amp; !productID.trim().equals("")'>
+                and productID = #{productID}
+            </if>
+
+            <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+                and warehouse = #{warehouse}
+            </if>
+
+        </where>
+    </select>
+    <insert id="addOutboundDetail"
+            parameterType="com.fms2.fms2.outboundDetails.domain.OutboundDetail">
+        insert into outbound_details(warehouse,outboundDate,productID,unit,
+        outboundQuantity,unitSalePrice,amountOfThisSale,saleFee,
+        saleFeeType,actualSales,comment)
+        values (#{warehouse},#{outboundDate},#{productID},#{unit},#{outboundQuantity},
+        #{unitSalePrice},#{amountOfThisSale},#{saleFee},#{saleFeeType},
+        #{actualSales},#{comment})
+    </insert>
+
+    <update id="updateOutboundDetail"
+            parameterType="com.fms2.fms2.outboundDetails.domain.OutboundDetail">
+        update outbound_details
+        <set>
+            <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+                warehouse = #{warehouse},
+            </if>
+
+            <if test='outboundDate!=null'>
+                outboundDate = #{outboundDate},
+            </if>
+
+            <if test='productID!=null &amp;&amp; !productID.trim().equals("")'>
+                productID = #{productID},
+            </if>
+
+            <if test='unit!=null &amp;&amp; !unit.trim().equals("")'>
+                unit = #{unit},
+            </if>
+
+            <if test='outboundQuantity!=null'>
+                outboundQuantity = #{outboundQuantity},
+            </if>
+
+            <if test='unitSalePrice!=null'>
+                unitSalePrice = #{unitSalePrice},
+            </if>
+
+            <if test='amountOfThisSale!=null'>
+                amountOfThisSale = #{amountOfThisSale},
+            </if>
+
+            <if test='saleFee!=null'>
+                saleFee = #{saleFee},
+            </if>
+
+            <if test='saleFeeType!=null &amp;&amp; !saleFeeType.trim().equals("")'>
+                saleFeeType = #{saleFeeType},
+            </if>
+
+            <if test='actualSales!=null'>
+                actualSales = #{actualSales},
+            </if>
+
+            <if test='comment!=null &amp;&amp; !comment.trim().equals("")'>
+                comment = #{comment},
+            </if>
+        </set>
+        where outboundId = #{outboundId};
+    </update>
+
+    <delete id="deleteOutboundDetail"
+            parameterType="com.fms2.fms2.outboundDetails.domain.OutboundDetail">
+        delete from outbound_details where outboundId = #{outboundId};
+    </delete>
+
+    <select id="getAllOutboundDetailStatistics"
+            parameterType="com.fms2.fms2.outboundDetails.page.OutboundDetailPage"
+            resultType="com.fms2.fms2.outboundDetails.domain.OutboundDetail">
+        select warehouse,
+
+        <if test='productID!=null &amp;&amp; !productID.trim().equals("")'>
+            productID,
+        </if>
+
+        SUM(outboundQuantity) AS outboundQuantity,
+        SUM(amountOfThisSale) AS amountOfThisSale,
+        sum(saleFee) AS saleFee ,
+        sum(actualSales) AS actualSales
+        from outbound_details
+        <where>
+
+            <if test='warehouse!=null &amp;&amp; !warehouse.trim().equals("")'>
+                and warehouse = #{warehouse}
+            </if>
+
+            <if test='productID!=null &amp;&amp; !productID.trim().equals("")'>
+                and productID = #{productID}
+            </if>
+
+            <if test='outboundStartDate!=null &amp;&amp; !outboundStartDate.trim().equals("")'>
+                and outboundDate >= #{outboundStartDate}
+            </if>
+
+            <if test='outboundEndDate!=null &amp;&amp; !outboundEndDate.trim().equals("")'>
+                and outboundDate &lt;= #{outboundEndDate}
+            </if>
+        </where>
+        group by
+        <if test='productID!=null &amp;&amp; !productID.trim().equals("")'>
+            productID,
+        </if>
+
+        warehouse
+
+    </select>
+</mapper>

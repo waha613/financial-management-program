@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fms2.fms2.product.mapper.ProductMapper">
+    <select id="getProducts"
+            parameterType="com.fms2.fms2.product.domain.Product"
+            resultType="com.fms2.fms2.product.domain.Product">
+       select * from products
+   </select>
+
+    <select id="getRows"
+            parameterType="com.fms2.fms2.product.domain.Product"
+            resultType="_int">
+       select count(*) from products
+   </select>
+
+    <insert id="addProduct" parameterType="com.fms2.fms2.product.domain.Product">
+        insert into products(productID,productName,standard,
+        itemQuantity,oneItemWeight,oneProductWeight,unit)
+        values (#{productID},#{productName},#{standard},
+        #{itemQuantity},#{oneItemWeight},#{oneProductWeight},#{unit})
+    </insert>
+
+    <select id="contains" parameterType="com.fms2.fms2.buyer.domain.Buyer" resultType="_int">
+        select count(*) from products
+        where productID = #{productID}
+
+    </select>
+
+    <update id="updateProduct" parameterType="com.fms2.fms2.product.domain.Product">
+        update products
+        <set>
+            <if test='productName != null &amp;&amp; !productName.trim().equals("")'>
+                productName = #{productName},
+            </if>
+
+            <if test='standard!= null &amp;&amp; !standard.trim().equals("")'>
+                standard = #{standard},
+            </if>
+
+            <if test='itemQuantity!= null '>
+                itemQuantity = #{itemQuantity},
+            </if>
+
+            <if test='oneItemWeight!= null'>
+                oneItemWeight = #{oneItemWeight},
+            </if>
+
+            <if test='oneProductWeight!= null'>
+                oneProductWeight = #{oneProductWeight},
+            </if>
+        </set>
+        where productID = #{productID}
+    </update>
+
+    <delete id="deleteProduct" parameterType="com.fms2.fms2.product.domain.Product">
+        delete from products
+        where productID = #{productID}
+    </delete>
+    
+    <select id="getProductWeight" parameterType="String" resultType="double">
+        select oneProductWeight from products where productID = #{productID};
+    </select>
+</mapper>

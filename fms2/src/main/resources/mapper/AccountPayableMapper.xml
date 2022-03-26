@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fms2.fms2.receivableAndPayable.mapper.AccountPayableMapper">
+    <select id="getAccountsPayable"
+            parameterType="com.fms2.fms2.receivableAndPayable.page.AccountPayablePage"
+            resultType="com.fms2.fms2.receivableAndPayable.domain.AccountPayable">
+        select * from account_payable
+        <where>
+            <if test='supplier!=null &amp;&amp; !supplier.trim().equals("")'>
+                and supplier = #{supplier}
+            </if>
+
+            <if test='payStartDate!=null &amp;&amp; !payStartDate.trim().equals("")'>
+                and payDate >= #{payStartDate}
+            </if>
+
+            <if test='payEndDate!=null &amp;&amp; !payEndDate.trim().equals("")'>
+                and payDate &lt;= #{payEndDate}
+            </if>
+
+            <if test='paymentMethod!=null &amp;&amp; !paymentMethod.trim().equals("")'>
+                and paymentMethod = #{paymentMethod}
+            </if>
+
+        </where>
+        order by ${sort} ${dir}
+        limit #{begin},#{limit}
+    </select>
+
+    <select id="getRows"
+            parameterType="com.fms2.fms2.receivableAndPayable.page.AccountPayablePage"
+            resultType="_int">
+        select count(*) from account_payable
+        <where>
+            <if test='supplier!=null &amp;&amp; !supplier.trim().equals("")'>
+                and supplier = #{supplier}
+            </if>
+
+            <if test='payStartDate!=null &amp;&amp; !payStartDate.trim().equals("")'>
+                and payDate >= #{payStartDate}
+            </if>
+
+            <if test='payEndDate!=null &amp;&amp; !payEndDate.trim().equals("")'>
+                and payDate &lt;= #{payEndDate}
+            </if>
+
+            <if test='paymentMethod!=null &amp;&amp; !paymentMethod.trim().equals("")'>
+                and paymentMethod = #{paymentMethod}
+            </if>
+        </where>
+    </select>
+    <insert id="addAccountPayable"
+            parameterType="com.fms2.fms2.receivableAndPayable.domain.AccountPayable">
+        insert into account_payable(supplier,payDate,amountOfThisPurchase,paymentMethod,comment)
+        values (#{supplier},#{payDate},#{amountOfThisPurchase},#{paymentMethod},#{comment})
+    </insert>
+
+    <update id="updateAccountPayable"
+            parameterType="com.fms2.fms2.receivableAndPayable.domain.AccountPayable">
+        update account_payable
+        <set>
+            <if test='supplier!=null &amp;&amp; !supplier.trim().equals("")'>
+                supplier = #{supplier},
+            </if>
+
+            <if test='payDate!=null'>
+                payDate = #{payDate},
+            </if>
+
+            <if test='amountOfThisPurchase!=null'>
+                amountOfThisPurchase = #{amountOfThisPurchase},
+            </if>
+
+            <if test='paymentMethod!=null &amp;&amp; !paymentMethod.trim().equals("")'>
+                paymentMethod = #{paymentMethod},
+            </if>
+
+            <if test='comment!=null &amp;&amp; !comment.trim().equals("")'>
+                comment = #{comment},
+            </if>
+        </set>
+        where payID = #{payID};
+    </update>
+
+    <delete id="deleteAccountPayable"
+            parameterType="com.fms2.fms2.receivableAndPayable.domain.AccountPayable">
+        delete from account_payable where payID = #{payID};
+    </delete>
+
+    <select id="getAllAccountsPayable"
+            parameterType="com.fms2.fms2.receivableAndPayable.domain.AccountPayable"
+            resultType="com.fms2.fms2.receivableAndPayable.domain.AccountPayable">
+        select * from account_payable
+        <where>
+            <if test='supplier!=null &amp;&amp; !supplier.trim().equals("")'>
+                and supplier = #{supplier}
+            </if>
+
+            <if test='payStartDate!=null &amp;&amp; !payStartDate.trim().equals("")'>
+                and payStartDate >= #{payStartDate}
+            </if>
+
+            <if test='payEndDate!=null &amp;&amp; !payEndDate.trim().equals("")'>
+                and payEndDate &lt;= #{payEndDate}
+            </if>
+
+            <if test='paymentMethod!=null &amp;&amp; !paymentMethod.trim().equals("")'>
+                and paymentMethod = #{paymentMethod}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="getAllAccountsPayableStatistics"
+            parameterType="com.fms2.fms2.receivableAndPayable.page.AccountPayablePage"
+            resultType="com.fms2.fms2.receivableAndPayable.domain.AccountPayable">
+        select supplier,
+
+        <if test='paymentMethod!=null &amp;&amp; !paymentMethod.trim().equals("")'>
+            paymentMethod,
+        </if>
+        sum(amountOfThisPurchase) AS amountOfThisPurchase
+        from account_payable
+        <where>
+            <if test='supplier!=null &amp;&amp; !supplier.trim().equals("")'>
+                and supplier = #{supplier}
+            </if>
+
+            <if test='payStartDate!=null &amp;&amp; !payStartDate.trim().equals("")'>
+                and payDate >= #{payStartDate}
+            </if>
+
+            <if test='payEndDate!=null &amp;&amp; !payEndDate.trim().equals("")'>
+                and payDate &lt;= #{payEndDate}
+            </if>
+
+            <if test='paymentMethod!=null &amp;&amp; !paymentMethod.trim().equals("")'>
+                and paymentMethod = #{paymentMethod}
+            </if>
+        </where>
+        group by
+        <if test='paymentMethod!=null &amp;&amp; !paymentMethod.trim().equals("")'>
+            paymentMethod,
+        </if>
+        supplier
+
+    </select>
+</mapper>

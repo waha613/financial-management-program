@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fms2.fms2.login.mapper.LoginMapper">
+   <select id="checkLogin" parameterType="com.fms2.fms2.login.domain.User" resultType="boolean">
+       select count(*) from users where userName = #{userName} and password = #{password}
+   </select>
+</mapper>
