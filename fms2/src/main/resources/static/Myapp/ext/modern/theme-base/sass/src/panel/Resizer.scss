@@ -1,7 +1,8 @@
 .#{$prefix}panelresizer {
     position: absolute;
     @include no-select;
-
+    z-index: 1;
+    
     &.#{$prefix}north {
         &.#{$prefix}handle {
             cursor: n-resize;

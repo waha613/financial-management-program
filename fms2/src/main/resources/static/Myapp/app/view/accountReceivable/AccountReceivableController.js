@@ -71,7 +71,9 @@ Ext.define('MyApp.view.accountReceivable.AccountReceivableController', {
                 {
                     xtype:'combo',
                     fieldLabel:'付款方',
-                    store: Ext.create('MyApp.store.Buyer'),
+                    store: Ext.create('MyApp.store.Buyer', {
+                        autoLoad:true
+                    }),
                     displayField: 'warehouse',
                     valueField: 'warehouse',
                     queryMode: 'remote',

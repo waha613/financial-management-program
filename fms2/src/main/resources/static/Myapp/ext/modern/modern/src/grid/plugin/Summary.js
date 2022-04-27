@@ -23,34 +23,180 @@
  * + {@link Ext.data.summary.Sum sum}
  *
  *
- *     @example
- *     var store = Ext.create('Ext.data.Store', {
- *         fields: ['fname', 'lname', 'talent', 'wins'],
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var store = Ext.create('Ext.data.Store', {
+ *     fields: ['fname', 'lname', 'talent', 'wins'],
+ *     data: [
+ *         { 'fname': 'Barry',  'lname': 'Allen', 'talent': 'Speedster', 'wins': 150  },
+ *         { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery', 'wins': 27  },
+ *         { 'fname': 'Kara',   'lname': 'Zor-El', 'talent': 'All', 'wins': 75  },
+ *         { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert', 'wins': 7  },
+ *         { 'fname': 'Hal',    'lname': 'Jordan', 'talent': 'Willpower', 'wins': 198  },
+ *     ]
+ * });
+ *
+ * Ext.create('Ext.grid.Grid', {
+ *     title: 'DC Personnel',
+ *
+ *     store: store,
+ *     plugins: {
+ *         gridsummaryrow: true
+ *     },
+ *     columns: [
+ *         { text: 'First Name', dataIndex: 'fname',  flex: 1 },
+ *         { text: 'Last Name',  dataIndex: 'lname',  flex: 1 },
+ *         { text: 'Talent',     dataIndex: 'talent', flex: 1 },
+ *         { text: 'Wins',       dataIndex: 'wins',   flex: 1,  summary: 'sum' }
+ *     ],
+ *     fullscreen: true,
+ *     height:275
+ * });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container width="100%" height="100%">
+ *     <ext-grid
+ *       shadow="true"
+ *       height="275"
+ *       plugins='["gridsummaryrow"]'
+ *       onready="summaryGrid.onGridReady"
+ *       fullscreen="true"
+ *       variableHeights="true"
+ *     >
+ *         <ext-column text="First Name" dataIndex="fname" flex="1"></ext-column>
+ *         <ext-column text="Last Name" dataIndex="lname" flex="1"></ext-column>
+ *         <ext-column text="Talent" dataIndex="talent" flex="1"></ext-column>
+ *         <ext-column text="Wins" dataIndex="wins" flex="1" summary="sum"></ext-column>
+ *     </ext-grid>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-grid.component';
+ * import '@sencha/ext-web-components/dist/ext-column.component';
+ * 
+ * Ext.require('Ext.grid.plugin.Summary');
+ * 
+ * export default class SummaryGridComponent {
+ *     constructor() {
+ *        this.store = new Ext.data.Store({
+ *           data: [
+ *               {
+ *                   'fname': 'Barry',
+ *                   'lname': 'Allen',
+ *                   'talent': 'Speedster',
+ *                   'wins': 150
+ *               },
+ *               {
+ *                   'fname': 'Oliver',
+ *                   'lname': 'Queen',
+ *                   'talent': 'Archery',
+ *                   'wins': 120
+ *               },
+ *               {
+ *                    'fname': 'Kara',
+ *                    'lname': 'Zor-El',
+ *                    'talent': 'All',
+ *                    'wins': 90
+ *               },
+ *               {
+ *                   'fname': 'Helena',
+ *                   'lname': 'Bertinelli',
+ *                   'talent': 'Weapons Expert',
+ *                   'wins': 70
+ *               },
+ *               {
+ *                   'fname': 'Hal',
+ *                   'lname': 'Jordan',
+ *                   'talent': 'Willpower',
+ *                   'wins': 60
+ *               }
+ *           ]
+ *        });
+ *     }
+ * 
+ *     onGridReady(event) {
+ *         this.summaryGridCmp = event.detail.cmp;
+ *         this.summaryGridCmp.setStore(this.store);
+ *     }
+ * }
+ * 
+ * window.summaryGrid = new SummaryGridComponent();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtGrid, ExtColumn } from '@sencha/ext-react';
+ * 
+ * Ext.require('Ext.grid.plugin.Summary');
+ *
+ * export default class MyExample extends Component {
+ *
+ *     store = new Ext.data.Store({
  *         data: [
- *             { 'fname': 'Barry',  'lname': 'Allen', 'talent': 'Speedster', 'wins': 150  },
- *             { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery', 'wins': 27  },
- *             { 'fname': 'Kara',   'lname': 'Zor-El', 'talent': 'All', 'wins': 75  },
- *             { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert', 'wins': 7  },
- *             { 'fname': 'Hal',    'lname': 'Jordan', 'talent': 'Willpower', 'wins': 198  },
+ *             { 'fname': 'Barry', 'lname': 'Allen', 'talent': 'Speedster', 'wins': 150 },
+ *             { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery', 'wins': 27 },
+ *             { 'fname': 'Kara', 'lname': 'Zor-El', 'talent': 'All', 'wins': 75 },
+ *             { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert', 'wins': 7 },
+ *             { 'fname': 'Hal', 'lname': 'Jordan', 'talent': 'Willpower', 'wins': 198 }
  *         ]
  *     });
- *
- *     Ext.create('Ext.grid.Grid', {
- *         title: 'DC Personnel',
- *
- *         store: store,
- *         plugins: {
- *             gridsummaryrow: true
- *         },
- *         columns: [
- *             { text: 'First Name', dataIndex: 'fname',  flex: 1 },
- *             { text: 'Last Name',  dataIndex: 'lname',  flex: 1 },
- *             { text: 'Talent',     dataIndex: 'talent', flex: 1 },
- *             { text: 'Wins',       dataIndex: 'wins',   flex: 1,  summary: 'sum' }
- *         ],
- *         fullscreen: true,
- *         height:275
- *     });
+ *      
+ *     render() {
+ *         return (
+ *             <ExtGrid
+ *                 height="275"
+ *                 store={this.store}
+ *                 plugins={['gridsummaryrow']}
+ *             >
+ *                 <ExtColumn text="First Name" dataIndex="fname" flex={1} />
+ *                 <ExtColumn text="Last Name" dataIndex="lname" flex={1} />
+ *                 <ExtColumn text="Talent" dataIndex="talent" flex={1} />
+ *                 <ExtColumn text="Wins" dataIndex="wins" flex={1} summary="sum" />
+ *             </ExtGrid>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ * 
+ *  Ext.require('Ext.grid.plugin.Summary');
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *      <ExtContainer layout="fit">
+ *          <ExtGrid
+ *               [height]="'280px'"
+ *               [store]="this.store"
+ *               [plugins]="['gridsummaryrow']"
+ *           >
+ *               <ExtColumn text="First Name" dataIndex="fname" flex="1"></ExtColumn>
+ *               <ExtColumn text="Last Name" dataIndex="lname" flex="1"></ExtColumn>
+ *               <ExtColumn text="Talent" dataIndex="talent" flex="1"></ExtColumn>
+ *               <ExtColumn text="Wins" dataIndex="wins" flex="1" summary="sum"></ExtColumn>
+ *           </ExtGrid>
+ *       </ExtContainer>
+ *      `
+ *  })
+ *  export class AppComponent {
+ *      store = Ext.create('Ext.data.Store', {
+ *          data: [
+ *              { 'fname': 'Barry', 'lname': 'Allen', 'talent': 'Speedster', 'wins': 150 },
+ *              { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery', 'wins': 27 },
+ *              { 'fname': 'Kara', 'lname': 'Zor-El', 'talent': 'All', 'wins': 75 },
+ *              { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert', 'wins': 7 },
+ *              { 'fname': 'Hal', 'lname': 'Jordan', 'talent': 'Willpower', 'wins': 198 }
+ *          ]
+ *      });
+ *  }
+ * ```
  *
  */
 Ext.define('Ext.grid.plugin.Summary', {

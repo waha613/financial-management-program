@@ -4,68 +4,191 @@
  * fields in the DataView's records.
  *
  * This handles selection and deletion of chips.
- *     @example
- *     Ext.define('Contact', {
- *         extend: 'Ext.data.Model',
- *         fields: [{
- *             name: 'emailAddress'
- *         }, {
- *             name: 'picture'
- *         }, {
- *             name: 'role',
- *             type: 'int'
- *         }, {
- *             name: 'closable',
- *             calculate: function(data) {
- *                 return data.role > 2 ? false: true;
- *             }
- *         }, {
- *             name: 'iconCls',
- *             calculate: function(data) {
- *                 return data.role > 2 ? 'x-manager-icon' : 'x-employee-icon';
- *             }
- *         }]
- *     });
- *
- *     var store = new Ext.data.Store({
- *        model: 'Contact',
- *         data: [{
- *             emailAddress: 'frederick.bloggs@sentcha.com',
- *             picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
- *             role: 1
- *         }, {
- *             emailAddress: 'joe.poe@sentcha.com',
- *             picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
- *             role: 2
- *         }, {
- *             emailAddress: 'mike.jones@sentcha.com',
- *             picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
- *             role: 3
- *         }]
- *     });
- *
- *     Ext.create({
- *         xtype: 'panel',
- *         title: 'Chip DataView',
- *         width: 400,
- *         height: 200,
- *         renderTo: document.body,
- *         border: true,
- *         bodyPadding: 5,
- *         items: {
- *             xtype: 'chipview',
- *             store: store,
- *             displayField: 'emailAddress',
- *             iconField: 'picture',
- *             closeHandler: function(chipview, location) {
- *                 store.remove(location.record);
- *
- *                 // Stop the event, otherwise the NavigationModel
- *                 // will try to click on the nonexistent Chip
- *                 return false;
- *             }
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.define('Contact', {
+ *     extend: 'Ext.data.Model',
+ *     fields: [{
+ *         name: 'emailAddress'
+ *     }, {
+ *         name: 'picture'
+ *     }, {
+ *         name: 'role',
+ *         type: 'int'
+ *     }, {
+ *         name: 'closable',
+ *         calculate: function(data) {
+ *             return data.role > 2 ? false: true;
  *         }
- *     });
+ *     }, {
+ *         name: 'iconCls',
+ *         calculate: function(data) {
+ *             return data.role > 2 ? 'x-manager-icon' : 'x-employee-icon';
+ *         }
+ *     }]
+ * });
+ *
+ * var store = new Ext.data.Store({
+ *    model: 'Contact',
+ *     data: [{
+ *         emailAddress: 'frederick.bloggs@sentcha.com',
+ *         picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *         role: 1
+ *     }, {
+ *         emailAddress: 'joe.poe@sentcha.com',
+ *         picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *         role: 2
+ *     }, {
+ *         emailAddress: 'mike.jones@sentcha.com',
+ *         picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *         role: 3
+ *     }]
+ * });
+ *
+ * Ext.create({
+ *     xtype: 'panel',
+ *     title: 'Chip DataView',
+ *     width: 400,
+ *     height: 200,
+ *     renderTo: document.body,
+ *     border: true,
+ *     bodyPadding: 5,
+ *     items: {
+ *         xtype: 'chipview',
+ *         store: store,
+ *         displayField: 'emailAddress',
+ *         iconField: 'picture',
+ *         closeHandler: function(chipview, location) {
+ *             store.remove(location.record);
+ *
+ *             // Stop the event, otherwise the NavigationModel
+ *             // will try to click on the nonexistent Chip
+ *             return false;
+ *         }
+ *     }
+ * });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * Ext.define('Contact', {
+ *     extend: 'Ext.data.Model',
+ *     fields: [{
+ *         name: 'emailAddress'
+ *     }, {
+ *         name: 'picture'
+ *     }, {
+ *         name: 'role',
+ *         type: 'int'
+ *     }, {
+ *         name: 'closable',
+ *         calculate: function(data) {
+ *             return data.role > 2 ? false: true;
+ *         }
+ *     }, {
+ *         name: 'iconCls',
+ *         calculate: function(data) {
+ *             return data.role > 2 ? 'x-manager-icon' : 'x-employee-icon';
+ *         }
+ *     }]
+ * });
+ *
+ * var store = new Ext.data.Store({
+ *    model: 'Contact',
+ *     data: [{
+ *         emailAddress: 'frederick.bloggs@sentcha.com',
+ *         picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *         role: 1
+ *     }, {
+ *         emailAddress: 'joe.poe@sentcha.com',
+ *         picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *         role: 2
+ *     }, {
+ *         emailAddress: 'mike.jones@sentcha.com',
+ *         picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *         role: 3
+ *     }]
+ * });
+ *
+ * <ExtChipView
+ *     store={store}
+ *     displayField={'emailAddress'}
+ *     iconField='picture'
+ *     closeHandler={(chipview, location) => {
+ *         store.remove(location.record);
+ *
+ *         // Stop the event, otherwise the NavigationModel
+ *         // will try to click on the nonexistent Chip
+ *         return false;
+ *     }}
+ * />
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *          <ExtChipView
+ *              [store]="store"
+ *              [displayField]="'emailAddress'"
+ *              iconField='picture'
+ *              [closeHandler]="closeHandler"
+ *          ></ExtChipView>
+ *      `
+ *  })
+ *  export class AppComponent {
+ *      model = Ext.define(
+ *          'Contact', {
+ *              extend: 'Ext.data.Model',
+ *              fields: [{
+ *                  name: 'emailAddress'
+ *              }, {
+ *                  name: 'picture'
+ *              }, {
+ *                  name: 'role',
+ *                  type: 'int'
+ *              }, {
+ *                  name: 'closable',
+ *                  calculate: function(data) {
+ *                      return data.role > 2 ? false: true;
+ *                  }
+ *              }, {
+ *                  name: 'iconCls',
+ *                  calculate: function(data) {
+ *                      return data.role > 2 ? 'x-manager-icon' : 'x-employee-icon';
+ *                  }
+ *              }]
+ *          }
+ *      );
+ *                    
+ *      store = new Ext.data.Store({
+ *          model: 'Contact',
+ *          data: [{
+ *              emailAddress: 'frederick.bloggs@sentcha.com',
+ *              picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *              role: 1
+ *          }, {
+ *              emailAddress: 'joe.poe@sentcha.com',
+ *              picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *              role: 2
+ *          }, {
+ *              emailAddress: 'mike.jones@sentcha.com',
+ *              picture: 'https://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *              role: 3
+ *          }]
+ *      });
+ *            
+ *     closeHandler = (param, location) => {
+ *         this.store.remove(location.record);
+ *         return false;
+ *     }
+ *                 
+ * }
+ * ```
  *
  * @since 6.7.0
  */

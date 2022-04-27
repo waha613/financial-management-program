@@ -1,12 +1,13 @@
 /**
  * This Field is useful for containing multiple {@link Ext.field.Radio radiofield}.
  *
- * It plots items into wither horizontal / vertical depending on 
+ * It plots items into wither horizontal / vertical depending on
  * {@link Ext.field.FieldGroupContainer#vertical} config properties.
- * 
+ *
  * ## Example usage
- * 
- *     @example
+ *
+ * ```javascript
+ *  @example({ framework: 'extjs' })
  *     Ext.create('Ext.form.Panel', {
  *         title: 'RadioGroup Example',
  *         width: 300,
@@ -15,8 +16,8 @@
  *         items:[{
  *             xtype: 'radiogroup',
  *             label: 'Two Columns',
- *             // Arrange radio field distributed vertically. 
- *             // Automatically latter items flow to next column if 
+ *             // Arrange radio field distributed vertically.
+ *             // Automatically latter items flow to next column if
  *             // available height is less to display all the items in single column.
  *             vertical: true,
  *             height: 100,
@@ -30,6 +31,191 @@
  *             ]
  *         }]
  *     });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtFormPanel, ExtRadioGroup, ExtRadioField } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtFormPanel
+ *                 title="RadioGroup Example"
+ *                 width={600}
+ *                 height={300}
+ *                 fullscreen
+ *             >
+ *                 <ExtRadioGroup
+ *                     label="Two Columns"
+ *                     vertical={true}
+ *                     height={100}
+ *                 >
+ *                     <ExtRadioField
+ *                         label="Item 1"
+ *                         name="rb"
+ *                         value={1}
+ *                     >
+ *                     </ExtRadioField>
+ *                     <ExtRadioField
+ *                         label="Item 2"
+ *                         name="rb"
+ *                         value={2}
+ *                         checked={true}
+ *                     >
+ *                     </ExtRadioField>
+ *                     <ExtRadioField
+ *                         label="Item 3"
+ *                         name="rb"
+ *                         value={3}
+ *                     >
+ *                     </ExtRadioField>
+ *                     <ExtRadioField
+ *                         label="Item 4"
+ *                         name="rb"
+ *                         value={4}
+ *                     >
+ *                     </ExtRadioField>
+ *                     <ExtRadioField
+ *                         label="Item 5"
+ *                         name="rb"
+ *                         value={5}
+ *                     >
+ *                     </ExtRadioField>
+ *                     <ExtRadioField
+ *                         label="Item 6"
+ *                         name="rb"
+ *                         value={6}
+ *                     >
+ *                     </ExtRadioField>
+ *                 </ExtRadioGroup>
+ *             </ExtFormPanel>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'radiogroup-component',
+ *     styles: [``],
+ *     template: `
+ *       <ExtFormPanel
+ *            title="RadioGroup Example"
+ *            [width]="600"
+ *            [height]="400"
+ *            [fullscreen]="true"
+ *        >
+ *            <ExtRadioGroup
+ *                [label]="'Two Columns'"
+ *                [vertical]="true"
+ *                [height]="100"
+ *            >
+ *                <ExtRadioField
+ *                    [label]="'Item 1'"
+ *                    [name]="'rb'"
+ *                    value="1"
+ *                >
+ *                </ExtRadioField>
+ *                <ExtRadioField
+ *                    [label]="'Item 2'"
+ *                    [name]="'rb'"
+ *                    value="2"
+ *                    [checked]="true"
+ *                >
+ *                </ExtRadioField>
+ *                <ExtRadioField
+ *                    [label]="'Item 3'"
+ *                    [name]="'rb'"
+ *                    value="3"
+ *                >
+ *                </ExtRadioField>
+ *                <ExtRadioField
+ *                    [label]="'Item 4'"
+ *                    [name]="'rb'"
+ *                    value="4"
+ *                >
+ *                </ExtRadioField>
+ *                <ExtRadioField
+ *                    [label]="'Item 5'"
+ *                    [name]="'rb'"
+ *                    value="5"
+ *                >
+ *                </ExtRadioField>
+ *                <ExtRadioField
+ *                    [label]="'Item 6'"
+ *                    [name]="'rb'"
+ *                    value="6"
+ *                >
+ *                </ExtRadioField>
+ *            </ExtRadioGroup>
+ *        </ExtFormPanel>`
+ * })
+ * export class RadioGroupComponents  {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-formpanel
+ *      title="RadioGroup Example"
+ *      width="300"
+ *      height="125"
+ *      fullscreen="true"
+ *  >
+ *   <ext-radiogroup
+ *       label="Two Columns"
+ *       vertical="true"
+ *       height="100"
+ *   >
+ *       <ext-radiofield
+ *           label="Item 1"
+ *           name="rb"
+ *           value="1"
+ *       >
+ *       </ext-radiofield>
+ *       <ext-radiofield
+ *           label="Item 2"
+ *           name="rb"
+ *           value="2"
+ *           checked="true"
+ *       >
+ *       </ext-radiofield>
+ *       <ext-radiofield
+ *           label="Item 3"
+ *           name="rb"
+ *           value="3"
+ *       >
+ *       </ext-radiofield>
+ *       <ext-radiofield
+ *           label="Item 4"
+ *           name="rb"
+ *           value="4"
+ *       >
+ *       </ext-radiofield>
+ *       <ext-radiofield
+ *           label="Item 5"
+ *           name="rb"
+ *           value="5"
+ *       >
+ *       </ext-radiofield>
+ *       <ext-radiofield
+ *           label="Item 6"
+ *           name="rb"
+ *           value="6"
+ *       >
+ *       </ext-radiofield>
+ *   </ext-radiogroup>
+ *  </ext-formpanel>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-radiogroup.component';
+ * import '@sencha/ext-web-components/dist/ext-radiofield.component';
+ * export default class RadioGroupComponent {}
+ * ```
  *
  * ## Binding Example
  *
@@ -123,7 +309,7 @@ Ext.define('Ext.field.RadioGroup', {
 
     /**
      * Sets the checked status of the radio group.
-     * If {@link #simpleValue `simpleValue`} is `true`, 
+     * If {@link #simpleValue `simpleValue`} is `true`,
      * value must be a single value, the child radiobutton matching the value
 	 * will be checked. If `simpleValue` is not used, value must be an object of name-value
 	 * pairs, each child radiobutton matching the name and value will be checked.

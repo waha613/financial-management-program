@@ -24,6 +24,7 @@ Ext.Number = (new function() { // jshint ignore:line
     Ext.apply(ExtNumber, {
         MIN_SAFE_INTEGER: Number.MIN_SAFE_INTEGER,
         MAX_SAFE_INTEGER: Number.MAX_SAFE_INTEGER,
+        MAX_32BIT_INTEGER: math.pow(2, 31) - 1,
         // No good way to allow "9." w/o allowing "." alone but we use isNaN to reject that
         floatRe: /^[-+]?(?:\d+|\d*\.\d*)(?:[Ee][+-]?\d+)?$/,
         intRe: /^[-+]?\d+(?:[Ee]\+?\d+)?$/,
@@ -183,10 +184,10 @@ Ext.Number = (new function() { // jshint ignore:line
          *        0   1   2   3   4   5   6   7
          *       -8  -7  -6  -5  -4  -3  -2  -1
          *
-         *      console.log(Ext.Number.clipIndices(8, [3, 10]); // logs "[3, 8]"
-         *      console.log(Ext.Number.clipIndices(8, [-5]);    // logs "[3, 8]"
-         *      console.log(Ext.Number.clipIndices(8, []);
-         *      console.log(Ext.Number.clipIndices(8, []);
+         *      console.log(Ext.Number.clipIndices(8, [3, 10])); // logs "[3, 8]"
+         *      console.log(Ext.Number.clipIndices(8, [-5]));    // logs "[3, 8]"
+         *      console.log(Ext.Number.clipIndices(8, []));
+         *      console.log(Ext.Number.clipIndices(8, []));
          *
          * @param {Number} length
          * @param {Number[]} indices

@@ -19,7 +19,7 @@ Ext.define('MyApp.view.trees.FinancialManageTrees', {
             type: 'ajax',
             api : {
                 read:'/getFinancialManageTrees'
-            },
+            }
         }
     },
     columns: [{

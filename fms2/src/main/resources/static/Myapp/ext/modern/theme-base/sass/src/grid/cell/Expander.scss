@@ -2,7 +2,8 @@
     .#{$prefix}icon-el {
         cursor: pointer;
 
-        .#{$prefix}summaryrow & {
+        .#{$prefix}summaryrow &,
+        .#{$prefix}grid-group & {
             display: none;
         }
     }

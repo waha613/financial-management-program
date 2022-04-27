@@ -507,12 +507,14 @@ Ext.define('Ext.Container', {
             masked = true;
             isVisible = false;
         }
-
-        if (Ext.isString(masked)) {
+        else if (Ext.isString(masked)) {
             masked = {
                 xtype: 'loadmask',
                 message: masked
             };
+        }
+        else if (masked && !masked.isComponent && masked.hidden) {
+            isVisible = false;
         }
 
         // Subscript notation is used to reference Ext.Mask to prevent creation of an
@@ -1839,7 +1841,7 @@ Ext.define('Ext.Container', {
     privates: {
         /**
          * This method is in place on the instance during construction to ensure that any
-         * {@link #lookup} or {@link #getReferences} calls have the {@link #items} initialized
+         * {@link #lookup} or {@link #getReferences} calls have the {@links} initialized
          * prior to the lookup.
          * @private
          */

@@ -360,6 +360,12 @@ Ext.define('Ext.grid.plugin.RowExpander', {
     },
 
     toggleRow: function(rowIdx, record) {
+        if (record.isNonData) {
+            // do not expand or collapse group headers and summaries
+            return;
+        }
+
+        // eslint-disable-next-line vars-on-top
         var me = this,
             // If we are handling a lockable assembly,
             // handle the normal view first
@@ -505,9 +511,12 @@ Ext.define('Ext.grid.plugin.RowExpander', {
             menuDisabled: true,
             tdCls: Ext.baseCSSPrefix + 'grid-cell-special',
             innerCls: Ext.baseCSSPrefix + 'grid-cell-inner-row-expander',
-            renderer: function() {
-                return '<div class="' + Ext.baseCSSPrefix +
-                       'grid-row-expander" role="presentation" tabIndex="0"></div>';
+            renderer: function(value, metaData, record) {
+                var cls = Ext.baseCSSPrefix + (record.isNonData
+                    ? 'grid-row-non-expander'
+                    : 'grid-row-expander');
+
+                return '<div class="' + cls + '" role="presentation" tabIndex="0"></div>';
             },
             processEvent: function(type, view, cell, rowIndex, cellIndex, e, record) {
                 var isTouch = e.pointerType === 'touch',

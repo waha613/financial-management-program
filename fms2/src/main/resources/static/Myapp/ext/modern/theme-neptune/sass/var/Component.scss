@@ -31,10 +31,6 @@ $enable-border-radius: dynamic($include-border-radius); // Can disable all round
  */
 $basic-slider: dynamic(false);
 
-/**
- * @var {color} $base-color
- * The primary color variable from which most elements derive their color scheme.
- */
 $base-color: dynamic(#157fcc);
 
 /**

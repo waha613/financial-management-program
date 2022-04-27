@@ -576,10 +576,9 @@ Ext.define('Ext.picker.Date', {
         me.textNodes = me.eventEl.query(dateCellSelector);
 
         me.eventEl.set({ 'aria-labelledby': me.monthBtn.id });
-
         me.mon(me.eventEl, {
             scope: me,
-            mousewheel: me.handleMouseWheel,
+            wheel: me.handleMouseWheel,
             click: {
                 fn: me.handleDateClick,
                 delegate: dateCellSelector
@@ -1266,10 +1265,12 @@ Ext.define('Ext.picker.Date', {
             delta = e.getWheelDelta();
 
             if (delta > 0) {
-                this.showPrevMonth();
+                // on delta being positive, the scroll down will get activated.
+                this.showNextMonth();
             }
             else if (delta < 0) {
-                this.showNextMonth();
+                // on delta being negative, the scroll up will get activated.
+                this.showPrevMonth();
             }
         }
     },

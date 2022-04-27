@@ -18,6 +18,11 @@ Ext.define('Ext.data.summary.Base', {
         cacheable: true
     },
 
+    /**
+     * Name of the summary function that appears in the {@link Ext.grid.plugin.Summaries} plugin
+     */
+    text: 'Custom',
+
     constructor: function(config) {
         var calculate = config && config.calculate;
 

@@ -165,6 +165,10 @@ Ext.define('Ext.chart.legend.SpriteLegend', {
         me.mixins.observable.constructor.call(me, config);
     },
 
+    isXType: function(xtype) {
+        return xtype === 'sprite';
+    },
+
     applyStore: function(store) {
         return store && Ext.StoreManager.lookup(store);
     },

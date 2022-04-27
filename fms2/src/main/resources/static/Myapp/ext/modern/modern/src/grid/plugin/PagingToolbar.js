@@ -2,37 +2,180 @@
  * The Paging Toolbar is a specialized toolbar that is
  * bound to a `Ext.data.Store` and provides automatic paging control.
  *
- *     @example
- *     var store = Ext.create('Ext.data.Store', {
- *         fields: ['fname', 'lname', 'talent'],
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var store = Ext.create('Ext.data.Store', {
+ *     fields: ['fname', 'lname', 'talent'],
+ *     pageSize: 3,
+ *     data: [
+ *         { 'fname': 'Barry',  'lname': 'Allen',      'talent': 'Speedster' },
+ *         { 'fname': 'Oliver', 'lname': 'Queen',      'talent': 'Archery'  },
+ *         { 'fname': 'Kara',   'lname': 'Zor-El',     'talent': 'All'  },
+ *         { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert'  },
+ *         { 'fname': 'Hal',    'lname': 'Jordan',     'talent': 'Willpower'  },
+ *     ]
+ * });
+ *
+ * Ext.create('Ext.grid.Grid', {
+ *     title: 'DC Personnel',
+ *
+ *     store: store,
+ *     plugins: {
+ *         pagingtoolbar: true
+ *     },
+ *
+ *     columns: [
+ *         { text: 'First Name', dataIndex: 'fname',  flex: 1 },
+ *         { text: 'Last Name',  dataIndex: 'lname',  flex: 1 },
+ *         { text: 'Talent',     dataIndex: 'talent', flex: 1 }
+ *     ],
+ *
+ *     height: 230,
+ *     layout: 'fit',
+ *     fullscreen: true
+ * });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container width="100%" height="100%">
+ *     <ext-grid
+ *         shadow="true"
+ *         height="275"
+ *         plugins='["pagingtoolbar"]'
+ *         onready="paginggrid.onGridReady"
+ *     >
+ *         <ext-column text="First Name" dataIndex="fname" flex="1" editable="true"></ext-column>
+ *         <ext-column text="Last Name" dataIndex="lname" flex="1" editable="true"></ext-column>
+ *         <ext-column text="Talent" dataIndex="talent" flex="1" editable="true"></ext-column>
+ *     </ext-grid>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-grid.component';
+ * import '@sencha/ext-web-components/dist/ext-column.component';
+ * 
+ * Ext.require('Ext.grid.plugin.PagingToolbar');
+ * 
+ * export default class PagingGridComponent {
+ *     constructor() {
+ *        this.store = new Ext.data.Store({
+ *           pageSize: 3,
+ *           data: [
+ *               { 'fname': 'Barry',  'lname': 'Allen', 'talent': 'Speedster'},
+ *               { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery'},
+ *               { 'fname': 'Kara',   'lname': 'Zor-El', 'talent': 'All'},
+ *               { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert'},
+ *               { 'fname': 'Hal',    'lname': 'Jordan', 'talent': 'Willpower'  }
+ *           ]
+ *        });
+ *     }
+ * 
+ *     onGridReady(event) {
+ *         this.pagingGridCmp = event.detail.cmp;
+ *         this.pagingGridCmp.setStore(this.store);
+ *     }
+ * }
+ * window.paginggrid = new PagingGridComponent();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtGrid, ExtColumn } from '@sencha/ext-react';
+ * 
+ * Ext.require('Ext.grid.plugin.PagingToolbar');
+ *
+ * export default class MyExample extends Component {
+ *
+ *     store = new Ext.data.Store({
  *         pageSize: 3,
  *         data: [
- *             { 'fname': 'Barry',  'lname': 'Allen',      'talent': 'Speedster' },
- *             { 'fname': 'Oliver', 'lname': 'Queen',      'talent': 'Archery'  },
- *             { 'fname': 'Kara',   'lname': 'Zor-El',     'talent': 'All'  },
- *             { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert'  },
- *             { 'fname': 'Hal',    'lname': 'Jordan',     'talent': 'Willpower'  },
+ *             { 'fname': 'Barry',  'lname': 'Allen', 'talent': 'Speedster'},
+ *             { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery'},
+ *             { 'fname': 'Kara',   'lname': 'Zor-El', 'talent': 'All'},
+ *             { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert'},
+ *             { 'fname': 'Hal',    'lname': 'Jordan', 'talent': 'Willpower'  }
  *         ]
  *     });
  *
- *     Ext.create('Ext.grid.Grid', {
- *         title: 'DC Personnel',
+ *    render() {
+ *        return (
+ *            <ExtGrid
+ *                height="180"
+ *                store={this.store}
+ *                plugins={['pagingtoolbar']}
+ *            >
+ *                <ExtColumn 
+ *                    text="First Name"
+ *                    dataIndex="fname"
+ *                    flex={1}
+ *                />
+ *                <ExtColumn 
+ *                    text="Last Name"
+ *                    dataIndex="lname"
+ *                    flex={1}
+ *                />
+ *                <ExtColumn 
+ *                    text="Talent"
+ *                    dataIndex="talent"
+ *                    flex={1}
+ *                />
+ *            </ExtGrid>
+ *        )
+ *    }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
  *
- *         store: store,
- *         plugins: {
- *             pagingtoolbar: true
- *         },
- *
- *         columns: [
- *             { text: 'First Name', dataIndex: 'fname',  flex: 1 },
- *             { text: 'Last Name',  dataIndex: 'lname',  flex: 1 },
- *             { text: 'Talent',     dataIndex: 'talent', flex: 1 }
- *         ],
- *
- *         height: 230,
- *         layout: 'fit',
- *         fullscreen: true
+ * Ext.require('Ext.grid.plugin.PagingToolbar');
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [`
+ *             `],
+ *     template: `
+ *     <ExtContainer>
+ *         <ExtGrid
+ *             [height]="'180px'"
+ *             [store]="this.store"
+ *             [plugins]="['pagingtoolbar']"
+ *         >
+ *             <ExtColumn 
+ *                 text="First Name"
+ *                 dataIndex="fname"
+ *                 flex="1"
+ *             ></ExtColumn>
+ *             <ExtColumn
+ *                 text="Last Name"
+ *                 dataIndex="lname"
+ *                 flex="1"
+ *             ></ExtColumn>
+ *             <ExtColumn
+ *                 text="Talent"
+ *                 dataIndex="talent"
+ *                 flex="1"
+ *             >
+ *             </ExtColumn>
+ *         </ExtGrid>
+ *     </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {
+ *     store = new Ext.data.Store({
+ *         pageSize: 3,
+ *         data: [
+ *             { 'fname': 'Barry',  'lname': 'Allen', 'talent': 'Speedster'},
+ *             { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery'},
+ *             { 'fname': 'Kara',   'lname': 'Zor-El', 'talent': 'All'},
+ *             { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert'},
+ *             { 'fname': 'Hal',    'lname': 'Jordan', 'talent': 'Willpower'  }
+ *         ]
  *     });
+ * }
+ * ```
  */
 Ext.define('Ext.grid.plugin.PagingToolbar', {
     extend: 'Ext.plugin.Abstract',

@@ -1,7 +1,12 @@
-topSuite("grid-general-locking",
-    [false, 'Ext.grid.Panel', 'Ext.data.ArrayStore', 'Ext.layout.container.Border',
-     'Ext.grid.plugin.CellEditing', 'Ext.form.field.Text'],
-function() {
+topSuite("grid-general-locking", [
+    false,
+    'Ext.grid.Panel',
+    'Ext.data.ArrayStore',
+    'Ext.layout.container.Border',
+    'Ext.grid.plugin.CellEditing',
+    'Ext.grid.feature.GroupingSummary',
+    'Ext.form.field.Text'
+], function() {
     var grid, view, store, colRef, navModel,
         synchronousLoad = true,
         proxyStoreLoad = Ext.data.ProxyStore.prototype.load,
@@ -309,9 +314,10 @@ function() {
                     'field9',
                     'field10'
                 ]
-            }),
-            lockedGrid, lockedView,
-            normalGrid, normalView;
+            });
+
+            var lockedGrid;
+            // var lockedView, normalGrid, normalView;
 
             function makeGrid(lockedColumnCount, cfg, lockedGridConfig, normalGridConfig) {
                 var data = [],
@@ -362,11 +368,13 @@ function() {
                     normalGridConfig: normalGridConfig,
                     renderTo: Ext.getBody()
                 }, cfg));
+
                 view = grid.getView();
+
                 lockedGrid = grid.lockedGrid;
-                lockedView = lockedGrid.getView();
-                normalGrid = grid.normalGrid;
-                normalView = normalGrid.getView();
+                // lockedView = lockedGrid.getView();
+                // normalGrid = grid.normalGrid;
+                // normalView = normalGrid.getView();
             }
 
             it('should be able to lock columns', function() {
@@ -611,22 +619,24 @@ function() {
             store = new Ext.data.Store({
                 fields: ['name', 'email', 'phone'],
                 data: [
-                { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' },
-                { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' },
-                { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
-                { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' },
-                { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' },
-                { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' },
-                { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
-                { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' },
-                { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' },
-                { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' },
-                { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
-                { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' },
-                { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' },
-                { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' },
-                { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
-                { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
+                    /* eslint-disable no-multi-spaces */
+                    { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' },
+                    { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' },
+                    { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+                    { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' },
+                    { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' },
+                    { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' },
+                    { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+                    { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' },
+                    { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' },
+                    { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' },
+                    { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+                    { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' },
+                    { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' },
+                    { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' },
+                    { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+                    { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
+                    /* eslint-enable no-multi-spaces */
                 ]
             });
         });
@@ -680,7 +690,7 @@ function() {
             var scroller,
                 cell;
 
-             createGrid({
+            createGrid({
                 bufferedRenderer: false,
                 columns: [{
                     text: 'Name',
@@ -703,21 +713,21 @@ function() {
             scroller.scrollTo(null, 100);
             scroller.scrollTo(100, null);
 
-             waitsFor(function() {
+            waitsFor(function() {
                 return scroller.position.y === scroller.position.x && scroller.position.y === 100;
             });
 
-             runs(function() {
+            runs(function() {
                 cell = grid.normalGrid.view.getCell(7, 0);
                 jasmine.fireMouseEvent(cell, 'mousedown');
             });
 
-             grid.updateLayout();
+            grid.updateLayout();
 
-             // Need waits here because we are waitign for the scroller not to move
+            // Need waits here because we are waitign for the scroller not to move
             waits(100);
 
-             runs(function() {
+            runs(function() {
                 expect(scroller.getPosition().y).toBe(100);
                 // finish the click to avoid even publisher leaks
                 jasmine.fireMouseEvent(cell, 'mouseup');
@@ -815,6 +825,129 @@ function() {
                     colIdx: --colIdx
                 });
             });
+        });
+    });
+
+    describe('reconfigure', function() {
+        var store2;
+
+        beforeEach(function() {
+            MockAjaxManager.addMethods();
+        });
+
+        afterEach(function() {
+            store2 = Ext.destroy(store2);
+            MockAjaxManager.removeMethods();
+        });
+
+        function completeWithData(theData) {
+            Ext.Ajax.mockComplete({
+                status: 200,
+                responseText: Ext.encode(theData)
+            });
+        }
+
+        it('should add first locked column via metachange on bound grid', function() {
+            createGrid({
+                enableLocking: true,
+                columns: null,
+
+                // Grouping enables variableRowHeight which caused a layout failure due
+                // to the lockingView not refreshing and then failing to sync row heights
+                features: [{
+                    ftype: 'grouping'
+                }],
+
+                lockedGridConfig: {
+                    flex: 1
+                },
+                normalGridConfig: {
+                    flex: 2
+                },
+
+                viewModel: {
+                    stores: {
+                        theStore: {
+                            fields: ['name', 'email', 'phone'],
+                            autoLoad: true,
+                            groupField: 'name',
+                            proxy: {
+                                type: 'ajax',
+                                url: 'EXTJS-16196.json',
+                                reader: {
+                                    type: 'json',
+                                    rootProperty: 'data',
+                                    metaProperty: 'meta'
+                                }
+                            },
+
+                            listeners: {
+                                metachange: function(store, meta) {
+                                    grid.reconfigure(meta.columns);
+                                }
+                            }
+                        }
+                    }
+                },
+
+                bind: {
+                    store: '{theStore}'
+                }
+            });
+
+            waits(10);
+            runs(function() {
+                completeWithData({
+                    meta: {
+                        columns: [
+                            { locked: true, dataIndex: 'name', text: 'Name1', flex: 1 },
+                            { dataIndex: 'phone', text: 'Phone Number', locked: false, width: 200 }
+                        ]
+                    },
+                    data: [
+                        { name: 'Lisa', email: 'lisa@simpsons.com', phone: '555-111-1224' },
+                        { name: 'Bart', email: 'bart@simpsons.com', phone: '555-222-1234' },
+                        { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+                        { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
+                    ]
+                });
+            });
+        });
+
+        it('should simultaneously remove rows and add first locked column', function() {
+            store = new Ext.data.Store({
+                fields: ['name', 'email', 'phone'],
+                data: [
+                    { name: 'Lisa', email: 'lisa@simpsons.com', phone: '555-111-1224' },
+                    { name: 'Bart', email: 'bart@simpsons.com', phone: '555-222-1234' },
+                    { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+                    { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
+                ]
+            });
+
+            store2 = new Ext.data.Store({
+                fields: [ 'name', 'email', 'phone'],
+                data: [
+                    { name: 'Lisa1', email: 'lisa@simpsons.com', phone: '555-111-1224' },
+                    { name: 'Bart1', email: 'bart@simpsons.com', phone: '555-222-1234' },
+                    { name: 'Homer1', email: 'homer@simpsons.com', phone: '555-222-1244' }
+                ]
+            });
+
+            createGrid({
+                enableLocking: true,
+                columns: [
+                    { text: 'Name', dataIndex: 'name' },
+                    { text: 'Email', dataIndex: 'email', flex: 1 },
+                    { text: 'Phone', dataIndex: 'phone' }
+                ]
+            });
+
+            grid.reconfigure(store2, [
+                { locked: true, dataIndex: 'name', text: 'Name1' },
+                { dataIndex: 'email', text: 'Email Id' },
+                { dataIndex: 'phone', text: 'Phone Number' }
+            ]);
         });
     });
 });

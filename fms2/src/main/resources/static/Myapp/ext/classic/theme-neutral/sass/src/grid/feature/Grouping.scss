@@ -58,7 +58,7 @@
             color: $grid-header-menu-glyph-color;
         }
     } @else {
-        background-image: theme-background-image('grid/group-by');
+        background-image: theme-background-image('grid/group-by', 'png');
     }
 }
 

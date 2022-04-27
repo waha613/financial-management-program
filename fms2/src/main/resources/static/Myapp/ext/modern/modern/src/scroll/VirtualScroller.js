@@ -291,6 +291,15 @@ Ext.define('Ext.scroll.VirtualScroller', {
 
     isAnimating: false,
 
+    /**
+         * This propery is used when touch Scrolling is in process to notify the last scroll at
+         * scroll end so that the scroll start and scroll end is in order.For each scroll start
+         * we increment the value to count number of scrolls and at each subsequent scroll end
+         *  the value is decremented
+         */
+
+    touchScrollCount: 0,
+
     isMouseEvent: {
         mousedown: 1,
         mousemove: 1,
@@ -1119,7 +1128,7 @@ Ext.define('Ext.scroll.VirtualScroller', {
                 y = position.y;
 
             if (!me.destroying && !me.destroyed && me.isScrolling && me.isPrimary &&
-                    !me.isTouching && !me.snapToSlot()) {
+                    !me.isTouching && !me.snapToSlot() && me.touchScrollCount <= 1) {
 
                 me.isScrolling = Ext.isScrolling = me.isWheeling = me.self.isWheeling =
                     me.isScrollbarScrolling = false;
@@ -1135,6 +1144,10 @@ Ext.define('Ext.scroll.VirtualScroller', {
                 if (!me.isScrolling) { // if scrollend event handler did not initiate another scroll
                     me.setPrimary(null);
                 }
+            }
+
+            if (me.touchScrollCount > 0) {
+                me.touchScrollCount--;
             }
         },
 
@@ -1184,6 +1197,8 @@ Ext.define('Ext.scroll.VirtualScroller', {
             me.isTouching = me.self.isTouching = true;
 
             me.stopAnimation();
+
+            me.touchScrollCount++;
         },
 
         onWheel: function(e) {

@@ -89,6 +89,13 @@ Ext.define('Ext.menu.Item', {
     disabledCls: Ext.baseCSSPrefix + 'menu-item-disabled',
 
     /**
+     * @cfg {String} emptyText
+     * The text to display when the the {@link #text} is empty.
+     * @since 7.2.0
+     */
+    emptyText: '\u00a0',
+
+    /**
      * @cfg {String} [href='#']
      * The href attribute to use for the underlying anchor link.
      */
@@ -452,7 +459,8 @@ Ext.define('Ext.menu.Item', {
 
     doExpandMenu: function(clickEvent) {
         var me = this,
-            menu = me.menu;
+            menu = me.menu,
+            ariaDom;
 
         if (!menu.isVisible()) {
             me.parentMenu.activeChild = menu;
@@ -463,6 +471,11 @@ Ext.define('Ext.menu.Item', {
             // Pointer-invoked menus do not auto focus, key invoked ones do.
             menu.autoFocus = !clickEvent || !clickEvent.pointerType;
             menu.showBy(me, me.menuAlign);
+            ariaDom = me.ariaEl.dom;
+
+            if (ariaDom) {
+                ariaDom.setAttribute('aria-owns', menu.id);
+            }
         }
         // Keyboard events should focus the first menu item even if it was already expanded
         else if (clickEvent && clickEvent.type === 'keydown') {
@@ -674,7 +687,7 @@ Ext.define('Ext.menu.Item', {
             isCheckItem: isCheckItem,
             rightIcon: rightIcon,
             plain: me.plain,
-            text: me.text,
+            text: me.getDisplayText(),
             arrowCls: me.arrowCls,
             baseIconCls: me.baseIconCls,
             textCls: me.textCls,
@@ -757,7 +770,10 @@ Ext.define('Ext.menu.Item', {
                 ariaAttr = (me.ariaRenderAttributes || (me.ariaRenderAttributes = {}));
 
                 ariaAttr['aria-haspopup'] = true;
-                ariaAttr['aria-owns'] = menu.id;
+
+                if (!menu.hidden) {
+                    ariaAttr['aria-owns'] = menu.id;
+                }
             }
         }
         else {
@@ -845,7 +861,7 @@ Ext.define('Ext.menu.Item', {
         me.text = text;
 
         if (me.rendered) {
-            el.setHtml(text || '');
+            el.setHtml(me.getDisplayText());
             me.updateLayout();
         }
 
@@ -911,6 +927,10 @@ Ext.define('Ext.menu.Item', {
 
     getFocusClsEl: function() {
         return this.el;
+    },
+
+    getDisplayText: function() {
+        return this.text || this.emptyText;
     },
 
     privates: {

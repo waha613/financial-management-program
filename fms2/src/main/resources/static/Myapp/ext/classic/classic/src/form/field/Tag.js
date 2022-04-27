@@ -1,7 +1,7 @@
 /**
- * `tagfield` provides a combobox that removes the hassle of dealing with long and unruly select 
- * options. The selected list is visually maintained in the value display area instead of 
- * within the picker itself. Users may easily add or remove `tags` from the 
+ * `tagfield` provides a combobox that removes the hassle of dealing with long and unruly select
+ * options. The selected list is visually maintained in the value display area instead of
+ * within the picker itself. Users may easily add or remove `tags` from the
  * display value area.
  *
  *     @example
@@ -32,7 +32,7 @@
  *             filterPickList: true
  *         }]
  *     });
- *       
+ *
  * ### History
  *
  * Inspired by the SuperBoxSelect component for ExtJS 3,
@@ -98,7 +98,7 @@ Ext.define('Ext.form.field.Tag', {
 
     /**
      * @cfg {String/Ext.XTemplate} tipTpl
-     * The {@link Ext.XTemplate XTemplate} to use for the tip of the labeled items. 
+     * The {@link Ext.XTemplate XTemplate} to use for the tip of the labeled items.
      *
      * @since  5.1.1
      */
@@ -179,6 +179,15 @@ Ext.define('Ext.form.field.Tag', {
      * - `false` to keep the item in the pick list as a selected item
      */
     filterPickList: false,
+
+    /**
+     * @cfg {Boolean} focusLastAddedItem
+     * True to focus, after the currently selected values from the drop down list.
+     *
+     * - `true` to focus, after the currently selected values from the drop down pick list
+     * - `false` to keep the focus at the first item in the pick list as a selected item
+     */
+    focusLastAddedItem: false,
 
     /**
      * @cfg {Boolean} clearOnBackspace
@@ -327,7 +336,7 @@ Ext.define('Ext.form.field.Tag', {
                     '<tpl if="tabIdx != null">tabindex="{tabIdx}" </tpl>',
                     '<tpl if="disabled"> disabled="disabled"</tpl>',
                     '<tpl foreach="inputElAriaAttributes"> {$}="{.}"</tpl>',
-                    'class="' + Ext.baseCSSPrefix + 'tagfield-input-field {inputElCls} {emptyCls} {fixCls}" autocomplete="off">',
+                    'class="' + Ext.baseCSSPrefix + 'tagfield-input-field {inputElCls} {noGrowCls} {emptyCls} {fixCls}" autocomplete="off">',
                 '</li>',
             '</ul>',
             '<ul id="{cmpId}-ariaList" data-ref="ariaList" role="listbox"',
@@ -342,7 +351,7 @@ Ext.define('Ext.form.field.Tag', {
     ],
 
     postSubTpl: [
-            '<label id="{cmpId}-placeholderLabel" data-ref="placeholderLabel" for="{cmpId}-inputEl" class="{placeholderCoverCls} {placeholderCoverCls}-{ui} {emptyCls}">{emptyText}</label>',
+            '<label id="{cmpId}-placeholderLabel" data-ref="placeholderLabel" for="{cmpId}-inputEl" class="{placeholderCoverCls} {placeholderCoverCls}-{ui} {emptyCls}">{placeholder}</label>',
             '</div>', // end inputWrap
             '<tpl for="triggers">{[values.renderTrigger(parent)]}</tpl>',
         '</div>' // end triggerWrap
@@ -370,6 +379,13 @@ Ext.define('Ext.form.field.Tag', {
      */
     ariaEl: 'listWrapper',
 
+    /**
+     * @private
+     * @cfg {String} notEditableCls
+     * CSS class added to the element when not editable
+     */
+    notEditableCls: Ext.baseCSSPrefix + 'not-editable',
+
     tagItemCls: Ext.baseCSSPrefix + 'tagfield-item',
     tagItemTextCls: Ext.baseCSSPrefix + 'tagfield-item-text',
     tagItemCloseCls: Ext.baseCSSPrefix + 'tagfield-item-close',
@@ -377,6 +393,8 @@ Ext.define('Ext.form.field.Tag', {
     tagItemSelector: '.' + Ext.baseCSSPrefix + 'tagfield-item',
     tagItemCloseSelector: '.' + Ext.baseCSSPrefix + 'tagfield-item-close',
     tagSelectedCls: Ext.baseCSSPrefix + 'tagfield-item-selected',
+
+    noGrowCls: Ext.baseCSSPrefix + 'tagfield-input-field-nogrow',
 
     initComponent: function() {
         var me = this,
@@ -556,11 +574,13 @@ Ext.define('Ext.form.field.Tag', {
 
             if (me.queryMode === 'local') {
                 me.clearLocalFilter();
-                // we need to refresh the picker after removing 
+                // we need to refresh the picker after removing
                 // the local filter to display the updated data
                 me.getPicker().refresh();
             }
         }
+
+        me.syncInputWidth();
     },
 
     onValueCollectionEndUpdate: function() {
@@ -679,6 +699,7 @@ Ext.define('Ext.form.field.Tag', {
             wrapperStyle += 'max-height: 1px;';
         }
 
+        data.noGrowCls = !me.grow ? me.noGrowCls : '';
         data.wrapperStyle = wrapperStyle;
 
         if (me.stacked === true) {
@@ -955,6 +976,10 @@ Ext.define('Ext.form.field.Tag', {
             inputEl.focus();
         }
 
+        if (this.growMax && this.growMax >= this.itemList.getHeight()) {
+            this.autoSize();
+        }
+
         me.callParent([e, t]);
     },
 
@@ -995,6 +1020,8 @@ Ext.define('Ext.form.field.Tag', {
                 me.lastMutatedValue = newValue;
 
                 inputElDom.value = newValue;
+                me.syncInputWidth();
+
                 me.selectText(selStart, newValue.length);
             }
         }
@@ -1125,6 +1152,11 @@ Ext.define('Ext.form.field.Tag', {
         if (itemList) {
             itemList.select('.' + Ext.baseCSSPrefix + 'tagfield-item').destroy();
             me.inputElCt.insertHtml('beforeBegin', me.getMultiSelectItemMarkup());
+
+            if (itemList.getHeight() > this.getHeight() && me.focusLastAddedItem) {
+                itemList.dom.scrollIntoView(false);
+            }
+
             me.autoSize();
         }
     },
@@ -1539,6 +1571,7 @@ Ext.define('Ext.form.field.Tag', {
         }
 
         me.inputEl.dom.value = '';
+        me.syncInputWidth();
 
         me.collapse();
         me.refreshEmptyText();
@@ -1653,6 +1686,42 @@ Ext.define('Ext.form.field.Tag', {
                 me.fireEvent('autosize', me, height);
                 me.lastInputHeight = height;
                 me.autoSizing = false;
+            }
+        }
+    },
+
+    onFieldMutation: function(e) {
+        this.callParent([e]);
+        this.syncInputWidth(true);
+    },
+
+    syncInputWidth: function(scrollIntoView) {
+        var me = this,
+            inputEl = me.inputEl,
+            editable = !!(inputEl && inputEl.dom.value) || (me.editable && me.hasFocus),
+            width;
+
+        if (me.grow) {
+            return;
+        }
+
+        me.toggleCls(me.notEditableCls, !editable);
+
+        // Don't need to sync width when not editable because inputEl is
+        // absolutely positioned when field is not editable
+        if (editable) {
+            width = Ext.util.TextMetrics.measure(inputEl, inputEl.dom.value).width;
+
+            // Fudge factor to ensure there is enough width to accommodate both
+            // current text and cursor:
+            width += 3;
+
+            inputEl.setWidth(width);
+
+            if (scrollIntoView) {
+                // Since the inputEl is always last we can just scroll to "bottom"
+                // using a large number to ensure it is fully visible:
+                me.listWrapper.dom.scrollTop = 99999;
             }
         }
     }

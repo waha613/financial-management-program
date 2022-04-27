@@ -7,6 +7,11 @@ Ext.define('Ext.data.summary.Average', {
 
     alias: 'data.summary.average',
 
+    /**
+     * Name of the summary function that appears in the {@link Ext.grid.plugin.Summaries} plugin
+     */
+    text: 'Average',
+
     calculate: function(records, property, root, begin, end) {
         var len = end - begin,
             value;

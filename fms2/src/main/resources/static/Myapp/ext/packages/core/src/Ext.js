@@ -20,7 +20,7 @@
  *          name: 'MyApp',
  *
  *          launch: function () {
- *              Ext.Msg.alert(this.name, 'Ready to go!');
+ *              Ext.Msg.alert(this.getName(), 'Ready to go!');
  *          }
  *      });
  *

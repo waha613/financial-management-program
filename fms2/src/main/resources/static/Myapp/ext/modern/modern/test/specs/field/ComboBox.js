@@ -231,6 +231,110 @@ function() {
         }
     }
 
+    describe('picker', function() {
+        // EXT-296
+        var oldPlatformTags;
+
+        beforeEach(function() {
+            oldPlatformTags = Ext.merge({}, Ext.platformTags);
+        });
+
+        afterEach(function() {
+            Ext.platformTags = oldPlatformTags;
+        });
+
+        function create(pickerType) {
+            makeComponent({
+                displayField: 'text',
+                valueField: 'value',
+                queryMode: 'local',
+                renderTo: Ext.getBody(),
+                picker: pickerType || 'auto',
+                platformConfig: { phone: { editable: false }}
+            });
+        }
+
+        it("should be edge picker when no picker type ('auto') is passed on phone", function() {
+            Ext.platformTags.phone = true;
+            create();
+
+            expect(component.config.picker).toBe("auto");
+            expect(component.getAutoPickerType()).toBe("edge");
+        });
+
+        it("should be floated picker when no picker type ('auto') is passed on desktop/tablet", function() {
+            create();
+
+            expect(component.config.picker).toBe("auto");
+            expect(component.getAutoPickerType()).toBe("floated");
+        });
+
+        it("should be floated picker when picker type 'floated' is passed on phone", function() {
+            Ext.platformTags.phone = true;
+            create('floated');
+
+            expect(component.config.picker).toBe("floated");
+        });
+
+        it("should be floated picker when picker type 'floated' is passed on desktop/tablet", function() {
+            create('floated');
+
+            expect(component.config.picker).toBe("floated");
+        });
+
+        it("should be edge picker when picker type 'edge' is passed on phone", function() {
+            Ext.platformTags.phone = true;
+            create('edge');
+
+            expect(component.config.picker).toBe("edge");
+        });
+
+        it("should be edge picker when picker type 'edge' is passed on desktop/tablet", function() {
+            create('edge');
+
+            expect(component.config.picker).toBe("edge");
+        });
+
+        it("should make combobox uneditable when pickertype is 'auto' on tablet/desktop", function() {
+            create();
+
+            expect(component.getEditable()).toBe(true);
+        });
+
+        it("should make combobox uneditable when pickertype is 'auto' on mobile", function() {
+            Ext.platformTags.phone = true;
+            create();
+            
+            expect(component.getEditable()).toBe(false);
+        });
+
+        it("should make combobox uneditable pickertype is 'edge' on mobile", function() {
+            Ext.platformTags.phone = true;
+            create('edge');
+
+            expect(component.getEditable()).toBe(false);
+        });
+
+        it("should make combobox uneditable pickertype is 'floated' on mobile", function() {
+            Ext.platformTags.phone = true;
+            create('floated');
+
+            expect(component.getEditable()).toBe(false);
+        });
+
+        it("should let combobox be editable when pickertype is 'edge' on desktop", function() {
+            create('edge');
+
+            expect(component.getEditable()).toBe(true);
+        });
+    
+        it("should let combobox be editable when pickertype is 'floated' on desktop", function() {
+            create('floated');
+
+            expect(component.getEditable()).toBe(true);
+        });
+    });
+
     it("should encode the input value in the template", function() {
         makeComponent({
             renderTo: Ext.getBody(),

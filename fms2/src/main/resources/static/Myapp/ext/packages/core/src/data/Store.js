@@ -354,6 +354,12 @@ Ext.define('Ext.data.Store', {
          * @param {Ext.util.Grouper} grouper The grouper object.
          */
         /**
+         * @event groupschange
+         * Fired whenever the multi grouping in the grid changes.
+         * @param {Ext.data.Store} store The store.
+         * @param {Ext.util.GrouperCollection} groupers The groupers collection.
+         */
+        /**
          * @event prefetch
          * Fires whenever records have been prefetched.
          * @param {Ext.data.Store} this
@@ -1370,6 +1376,75 @@ Ext.define('Ext.data.Store', {
         me.callParent();
     },
 
+    /**
+     * Change summary functions on multiple fields on the store model
+     *
+     * @param {Object} values Object where keys are field names and values are summary types
+     */
+    setFieldsSummaries: function(values) {
+        var me = this,
+            model = me.model.getSummaryModel(),
+            key;
+
+        if (!model || me.isDestroyed) {
+            return;
+        }
+
+        for (key in values) {
+            model.setSummaryField(key, values[key]);
+        }
+
+        if (me.getRemoteSummary()) {
+            me.reload();
+        }
+        else {
+            me.getSummaryRecord().calculateSummary(me.getData().items);
+            me.recalculateSummaries(me.getGroups());
+            me.fireEvent('summarieschanged', me);
+            me.fireEvent('datachanged', me);
+        }
+    },
+
+    /**
+     * Change summary function on the specified field of the store model
+     *
+     * @param {String} field
+     * @param {String/Ext.data.summary.Base} summary
+     */
+    setFieldSummary: function(field, summary) {
+        var me = this,
+            model = me.model.getSummaryModel();
+
+        if (!model || me.isDestroyed) {
+            return;
+        }
+
+        model.setSummaryField(field, summary);
+
+        if (me.getRemoteSummary()) {
+            me.reload();
+        }
+        else {
+            me.getSummaryRecord().calculateSummary(me.getData().items);
+            me.recalculateSummaries(me.getGroups());
+            me.fireEvent('summarieschanged', me);
+            me.fireEvent('datachanged', me);
+        }
+    },
+
+    recalculateSummaries: function(groups) {
+        var groupCount = groups ? groups.length : 0,
+            i, group;
+
+        for (i = 0; i < groupCount; i++) {
+            group = groups.items[i];
+
+            group.recalculateSummaries();
+
+            this.recalculateSummaries(group.getGroups());
+        }
+    },
+
     privates: {
         commitOptions: {
             commit: true
@@ -1383,13 +1458,20 @@ Ext.define('Ext.data.Store', {
             /* eslint-disable-next-line vars-on-top */
             var me = this,
                 summary = resultSet.getSummaryData(),
-                grouper = me.getGrouper(),
+                groupers = me.getGroupers(),
                 current = me.summaryRecord,
                 commitOptions = me.commitOptions,
-                groups, len, i, rec, group;
+                changed = false,
+                groups, len, i, rec, group, children, child;
 
             if (summary) {
+                changed = true;
+
                 if (current) {
+                    // we need to clear the data object otherwise fields
+                    // that are populated on the client side but are not
+                    // calculated on the server may not be removed.
+                    current.data = {};
                     current.set(summary.data, commitOptions);
                 }
                 else {
@@ -1398,7 +1480,8 @@ Ext.define('Ext.data.Store', {
                 }
             }
 
-            if (grouper) {
+            if (groupers && groupers.length) {
+                changed = true;
                 summary = resultSet.getGroupData();
 
                 if (summary) {
@@ -1406,20 +1489,48 @@ Ext.define('Ext.data.Store', {
 
                     for (i = 0, len = summary.length; i < len; ++i) {
                         rec = summary[i];
+                        // The summaries are in fact records. For multiple groupers the records
+                        // should only fill in the dataIndex of all groupers above it.
                         group = groups.getItemGroup(rec);
 
                         if (group) {
-                            current = group.summaryRecord;
+                            children = group.getGroups();
 
-                            if (current) {
-                                current.set(rec.data, commitOptions);
+                            while (children) {
+                                child = children.getItemGroup(rec);
+
+                                if (child) {
+                                    // if the remote summary record is undefined on the grouper
+                                    // property then this child group is not the right one
+                                    if (Ext.isDefined(rec.data[child.getGrouper().getProperty()])) {
+                                        group = child;
+                                        children = group.getGroups();
+                                    }
+                                    else {
+                                        children = null;
+                                    }
+                                }
+                                else {
+                                    children = null;
+                                }
                             }
-                            else {
-                                group.summaryRecord = rec;
-                                rec.isRemote = true;
-                            }
+
+                            delete(rec.data.id);
+                            current = group.getGroupRecord();
+                            current.set(rec.data, commitOptions);
+                            current.isRemote = true;
+
+                            current = group.getSummaryRecord();
+                            current.set(rec.data, commitOptions);
+                            current.isRemote = true;
                         }
                     }
+                }
+            }
+
+            if (changed) {
+                if (me.hasListeners.remotesummarieschanged) {
+                    me.fireEvent('remotesummarieschanged', me);
                 }
             }
         },
@@ -1509,14 +1620,42 @@ Ext.define('Ext.data.Store', {
             // Only add grouping options if grouping is remote
             var me = this,
                 pageSize = me.getPageSize(),
-                session, grouper;
+                summaries = [],
+                groupers = me.getGroupers(false),
+                session, grouper, model, fields, field, len, i;
 
-            if (me.getRemoteSort() && !options.grouper) {
-                grouper = me.getGrouper();
+            if (me.getRemoteSort() || me.getRemoteSummary()) {
+                if (!options.grouper) {
+                    grouper = me.getGrouper();
 
-                if (grouper) {
-                    options.grouper = grouper;
+                    if (grouper) {
+                        options.grouper = grouper;
+                    }
                 }
+                else if (!options.groupers) {
+                    if (groupers && groupers.length) {
+                        options.groupers = groupers.getRange();
+                    }
+                }
+            }
+
+            if (me.getRemoteSummary()) {
+                // extract summary fields from the model
+                model = me.getModel().getSummaryModel();
+                fields = model.getFields();
+                len = fields.length;
+
+                for (i = 0; i < len; i++) {
+                    // fields that are sent as groupers should not be sent as summaries
+                    // otherwise when the response comes back we can't link groups to results
+                    field = fields[i];
+
+                    if (groupers && !groupers.get(field.name)) {
+                        summaries.push(field);
+                    }
+                }
+
+                options.summaries = summaries;
             }
 
             if (pageSize || 'start' in options || 'limit' in options || 'page' in options) {

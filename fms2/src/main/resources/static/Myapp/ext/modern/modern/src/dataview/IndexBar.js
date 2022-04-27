@@ -7,44 +7,205 @@
  *
  * Here is an example of the usage in a {@link Ext.dataview.List List}:
  *
- *     @example
- *     Ext.define('Contact', {
- *         extend: 'Ext.data.Model',
- *         config: {
- *             fields: ['firstName', 'lastName']
- *         }
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.define('Contact', {
+ *     extend: 'Ext.data.Model',
+ *     config: {
+ *         fields: ['firstName', 'lastName']
+ *     }
+ * });
+ *
+ * var store = new Ext.data.JsonStore({
+ *    model: 'Contact',
+ *    sorters: 'lastName',
+ *
+ *    grouper: {
+ *        groupFn: function(record) {
+ *            return record.get('lastName')[0];
+ *        }
+ *    },
+ *
+ *    data: [
+ *        {firstName: 'Screech', lastName: 'Powers'},
+ *        {firstName: 'Kelly',   lastName: 'Kapowski'},
+ *        {firstName: 'Zach',    lastName: 'Morris'},
+ *        {firstName: 'Jessie',  lastName: 'Spano'},
+ *        {firstName: 'Lisa',    lastName: 'Turtle'},
+ *        {firstName: 'A.C.',    lastName: 'Slater'},
+ *        {firstName: 'Richard', lastName: 'Belding'}
+ *    ]
+ * });
+ *
+ * var list = new Ext.List({
+ *    fullscreen: true,
+ *    itemTpl: '<div class="contact">{firstName} <strong>{lastName}</strong></div>',
+ *
+ *    grouped: true,
+ *    indexBar: true,
+ *    store: store,
+ *    hideOnMaskTap: false
+ * });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-list
+ *     onready="indexbar.readyIndexBarView"
+ *     indexBar="true"
+ * >
+ * </ext-list>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-spinnerfield.component';
+ *  
+ * export default class IndexBarComponent {
+ *     constructor() {
+ *         this.store = new Ext.data.Store({
+ *             data: [{
+ *                 firstName: 'Screech',
+ *                 lastName: 'Powers'
+ *             },
+ *             {
+ *                 firstName: 'Kelly',
+ *                 lastName: 'Kapowski'
+ *             },
+ *             {
+ *                 firstName: 'Zach',
+ *                 lastName: 'Morris'
+ *             },
+ *             {
+ *                 firstName: 'Jessie',
+ *                 lastName: 'Spano'
+ *             },
+ *             {
+ *                 firstName: 'Lisa',
+ *                 lastName: 'Turtle'
+ *             },
+ *             {
+ *                 firstName: 'A.C.',
+ *                 lastName: 'Slater'
+ *             },
+ *             {
+ *                 firstName: 'Richard',
+ *                 lastName: 'Belding'
+ *             }]
+ *         })
+ *     }
+ *           
+ *     readyIndexBarView(event) {
+ *         this.indexBarView = event.detail.cmp;
+ *         this.indexBarView.setStore(this.store);
+ *         this.indexBarView.setItemTpl(`<divclass='contact'>{firstName} <strong>{lastName}</strong>
+ *         </div>`);
+ *     }
+ * }
+ * 
+ *  window.indexbar = new IndexBarComponent();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtList } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *
+ *     store = new Ext.data.Store({
+ *         data: [{
+ *             firstName: 'Screech',
+ *             lastName: 'Powers'
+ *         },
+ *         {
+ *             firstName: 'Kelly',
+ *             lastName: 'Kapowski'
+ *         },
+ *         {
+ *             firstName: 'Zach',
+ *             lastName: 'Morris'
+ *         },
+ *         {
+ *             firstName: 'Jessie',
+ *             lastName: 'Spano'
+ *         },
+ *         {
+ *             firstName: 'Lisa',
+ *             lastName: 'Turtle'
+ *         },
+ *         {
+ *             firstName: 'A.C.',
+ *             lastName: 'Slater'
+ *         },
+ *         {
+ *             firstName: 'Richard',
+ *             lastName: 'Belding'
+ *         }]
  *     });
  *
- *     var store = new Ext.data.JsonStore({
- *        model: 'Contact',
- *        sorters: 'lastName',
+ *     render() {
+ *         return (
+ *             <ExtList
+ *                 itemTpl="<div class='contact'>{firstName} <strong>{lastName}</strong></div>"
+ *                 store={this.store}
+ *                 indexBar
+ *             />
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
  *
- *        grouper: {
- *            groupFn: function(record) {
- *                return record.get('lastName')[0];
- *            }
- *        },
- *
- *        data: [
- *            {firstName: 'Screech', lastName: 'Powers'},
- *            {firstName: 'Kelly',   lastName: 'Kapowski'},
- *            {firstName: 'Zach',    lastName: 'Morris'},
- *            {firstName: 'Jessie',  lastName: 'Spano'},
- *            {firstName: 'Lisa',    lastName: 'Turtle'},
- *            {firstName: 'A.C.',    lastName: 'Slater'},
- *            {firstName: 'Richard', lastName: 'Belding'}
- *        ]
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [`
+ *             `],
+ *     template: `
+ *              <ExtList
+ *                 [itemTpl]="this.itemTpl"
+ *                 [store]="this.store"
+ *                 [indexBar]="true"
+ *             ></ExtList>
+ *             `
+ * })
+ * export class AppComponent {
+ *     store = new Ext.data.Store({
+ *         data: [{
+ *             firstName: 'Screech',
+ *             lastName: 'Powers'
+ *         },
+ *         {
+ *             firstName: 'Kelly',
+ *             lastName: 'Kapowski'
+ *         },
+ *         {
+ *             firstName: 'Zach',
+ *             lastName: 'Morris'
+ *         },
+ *         {
+ *             firstName: 'Jessie',
+ *             lastName: 'Spano'
+ *         },
+ *         {
+ *             firstName: 'Lisa',
+ *             lastName: 'Turtle'
+ *         },
+ *         {
+ *             firstName: 'A.C.',
+ *             lastName: 'Slater'
+ *         },
+ *         {
+ *             firstName: 'Richard',
+ *             lastName: 'Belding'
+ *         }]
  *     });
  *
- *     var list = new Ext.List({
- *        fullscreen: true,
- *        itemTpl: '<div class="contact">{firstName} <strong>{lastName}</strong></div>',
- *
- *        grouped: true,
- *        indexBar: true,
- *        store: store,
- *        hideOnMaskTap: false
- *     });
+ *     itemTpl = "<div class='contact'>{firstName} <strong>{lastName}</strong></div>"
+ * }
+ * ```
  *
  */
 Ext.define('Ext.dataview.IndexBar', {

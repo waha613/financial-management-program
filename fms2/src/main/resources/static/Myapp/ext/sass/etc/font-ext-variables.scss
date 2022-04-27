@@ -1,5 +1,26 @@
 //# fashion warn -elevation
 
+$ext-var-groups: "\e90f";
+$ext-var-add: "\e910";
+$ext-var-remove: "\e911";
+$ext-var-summary: "\e912";
+$ext-var-unlock: "\e913";
+$ext-var-lock: "\e914";
+$ext-var-op-like: "\e900";
+$ext-var-op-nlike: "\e901";
+$ext-var-op-eq: "\e902";
+$ext-var-op-neq: "\e903";
+$ext-var-op-empty: "\e904";
+$ext-var-op-exists: "\e905";
+$ext-var-op-in: "\e906";
+$ext-var-op-nin: "\e907";
+$ext-var-op-identical: "\e908";
+$ext-var-op-nidentical: "\e909";
+$ext-var-op-fn: "\e90a";
+$ext-var-op-gt: "\e90b";
+$ext-var-op-gte: "\e90c";
+$ext-var-op-lt: "\e90d";
+$ext-var-op-lte: "\e90e";
 $ext-var-sencha: "\e61e";
 $ext-var-checkbox-checked: "\e613";
 $ext-var-checkbox-unchecked: "\e614";

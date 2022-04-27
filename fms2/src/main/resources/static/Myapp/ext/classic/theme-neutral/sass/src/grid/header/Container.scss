@@ -61,6 +61,6 @@
             color: $grid-header-menu-glyph-color;
         }
     } @else {
-        background-image: theme-background-image('grid/columns');
+        background-image: theme-background-image('grid/columns', 'png');
     }
 }

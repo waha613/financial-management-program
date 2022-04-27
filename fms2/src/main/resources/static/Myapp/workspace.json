@@ -1,5 +1,12 @@
 {
     /**
+     *  An array of the paths to all the applications present in this workspace
+     */
+    "apps": [
+        ""
+    ],
+
+    /**
      * An object containing key value pair framework descriptors.
      *
      * The value should be an object containing "path" the path inside the workspace where the framework
@@ -22,8 +29,8 @@
      */
     "frameworks": {        "ext": {
             "path":"ext",
-            "package":"ext@7.0.0.156",
-            "version":"7.0.0.156"
+            "package":"ext@7.4.0.42",
+            "version":"7.4.0.42"
         }
 
     },

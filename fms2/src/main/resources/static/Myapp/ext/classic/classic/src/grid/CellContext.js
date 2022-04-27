@@ -147,6 +147,13 @@ Ext.define('Ext.grid.CellContext', {
             else if (row.isModel) {
                 me.record = row;
                 me.rowIdx = dataSource.indexOf(row);
+
+                // expand all collapsed groups the record belongs to
+                // eslint-disable-next-line max-len
+                if (me.rowIdx === -1 && dataSource.isMultigroupStore && dataSource.isInCollapsedGroup(row)) {
+                    dataSource.expandToRecord(row);
+                    me.rowIdx = dataSource.indexOf(row);
+                }
             }
             // row is a grid row, or Element wrapping row
             else if (row.tagName || row.isElement) {

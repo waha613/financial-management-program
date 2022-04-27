@@ -1,4 +1,4 @@
-topSuite("Ext.picker.Date", [
+topSuite('Ext.picker.Date', [
     'Ext.viewport.Viewport'
 ], function() {
     var datePicker;
@@ -23,8 +23,8 @@ topSuite("Ext.picker.Date", [
         datePicker = Ext.destroy(datePicker);
     });
 
-    describe("create", function() {
-        it("should assign an initial value if one was specified in the config", function() {
+    describe('create', function() {
+        it('should assign an initial value if one was specified in the config', function() {
             var date = new Date();
 
             makeDatePicker(date);
@@ -35,15 +35,18 @@ topSuite("Ext.picker.Date", [
         });
     });
 
-    describe("configuration", function() {
-        it("should allow to be created without a day slow", function() {
+    describe('configuration', function() {
+        it('should allow to be created without a day slot', function() {
             var date = new Date();
 
-            makeDatePicker(date, ["year", "month" ]);
+            makeDatePicker(date, ['year', 'month']);
 
-            expect(function() {
-                datePicker.show();
-            }).not.toThrow();
+            datePicker.show();
+            datePicker.onDoneButtonTap();
+
+            waitsFor(function() {
+                return datePicker.getHidden();
+            });
         });
     });
 });

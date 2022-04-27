@@ -48,6 +48,6 @@ Ext.define('Ext.grid.cell.Date', {
     },
 
     formatValue: function(value) {
-        return value ? Ext.Date.format(value, this.getFormat()) : '';
+        return value ? (Ext.isDate(value) ? Ext.Date.format(value, this.getFormat()) : value) : '';
     }
 });

@@ -390,6 +390,11 @@ Ext.define('Ext.tab.Bar', {
                 parent = me.parent;
 
             if (parent && parent.isTabPanel) {
+
+                if (tab.card.fireEvent('beforeclose', tab.card) === false) {
+                    return;
+                }
+
                 // setting the active card on a tab panel also sets the active tab in the tab bar
                 if (nextActivatableTab) {
                     parent.setActiveItem(nextActivatableTab.card);

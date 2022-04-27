@@ -9,67 +9,138 @@
  *
  * ## Examples
  *
- *     @example
- *     Ext.Viewport.add({
- *         xtype: 'titlebar',
- *         docked: 'top',
- *         title: 'Navigation',
- *         items: [
- *             {
- *                 iconCls: 'add',
- *                 align: 'left'
- *             },
- *             {
- *                 iconCls: 'home',
- *                 align: 'right'
- *             }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ *  Ext.Viewport.add({
+ *      xtype: 'titlebar',
+ *      docked: 'top',
+ *      title: 'Navigation',
+ *      items: [
+ *          {
+ *              iconCls: 'add',
+ *              align: 'left'
+ *          },
+ *          {
+ *              iconCls: 'home',
+ *              align: 'right'
+ *          }
+ *      ]
+ *  });
+ * ```
  *
  *     Ext.Viewport.setHtml('This shows the title being centered and buttons using align
  *     <i>left</i> and <i>right</i>.');
  *
  * <br />
  *
- *     @example
- *     Ext.Viewport.add({
- *         xtype: 'titlebar',
- *         docked: 'top',
- *         title: 'Navigation',
- *         items: [
- *             {
- *                 align: 'left',
- *                 text: 'This button has a super long title'
- *             },
- *             {
- *                 iconCls: 'home',
- *                 align: 'right'
- *             }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ *  Ext.Viewport.add({
+ *      xtype: 'titlebar',
+ *      docked: 'top',
+ *      title: 'Navigation',
+ *      items: [
+ *          {
+ *              align: 'left',
+ *              text: 'This button has a super long title'
+ *          },
+ *          {
+ *              iconCls: 'home',
+ *              align: 'right'
+ *          }
+ *      ]
+ *  });
+ * ```
  *
  *     Ext.Viewport.setHtml('This shows how the title is automatically moved to the right when one
  *     of the aligned buttons is very wide.');
  *
  * <br />
  *
- *     @example
- *     Ext.Viewport.add({
- *         xtype: 'titlebar',
- *         docked: 'top',
- *         title: 'A very long title',
- *         items: [
- *             {
- *                 align: 'left',
- *                 text: 'This button has a super long title'
- *             },
- *             {
- *                 align: 'right',
- *                 text: 'Another button'
- *             }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ *  Ext.Viewport.add({
+ *      xtype: 'titlebar',
+ *      docked: 'top',
+ *      title: 'A very long title',
+ *      items: [
+ *          {
+ *              align: 'left',
+ *              text: 'This button has a super long title'
+ *          },
+ *          {
+ *              align: 'right',
+ *              text: 'Another button'
+ *          }
+ *      ]
+ *  });
+ * ```
  *
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container>
+ *     <ext-titlebar title="App Title" docked="top">
+ *         <ext-button align="left" iconCls="x-fa fa-bars"></ext-button>
+ *         <ext-button align="right" iconCls="x-fa fa-inbox" text="Inbox"></ext-button>
+ *         <ext-button align="right" iconCls="x-fa fa-user" text="Profile"></ext-button>
+ *     </ext-titlebar>
+ * </ext-container>
+ *       
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ *
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-titlebar.component';
+ *  
+ * export default class TitleBarComponent {}
+ *    
+ * ```
+ * 
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtTitleBar, ExtButton } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtContainer>
+ *                 <ExtTitleBar title="App Title" docked="top">
+ *                     <ExtButton align="left" iconCls="x-fa fa-bars"/>
+ *                     <ExtButton align="right" iconCls="x-fa fa-inbox" text="Inbox"/>
+ *                     <ExtButton align="right" iconCls="x-fa fa-user" text="Profile"/>
+ *                 </ExtTitleBar>
+ *             </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * 
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ *  import { Component } from '@angular/core'
+ *  declare var Ext: any;
+ *
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *              <ExtTitleBar title="App Title" docked="top">
+ *                  <ExtButton align="left" iconCls="x-fa fa-bars"></ExtButton>
+ *                  <ExtButton align="right" iconCls="x-fa fa-inbox" text="Inbox"></ExtButton>
+ *                  <ExtButton align="right" iconCls="x-fa fa-user" text="Profile"></ExtButton>
+ *              </ExtTitleBar>
+ *              `
+ *  })
+ *  export class AppComponent {
+ *      buttonHandler = function() {
+ *          Ext.toast('Hello World!');
+ *      }
+ *  }
+ * ```
  *     Ext.Viewport.setHtml('This shows how the title and buttons will automatically adjust their
  *     size when the width of the items are too wide..');
  *

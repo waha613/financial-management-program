@@ -7,28 +7,111 @@
  *
  * # Simple Toast
  *
- *      @example
- *      // Toast will close in 1000 milliseconds (default)
- *      Ext.toast('Hello Sencha!');
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ *  // Toast will close in 1000 milliseconds (default)
+ *  Ext.toast('Hello Sencha!');
+ * ```
  *
  * # Toast with Timeout
  *
- *      @example
- *      // Toast will close in 5000 milliseconds
- *      Ext.toast('Hello Sencha!', 5000);
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ *  // Toast will close in 5000 milliseconds
+ *  Ext.toast('Hello Sencha!', 5000);
+ * ```
  *
  * # Toast with config
  *
- *      @example
- *      // Toast will close in 2000 milliseconds
- *      Ext.toast({message: 'Hello Sencha!', timeout: 2000});
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ *  // Toast will close in 2000 milliseconds
+ *  Ext.toast({message: 'Hello Sencha!', timeout: 2000});
+ * ```
  *
  * # Multiple Toasts queued
  *
- *      @example
- *      Ext.toast('Hello Sencha!');
- *      Ext.toast('Hello Sencha Again!');
- *      Ext.toast('Hello Sencha One More Time!');
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ *  Ext.toast('Hello Sencha!');
+ *  Ext.toast('Hello Sencha Again!');
+ *  Ext.toast('Hello Sencha One More Time!');
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container layout='{"type": "vbox", "align": "left"}'>
+ *     <ext-button
+ *          ui="action"
+ *          ontap="toast.onTap"
+ *          text="Show Toast"
+ *     >
+ *      </ext-button>
+ * </ext-container>
+ *       
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ *
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ *  
+ * Ext.require('Ext.Toast');
+ *  
+ * export default class ToastComponent {
+ *   onTap = () => {
+ *      Ext.toast('Hello World!')
+ *    }
+ * }
+ *  window.toast = new ToastComponent();
+ * ```
+ * 
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ *  import React, { Component } from 'react';
+ *  import { ExtContainer, ExtButton } from '@sencha/ext-react';
+ *
+ *  Ext.require('Ext.Toast');
+ *
+ *  export default class MyExample extends Component {
+ *      render() {
+ *          return (
+ *              <ExtContainer layout={{type: 'vbox', align: 'left'}}>
+ *                  <ExtButton
+ *                      ui="action"
+ *                      handler={() => Ext.toast('Hello World!')}
+ *                      text="Show Toast"
+ *                  />
+ *              </ExtContainer>
+ *          )
+ *      }
+ *  }
+ * ```
+ * 
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']}
+ *  import { Component } from '@angular/core'
+ *  declare var Ext: any;
+ *
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *              <ExtContainer [layout]="{type: 'vbox', align: 'left'}">
+ *                  <ExtButton
+ *                      ui="action"
+ *                      [handler]="buttonHandler"
+ *                      text="Show Toast"
+ *                  ></ExtButton>
+ *              </ExtContainer>
+ *              `
+ *  })
+ *  export class AppComponent {
+ *      buttonHandler = function() {
+ *          Ext.toast('Hello World!');
+ *      }
+ *  }
+ * ```
  */
 Ext.define('Ext.Toast', {
     extend: 'Ext.Sheet',

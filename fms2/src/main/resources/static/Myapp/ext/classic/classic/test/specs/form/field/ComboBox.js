@@ -3411,6 +3411,34 @@ function() {
         });
     });
 
+    it("should recreate default displayTpl and refresh display value when displayField is changed", function() {
+        makeComponent({
+            valueField: 'val',
+            value: 'value 31'
+        });
+
+        expect(component.getDisplayValue()).toBe('text 31');
+        component.setDisplayField('val');
+        expect(component.getDisplayValue()).toBe('value 31');
+    });
+
+    it("should always use configured displayTpl regardless of config order", function() {
+        makeComponent({
+            displayField: 'text',
+            displayTpl: '<tpl for=".">[ {text} ]</tpl>'
+        });
+
+        expect(component.displayTpl.html).toBe('<tpl for=".">[ {text} ]</tpl>');
+        component.destroy();
+
+        makeComponent({
+            displayTpl: '<tpl for=".">[ {text} ]</tpl>',
+            displayField: 'text'
+        });
+
+        expect(component.displayTpl.html).toBe('<tpl for=".">[ {text} ]</tpl>');
+    });
+
     describe("events", function() {
         var spy;
 
@@ -3697,6 +3725,78 @@ function() {
                 clickListItem('yumyum', component.store);
 
                 expect(spy.callCount).toBeGreaterThanOrEqual(1);
+            });
+        });
+
+        describe("blur", function() {
+            var field, blurSpy;
+
+            beforeEach(function() {
+                blurSpy = jasmine.createSpy('blur event');
+
+                field = new Ext.form.field.Text({
+                    renderTo: document.body,
+                    name: 'name',
+                    fieldLabel: 'Name'
+                });
+
+                component = new Ext.form.field.ComboBox({
+                    fieldLabel: 'Choose State',
+                    renderTo: Ext.getBody(),
+                    queryMode: 'local',
+                    valueField: 'value',
+                    typeAhead: true,
+                    autoSelect: true,
+                    displayField: 'text',
+                    store: {
+                        fields: ['value', 'text'],
+                        data: [
+                            { value: "Alabama", text: "Alabama" },
+                            { value: "Alaska", text: "Alaska" },
+                            { value: "Arkansas", text: "Arkansas" },
+                            { value: "Arizona", text: "Arizona" }
+                        ]
+                    },
+                    value: "Alabama",
+                    listeners: {
+                        select: spy,
+                        blur: blurSpy
+                    }
+                });
+
+                focusAndWait(component);
+            });
+
+            afterEach(function() {
+                blurSpy = null;
+                field = Ext.destroy(field);
+            });
+
+            it("should not fire select when blurred", function() {
+                runs(function() {
+                    jasmine.fireKeyEvent(component.inputEl, 'keydown', Ext.event.Event.DOWN);
+                });
+
+                waitsForEvent(component.getPicker(), 'show');
+                runs(function() {
+                    expect(component.picker.isVisible()).toBe(true);
+                    jasmine.fireKeyEvent(component.inputEl, 'keydown', Ext.event.Event.TAB);
+                });
+
+                waitAWhile();
+                waitsForEvent(component.getPicker(), 'hide');
+                runs(function() {
+                    component.fireEvent('blur');
+                    field.focus();
+                });
+
+                waitAWhile();
+                waitsFor(function() {
+                       return blurSpy.callCount > 0;
+                }, 'blur event');
+                runs(function() {
+                    expect(spy.callCount).toBe(0);
+                });
             });
         });
     });
@@ -5673,6 +5773,26 @@ function() {
             runs(function() {
                 jasmine.fireMouseEvent(testWin.header.el, 'mouseup');
                 expect(combo.picker.isVisible()).toBe(false);
+            });
+        });
+    });
+
+    describe("caret position when forceResetCaret is true", function() {
+        it("should not scroll to end of long value", function() {
+            makeComponent({
+                renderTo: Ext.getBody(),
+                forceResetCaret: true
+            });
+            component.setValue('I am a long piece of text which scrolls to end on trigger click');
+            component.onTriggerClick();
+            expect(component.getCaretPos()).toBe(0);
+
+            store.getAt(2).set('text', 'I am another long text here to replace the earlier text on update value');
+            expect(component.getCaretPos()).toBe(0);
+
+            jasmine.blurAndWait(component);
+            runs(function() {
+                expect(component.getCaretPos()).toBe(0);
             });
         });
     });

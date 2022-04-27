@@ -321,7 +321,7 @@ Ext.define('Ext.util.Positionable', {
 
     getAlignToRegion: function(alignToEl, posSpec, offset, minHeight) {
         var me = this,
-            inside, newRegion, bodyScroll;
+            inside, newRegion, bodyScroll, oldOffset;
 
         alignToEl = Ext.fly(alignToEl.el || alignToEl);
 
@@ -356,8 +356,8 @@ Ext.define('Ext.util.Positionable', {
 
         if (alignToEl === Ext.getBody()) {
             bodyScroll = alignToEl.getScroll();
-
-            offset = [bodyScroll.left, bodyScroll.top];
+            oldOffset = offset && offset.length === 2 ? offset : [0, 0];
+            offset = [bodyScroll.left + oldOffset[0], bodyScroll.top + oldOffset[1]];
         }
 
         newRegion = me.getRegion().alignTo({

@@ -1,10 +1,11 @@
 /**
- * Creates an HTML file input field on the page. This is usually used to upload files 
+ * Creates an HTML file input field on the page. This is usually used to upload files
  * to remote server.
  * File fields are usually created inside a form like this:
  *
- *     @example
- *     Ext.create('Ext.form.Panel', {
+ * ```javascript
+ *  @example({ framework: 'extjs' })
+ *      Ext.create('Ext.form.Panel', {
  *         fullscreen: true,
  *         items: [
  *             {
@@ -21,6 +22,74 @@
  *             }
  *         ]
  *     });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtFormPanel, ExtFileField } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtContainer layout="center">
+ *                 <ExtFormPanel shadow>
+ *                     <ExtFileField
+ *                       label="Select a File"
+ *                       name="photo"
+ *                       accept="image"
+ *                     />
+ *                 </ExtFormPanel>
+ *             </ExtContainer>
+ *        )
+ *    }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *    selector: 'app-root-1',
+ *    styles: [``],
+ *    template: `
+ *        <ExtContainer [layout]='"center"'>
+ *            <ExtFormPanel [shadow]>
+ *                <ExtFileField
+ *                    [label]='"Select a File"'
+ *                    [name]='"photo"'
+ *                    [accept]='"image"'
+ *                >
+ *                </ExtFileField>
+ *            </ExtFormPanel>
+ *        </ExtContainer>
+ *    `
+ * })
+ *
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container layout="center">
+ *     <ext-formpanel shadow="true">
+ *         <ext-filefield
+ *              label="Select a File"
+ *              name="photo"
+ *              accept="image"
+ *          >
+ *          </ext-filefield>
+ *     </ext-formpanel>
+ * </ext-container>
+ * ```
+ * ```javascript
+ *  @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ *  import '@sencha/ext-web-components/dist/ext-container.component';
+ *  import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ *  import '@sencha/ext-web-components/dist/ext-filefield.component';
+ *
+ *  export default class FileFieldComponent {}
+ * ```
+ *
  */
 Ext.define('Ext.field.File', {
     extend: 'Ext.field.Text',

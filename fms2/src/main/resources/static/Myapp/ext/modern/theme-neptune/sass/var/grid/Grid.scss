@@ -16,6 +16,18 @@ $grid-resize-marker-background-color: dynamic($neutral-dark-color);
 $grid-resize-marker-width: dynamic(1px);
 
 /**
+ * @var {number}
+ * opacity of the grid with disabled true
+ */
+$grid-disabled-opacity: dynamic(.6);
+
+/**
+ * @var {number}
+ * default cursor for grid with disabled true
+ */
+$grid-disabled-cursor: dynamic(default);
+
+/**
  * Creates a visual theme for a Grid.
  *
  * @param {string} $ui
@@ -29,11 +41,17 @@ $grid-resize-marker-width: dynamic(1px);
 @mixin grid-ui(
     $ui: null,
     $resize-marker-background-color: null,
-    $resize-marker-width: null
+    $resize-marker-width: null,
+    $disabled-opacity: null,
+    $disabled-cursor: null
 ) {
     $ui-suffix: ui-suffix($ui);
-
     .#{$prefix}grid#{$ui-suffix} {
+        &.#{$prefix}disabled {
+            cursor: $disabled-cursor;
+            pointer-events: none;
+            opacity: $disabled-opacity;
+        }
         .#{$prefix}resize-marker-el {
             background-color: $resize-marker-background-color;
             width: $resize-marker-width;

@@ -63,7 +63,8 @@ Ext.define('Ext.util.Collection', {
     uses: [
         'Ext.util.SorterCollection',
         'Ext.util.FilterCollection',
-        'Ext.util.GroupCollection'
+        'Ext.util.GroupCollection',
+        'Ext.util.GrouperCollection'
     ],
 
     /**
@@ -205,6 +206,38 @@ Ext.define('Ext.util.Collection', {
          *      });
          */
         grouper: null,
+
+        /**
+         * @cfg {Ext.util.GrouperCollection} groupers
+         * The collection of {@link Ext.util.Grouper Groupers} for this collection.At the
+         * time a collection is created `groupers` can be specified as a unit. After that
+         * time the normal `setGroupers` method can also be given a set of replacement
+         * groupers for the collection.
+         *
+         * Individual groupers can be specified as an `Ext.util.Grouper` instance, a config
+         * object for `Ext.util.Grouper` or simply a function that will be wrapped in a
+         * instance with its {@Ext.util.Grouper#groupFn groupFn} set.
+         *
+         * For fine grain control of the groupers collection, call `getGroupers` to return
+         * the `Ext.util.Collection` instance that holds this collection's groupers.
+         *
+         *      var collection = new Ext.util.Collection();
+         *      var groupers = collection.getGroupers(); // an Ext.util.GrouperCollection
+         *
+         *      function groupFn (item) {
+         *          return item.lastName.substring(0, 1);
+         *      }
+         *
+         *      groupers.add(groupFn);
+         *
+         *      //...
+         *
+         *      groupers.remove(groupFn);
+         *
+         * Any changes to the `groupers` collection will cause this collection to adjust
+         * its items accordingly (if `autoGroup` is `true`).
+         */
+        groupers: null,
 
         /**
          * @cfg {Ext.util.GroupCollection} groups
@@ -694,7 +727,8 @@ Ext.define('Ext.util.Collection', {
         var me = this,
             filters = me._filters,
             sorters = me._sorters,
-            groups = me._groups;
+            groupers = me._groupers,
+            monitored = me.lastMonitoredGroupers;
 
         if (filters) {
             filters.destroy();
@@ -712,11 +746,16 @@ Ext.define('Ext.util.Collection', {
             }
         }
 
-        if (groups) {
-            groups.destroy();
-            me._groups = null;
+        if (monitored) {
+            monitored.removeGroupersObserver(me);
         }
 
+        if (groupers) {
+            groupers.destroy();
+            me._groupers = null;
+        }
+
+        me.setGroups(null);
         me.setSource(null);
         me.observers = me.items = me.map = null;
 
@@ -3019,6 +3058,8 @@ Ext.define('Ext.util.Collection', {
         remove: 'onCollectionRemove',
         beforesort: 'beforeCollectionSort',
         sort: 'onCollectionSort',
+        beforegroup: 'onCollectionBeforeGroup',
+        group: 'onCollectionGroup',
         filter: 'onCollectionFilter',
         filteradd: 'onCollectionFilterAdd',
         updatekey: 'onCollectionUpdateKey'
@@ -3108,8 +3149,8 @@ Ext.define('Ext.util.Collection', {
     },
 
     applyGrouper: function(grouper) {
-        if (grouper) {
-            grouper = this.getSorters().decodeSorter(grouper, Ext.util.Grouper);
+        if (grouper && !grouper.isGrouper) {
+            grouper = this.getGroupers(true).decodeGrouper(grouper);
         }
 
         return grouper;
@@ -3606,16 +3647,17 @@ Ext.define('Ext.util.Collection', {
 
     createSortFn: function() {
         var me = this,
-            grouper = me.getGrouper(),
+            groupers = me.getGroupers(false),
             sorters = me.getSorters(false),
-            sorterFn = sorters ? sorters.getSortFn() : null;
+            sorterFn = sorters ? sorters.getSortFn() : null,
+            groupSorterFn = groupers ? groupers.getSortFn() : null;
 
-        if (!grouper) {
+        if (!groupers) {
             return sorterFn;
         }
 
         return function(lhs, rhs) {
-            var ret = grouper.sort(lhs, rhs);
+            var ret = groupSorterFn(lhs, rhs);
 
             if (!ret && sorterFn) {
                 ret = sorterFn(lhs, rhs);
@@ -3625,48 +3667,28 @@ Ext.define('Ext.util.Collection', {
         };
     },
 
-    updateGrouper: function(grouper) {
-        var me = this,
-            groups = me.getGroups(),
-            sorters = me.getSorters(),
-            populate;
+    // we need to ensure that the previous grouping functionality still works
+    getGrouper: function() {
+        var groupers = this.getGroupers(false);
 
-        me.onSorterChange();
-        me.grouped = !!grouper;
+        return (groupers && groupers.length ? groupers.getAt(0) : null);
+    },
+
+    updateGrouper: function(grouper) {
+        var groupers = this.getGroupers(false);
 
         if (grouper) {
-            if (me.getTrackGroups()) {
-                if (!groups) {
-                    groups = new Ext.util.GroupCollection({
-                        //<debug>
-                        id: me.getId() + '-groups' + (me.generation || ''),
-                        //</debug>
-                        itemRoot: me.getRootProperty(),
-                        groupConfig: me.getGroupConfig()
-                    });
-                    groups.$groupable = me;
-                    me.setGroups(groups);
-                }
-
-                groups.setGrouper(grouper);
-                populate = true;
+            if (!groupers) {
+                groupers = this.getGroupers(true);
             }
+
+            groupers.clear();
+            groupers.add(grouper);
         }
         else {
-            if (groups) {
-                me.removeObserver(groups);
-                groups.destroy();
-            }
-
-            me.setGroups(null);
-        }
-
-        if (!sorters.updating) {
-            me.onEndUpdateSorters(sorters);
-        }
-
-        if (populate) {
-            groups.onCollectionRefresh(me);
+            // To keep compatibility with older versions when the 'grouper' config
+            // is nullified then destroy the groupers.
+            this.setGroupers(null);
         }
     },
 
@@ -3713,6 +3735,159 @@ Ext.define('Ext.util.Collection', {
             me.sorted = !!is;
             me.onSortChange(sorters);
         }
+    },
+
+    /**
+     * Returns the `Ext.util.GrouperCollection`. Unless `autoCreate` is explicitly passed
+     * as `false` this collection will be automatically created if it does not yet exist.
+     * @param [autoCreate=true] Pass `false` to disable auto-creation of the collection.
+     * @return {Ext.util.GrouperCollection} The collection of sorters.
+     */
+    getGroupers: function(autoCreate) {
+        var ret = this._groupers;
+
+        if (!ret && autoCreate !== false) {
+            ret = new Ext.util.GrouperCollection({
+                rootProperty: this.getRootProperty()
+            });
+            this.setGroupers(ret);
+        }
+
+        return ret;
+    },
+
+    applyGroupers: function(groupers, collection) {
+        if (groupers == null || (groupers && groupers.isGrouperCollection)) {
+            return groupers;
+        }
+
+        if (groupers) {
+            if (!collection) {
+                collection = this.getGroupers();
+            }
+
+            collection.splice(0, collection.length, groupers);
+        }
+
+        return collection;
+    },
+
+    /**
+     * This is the place where the GroupCollection is created to save groups.
+     *
+     * @param newGroupers
+     * @param oldGroupers
+     */
+    updateGroupers: function(newGroupers, oldGroupers) {
+        var me = this,
+            groups = me.getGroups(),
+            sorters = me.getSorters(),
+            populate;
+
+        if (oldGroupers) {
+            oldGroupers.un('endupdate', 'onEndUpdateGroupers', me);
+        }
+
+        if (newGroupers) {
+            if (me.getTrackGroups()) {
+                if (!groups) {
+                    groups = new Ext.util.GroupCollection({
+                        itemRoot: me.getRootProperty(),
+                        autoGroup: me.getAutoGroup(),
+                        autoSort: me.getAutoSort(),
+                        groupConfig: me.getGroupConfig()
+                    });
+                    me.setGroups(groups);
+                }
+
+                populate = true;
+            }
+
+            newGroupers.on('endupdate', 'onEndUpdateGroupers', me, { prepend: true });
+
+        }
+        else {
+            me.setGroups(null);
+        }
+
+        me.onEndUpdateGroupers(newGroupers);
+
+        if (!sorters.updating) {
+            me.onEndUpdateSorters(sorters);
+        }
+
+        if (populate) {
+            groups.onCollectionRefresh(me);
+        }
+    },
+
+    onEndUpdateGroupers: function(groupers) {
+        var me = this,
+            was = me.grouped,
+            sorters = me.getSorters(),
+            is = groupers && groupers.length > 0;
+
+        if (me.lastMonitoredGroupers) {
+            me.lastMonitoredGroupers.removeGroupersObserver(me);
+            me.lastMonitoredGroupers = null;
+        }
+
+        if (was || is) {
+            // ensure flag property is a boolean.
+            // groupers && (groupers.length > 0) may evaluate to null
+            me.grouped = !!is;
+
+            // if grouping changes then sorting changes too
+            me.onSorterChange();
+
+            if (sorters && !sorters.updating) {
+                me.onEndUpdateSorters(groupers);
+            }
+
+            me.onGroupChange(groupers);
+
+            if (groupers) {
+                me.lastMonitoredGroupers = groupers;
+                groupers.addGroupersObserver(me);
+            }
+        }
+    },
+
+    onGrouperDirectionChange: function() {
+        var me = this;
+
+        // if a grouper changes its direction then we need to notify about this change
+        me.onEndUpdateSorters(me.getSorters());
+        me.notify('group', [me.getGroupers(false)]);
+    },
+
+    onGroupChange: function(groupers) {
+        var me = this,
+            groups = me.getGroups();
+
+        if (groups) {
+            groups.onCollectionGroupersChanged(me);
+            me.groupItems();
+        }
+        else {
+            me.notify('group', [groupers]);
+        }
+    },
+
+    groupItems: function() {
+        var me = this,
+            groupers = me.getGroupers(false),
+            groups = me.getGroups();
+
+        me.notify('beforegroup', [groupers]);
+
+        if (me.length && groups) {
+            groups.onCollectionRefresh(me);
+        }
+
+        // Even if there's no data, notify interested parties.
+        // Eg: Stores must react and fire their refresh and group events.
+        me.notify('group', [groupers]);
     },
 
     /**
@@ -3886,6 +4061,7 @@ Ext.define('Ext.util.Collection', {
     updateGroups: function(newGroups, oldGroups) {
         if (oldGroups) {
             this.removeObserver(oldGroups);
+            oldGroups.destroy();
         }
 
         if (newGroups) {

@@ -54,8 +54,8 @@ Ext.define('Ext.chart.legend.LegendBase', {
         }
     },
 
-    onChildTap: function(view, context) {
-        this.callParent([view, context]);
+    onChildTap: function(context) {
+        this.callParent([ context ]);
         this.toggleItem(context.viewIndex);
     }
 });

@@ -2,43 +2,47 @@
  * List is a vertical `DataView` which additionally supports {@link #grouped grouping},
  * {@link #indexBar indexing} and {@link #onItemDisclosure disclosures}.
  *
- *      @example
- *      Ext.create({
- *          xtype: 'list',
- *          fullscreen: true,
- *          itemTpl: '{title}',
- *          data: [
- *              { title: 'Item 1' },
- *              { title: 'Item 2' },
- *              { title: 'Item 3' },
- *              { title: 'Item 4' }
- *          ]
- *      });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'list',
+ *     fullscreen: true,
+ *     itemTpl: '{title}',
+ *     data: [
+ *         { title: 'Item 1' },
+ *         { title: 'Item 2' },
+ *         { title: 'Item 3' },
+ *         { title: 'Item 4' }
+ *     ]
+ * });
+ * ```
  *
  * A more advanced example showing a list of people grouped by last name:
  *
- *      @example
- *      Ext.create({
- *          xtype: 'list',
- *          fullscreen: true,
- *          itemTpl: '<div class="contact">{firstName} <b>{lastName}</b></div>',
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'list',
+ *     fullscreen: true,
+ *     itemTpl: '<div class="contact">{firstName} <b>{lastName}</b></div>',
  *
- *          store: {
- *              grouper: {
- *                  property: 'lastName',
- *                  groupFn: function(record) {
- *                      return record.get('lastName')[0];
- *                  }
- *              },
+ *     store: {
+ *         grouper: {
+ *             property: 'lastName',
+ *             groupFn: function(record) {
+ *                 return record.get('lastName')[0];
+ *             }
+ *         },
  *
- *              data: [
- *                  { firstName: 'Peter',   lastName: 'Venkman'  },
- *                  { firstName: 'Raymond', lastName: 'Stantz'   },
- *                  { firstName: 'Egon',    lastName: 'Spengler' },
- *                  { firstName: 'Winston', lastName: 'Zeddemore'}
- *              ]
- *          }
- *      });
+ *         data: [
+ *             { firstName: 'Peter',   lastName: 'Venkman'  },
+ *             { firstName: 'Raymond', lastName: 'Stantz'   },
+ *             { firstName: 'Egon',    lastName: 'Spengler' },
+ *             { firstName: 'Winston', lastName: 'Zeddemore'}
+ *         ]
+ *     }
+ * });
+ * ```
  *
  * ## Components
  *
@@ -54,26 +58,389 @@
  * configuration on child items in this List. The following example adds a button to the
  * bottom of the List.
  *
- *      @example
- *      Ext.create({
- *          xtype: 'list',
- *          fullscreen: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'list',
+ *     fullscreen: true,
  *
- *          store: [
- *              { firstName: 'Peter',   lastName: 'Venkman'  },
- *              { firstName: 'Raymond', lastName: 'Stantz'   },
- *              { firstName: 'Egon',    lastName: 'Spengler' },
- *              { firstName: 'Winston', lastName: 'Zeddemore'}
- *          ],
+ *     store: [
+ *         { firstName: 'Peter',   lastName: 'Venkman'  },
+ *         { firstName: 'Raymond', lastName: 'Stantz'   },
+ *         { firstName: 'Egon',    lastName: 'Spengler' },
+ *         { firstName: 'Winston', lastName: 'Zeddemore'}
+ *     ],
  *
- *          itemTpl: '<div class="contact">{firstName} <b>{lastName}</b></div>',
+ *     itemTpl: '<div class="contact">{firstName} <b>{lastName}</b></div>',
  *
- *          items: [{
- *              xtype: 'button',
- *              scrollDock: 'end',
- *              text: 'Load More...'
+ *     items: [{
+ *         xtype: 'button',
+ *         scrollDock: 'end',
+ *         text: 'Load More...'
+ *     }]
+ * });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ *  <ext-list
+ *      onready="basiclist.readylistView"
+ *  >
+ *  </ext-list>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-list.component';
+ *  
+ * export default class BasicListComponent {
+ *     constructor() {
+ *         this.store = new Ext.data.Store({
+ *            data: [
+ *                {title: 'Item 1'},
+ *                {title: 'Item 2'},
+ *                {title: 'Item 3'},
+ *                {title: 'Item 4'}
+ *            ] 
+ *        });
+ *     }
+ *     readylistView(event) {
+ *         this.listView = event.detail.cmp;
+ *         this.listView.setStore(this.store);
+ *         this.listView.setItemTpl(`{title}`);
+ *     }
+ * }
+ * 
+ * window.basiclist = new BasicListComponent();
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-list
+ *     grouped="true"
+ *     onready="groupedlist.readyGroupedListView"
+ * >
+ * </ext-list>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-list.component';
+ *  
+ * export default class GroupedListComponent {
+ *     constructor() {
+ *         this.store = new Ext.data.Store({
+ *             data: [{
+ *                firstName: 'Peter',
+ *                lastName: 'Venkman'
+ *             }, {
+ *                firstName: 'Raymond',
+ *                 lastName: 'Stantz'
+ *             }, {
+ *                firstName: 'Egon',
+ *                lastName: 'Spengler'
+ *             }, {
+ *                firstName: 'Winston',
+ *                lastName: 'Zeddemore'
+ *            }],
+ * 
+ *            sorters: 'lastName',
+ * 
+ *            grouper: {
+ *                groupFn: function(record) {
+ *                    return record.get('lastName')[0];
+ *                }
+ *            }
+ *        });
+ *    }
+ *  
+ *    readyGroupedListView(event) {
+ *        this.groupedlistView = event.detail.cmp;
+ *        this.groupedlistView.setStore(this.store);
+ *        this.groupedlistView.setItemTpl(`{firstName} {lastName}`);
+ *    }
+ * }
+ * 
+ * window.groupedlist = new GroupedListComponent();
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-list
+ *     onready="positionlistitem.readyPositionedListView"
+ * >
+ *     <ext-button
+ *        scrollDock="bottom"
+ *        docked="bottom"
+ *        text="load more..."
+ *     >
+ *     </ext-button>
+ * </ext-list>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-list.component';
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ *  
+ * export default class PositionedListItemComponent {
+ *  
+ *     constructor() {
+ *         this.store = new Ext.data.store({
+ *             data: [{
+ *                 firstName: 'Peter',
+ *                 lastName: 'Venkman'
+ *              },    
+ *              {
+ *                 firstName: 'Raymond',
+ *                 lastName: 'Stantz'
+ *              },
+ *              {
+ *                 firstName: 'Egon',
+ *                 lastName: 'Spengler'
+ *              },
+ *              {
+ *                 firstName: 'Winston',
+ *                 lastName: 'Zeddemore'
+ *            }]
+ *        })
+ *  
+ *    }
+ *  
+ *    readyPositionedListView(event) {
+ *         this.positionedListView = event.detail.cmp;
+ *         this.positionedListView.setStore(this.store);
+ *         this.positionedListView.setItemTpl(`{firstName} {lastName}`);
+ *    }
+ * }
+ *
+ * window.positionlistitem = new PositionedListItemComponent();
+ *
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtList } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *
+ *     store = new Ext.data.Store({
+ *         data: [
+ *             {title: 'Item 1'},
+ *             {title: 'Item 2'},
+ *             {title: 'Item 3'},
+ *             {title: 'Item 4'}
+ *         ]
+ *     });
+ *
+ *     render() {
+ *         return (
+ *             <ExtList
+ *                 itemTpl="{title}"
+ *                 store={this.store}
+ *             />
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtList, ExtButton } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *
+ *     store = new Ext.data.Store({
+ *         data: [{
+ *             firstName: 'Peter',
+ *             lastName: 'Venkman'
+ *         }, {
+ *             firstName: 'Raymond',
+ *             lastName: 'Stantz'
+ *         }, {
+ *             firstName: 'Egon',
+ *             lastName: 'Spengler'
+ *         }, {
+ *             firstName: 'Winston',
+ *             lastName: 'Zeddemore'
+ *         }],
+ *
+ *        sorters: 'lastName',
+ *
+ *        grouper: {
+ *            groupFn: function(record) {
+ *                return record.get('lastName')[0];
+ *            }
+ *         }
+ *     });
+ *
+ *     render() {
+ *         return (
+ *             <ExtList
+ *                 itemTpl="{firstName} {lastName}"
+ *                 store={this.store}
+ *                 grouped
+ *             />
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtList, ExtButton } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *
+ *     store = new Ext.data.Store({
+ *         data: [{
+ *             firstName: 'Peter',
+ *             lastName: 'Venkman'
+ *         },
+ *         {
+ *             firstName: 'Raymond',
+ *             lastName: 'Stantz'
+ *         },
+ *         {
+ *             firstName: 'Egon',
+ *             lastName: 'Spengler'
+ *         },
+ *         {
+ *             firstName: 'Winston',
+ *             lastName: 'Zeddemore'
+ *         }]
+ *     });
+ *
+ *     render() {
+ *         return (
+ *             <ExtList
+ *                 itemTpl="{firstName} {lastName}"
+ *                 store={this.store}
+ *              >
+ *                  <ExtButton
+ *                      scrollDock="bottom"
+ *                      docked="bottom"
+ *                      text="load more..."
+ *                  />
+ *             </ExtList>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [`
+ *             `],
+ *     template: `
+ *              <ExtList 
+ *                 [store]="this.store"
+ *                 [itemTpl]="this.itemTpl"
+ *             ></ExtList>
+ *             `
+ * })
+ * export class AppComponent {
+ *     store = new Ext.data.Store({
+ *         data: [
+ *             {title: 'Item 1'},
+ *             {title: 'Item 2'},
+ *             {title: 'Item 3'},
+ *             {title: 'Item 4'}
+ *         ]
+ *     });
+ *
+ *     itemTpl = "{title}";
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *               <ExtList 
+ *                  [store]="this.store"
+ *                  [itemTpl]="this.itemTpl"
+ *                  grouped="true"
+ *              ></ExtList>
+ *              `
+ *  })
+ *  export class AppComponent {
+ *      store = new Ext.data.Store({
+ *          data: [{
+ *              firstName: 'Peter',
+ *              lastName: 'Venkman'
+ *          }, {
+ *              firstName: 'Raymond',
+ *              lastName: 'Stantz'
+ *          }, {
+ *              firstName: 'Egon',
+ *              lastName: 'Spengler'
+ *          }, {
+ *              firstName: 'Winston',
+ *              lastName: 'Zeddemore'
+ *          }],
+ *    
+ *          sorters: 'lastName',
+ *    
+ *          grouper: {
+ *              groupFn: function(record) {
+ *                  return record.get('lastName')[0];
+ *              }
+ *          }
+ *     });
+ *
+ *     itemTpl = "{firstName} {lastName}";
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ *  import { Component } from '@angular/core'
+ *  declare var Ext: any;
+ *
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *              <ExtList 
+ *                  [store]="this.store"
+ *                  [itemTpl]="this.itemTpl"
+ *              >
+ *              <ExtButton 
+ *                    scrollDock="bottom"
+ *                    docked="bottom"
+ *                    text="load more..."
+ *                ></ExtButton>
+ *              </ExtList>
+ *              `
+ *  })
+ *  export class AppComponent {
+ *      store = new Ext.data.Store({
+ *          data: [{
+ *              firstName: 'Peter',
+ *              lastName: 'Venkman'
+ *          },
+ *          {
+ *              firstName: 'Raymond',
+ *              lastName: 'Stantz'
+ *          },
+ *          {
+ *              firstName: 'Egon',
+ *              lastName: 'Spengler'
+ *          },
+ *          {
+ *              firstName: 'Winston',
+ *              lastName: 'Zeddemore'
  *          }]
  *      });
+ *
+ *      itemTpl = "{firstName} {lastName}";
+ * }
+ * ```
+ *
  */
 Ext.define('Ext.dataview.List', {
     extend: 'Ext.dataview.Component',
@@ -731,7 +1098,12 @@ Ext.define('Ext.dataview.List', {
 
     doDestroy: function() {
         var me = this,
-            groupingInfo = me.groupingInfo;
+            groupingInfo = me.groupingInfo,
+            viewport = Ext.Viewport;
+
+        if (me.infinite && Ext.os.is.iOS && viewport) {
+            viewport.un('orientationchange', 'onOrientationChange', me);
+        }
 
         // Don't need to destroy headers/footers attached to dataItems,
         // since they will be in the container they will be removed. Any
@@ -1177,7 +1549,8 @@ Ext.define('Ext.dataview.List', {
     // infinite
 
     updateInfinite: function(infinite) {
-        var me = this;
+        var me = this,
+            viewport = Ext.Viewport;
 
         me.infinite = infinite;
 
@@ -1251,7 +1624,49 @@ Ext.define('Ext.dataview.List', {
                 scrollstart: 'onContainerScrollStart',
                 scrollend: 'onContainerScrollEnd'
             });
+
+            // Navigate listener for iOS to apply list scrolling
+            // when navigating the list using mobile arrow keys.
+            if (Ext.os.is.iOS) {
+                me.on('navigate', me.onListNavigate, me);
+
+                // Resetting the rowHeight property on orientation change
+                // so that proper value of rowCount is calculated.
+                if (viewport) {
+                    viewport.on('orientationchange', 'onOrientationChange', me);
+                }
+            }
         }
+        else if (Ext.os.is.iOS && viewport) {
+            viewport.un('orientationchange', 'onOrientationChange', me);
+        }
+    },
+
+    /**
+     * This method is fired whenever the list is navigated in iOS.
+     * However, it is only relevant when the navigation takes place using
+     * the focusable inputs (input & textarea elements). This navigation 
+     * here does not guarantee that the DOM elements will be in order, so
+     * the arrow keys may disable at some point during the navigation. This
+     * is due to rendering of the DOM elements which is decided by the list.
+     * In order to maintain the order of rendered items in the DOM childNodes,
+     * the list config 'maintainChildNodes' can be set to true. In an
+     * infinite list this is not normally done for performance reasons but
+     * this can create accessibility issues.
+     * @param {Ext.dataview.List} list This list instance.
+     * @param {Ext.dataview.Location} to The location to which we are navigating.
+     * @param {Ext.dataview.Location} from The location from which we are navigating.
+     */
+    onListNavigate: function(list, to, from) {
+        var nodeName = to.sourceElement.nodeName;
+
+        // If not coming from another navigable element
+        // or navigation is not caused on input, return.
+        if (!from || !(nodeName === "INPUT" || nodeName === "TEXTAREA")) {
+            return;
+        }
+
+        list.scrollToRecord(to.record);
     },
 
     // maxItemCache
@@ -1542,6 +1957,15 @@ Ext.define('Ext.dataview.List', {
             me.fireAction('disclose', [me, record, item, index, e], 'doDisclose');
         },
 
+        /**
+         * This method is fired whenever orientation of the device is changed
+         * on iOS, it resets the rowHeight property of the list so that the 
+         * rowCount is correctly calculated, as it is done on normal page load.
+         */
+        onOrientationChange: function() {
+            this.rowHeight = 0;
+        },
+
         _onChildTouchCancel: function(e) {
             if (!e.getTarget(this.toolSelector)) {
                 this.callParent([e]);
@@ -1570,7 +1994,7 @@ Ext.define('Ext.dataview.List', {
             }
         },
 
-        onRangeAvailable: function() {
+        onRangeAvailable: function(range, first, last) {
             // This method is called by virtual stores when records become
             // available (or possibly reload).
             this.syncRows();
@@ -1607,11 +2031,24 @@ Ext.define('Ext.dataview.List', {
             this.adjustScrollDockHeight(item.scrollDock, height);
         },
 
-        onStoreGroupChange: function() {
-            if (this.initialized) {
-                this.refreshGrouping();
-                this.syncRows();
+        onStoreGroupChange: function(store) {
+            var me = this,
+                was;
+
+            if (!me.initialized) {
+                return;
             }
+
+            if (!store.isGroupStore) {
+                was = store.getAutoDestroy();
+                // Ensure we don't clobber the store when unbinding it.
+                store.setAutoDestroy(false);
+                this.setStore(store);
+                store.setAutoDestroy(was);
+            }
+
+            me.refreshGrouping();
+            me.syncRows();
         },
 
         onStoreTotalCountChange: function() {
@@ -4141,16 +4578,15 @@ Ext.define('Ext.dataview.List', {
                 firstTime = ! me.heightSyncs++,
                 renderInfo = me.renderInfo,
                 oldIndexBottom = renderInfo && renderInfo.indexBottom,
-                storeCount = me.store.getCount(),
+                storeCount = me.store && me.store.getCount(),
                 // When a maxHeight is configured, we use that to drive the number
                 // of rows to render. We set the height of our innerCt (which is
                 // position:relative) to provide a height to the list (see syncRows).
                 visibleHeight = me.getMaxHeight() || me.getVisibleHeight(),
                 // row,
-                partners,
-                indexTop, rowCount, i, len, p, active;
+                partners, indexTop, rowCount, i, len, p, active;
 
-            if (!me.isActivePartner()) {
+            if (!me.isActivePartner() || (!rowCount && !me.store)) {
                 return;
             }
 
@@ -4224,7 +4660,7 @@ Ext.define('Ext.dataview.List', {
                     if (force && storeCount < oldIndexBottom && active) {
                         // Changing the amount of rows because the data in the store is
                         // no longer sufficient to fill the view
-                        renderInfo.top = renderInfo.indexTop * me.rowHeight;
+                        renderInfo.top = renderInfo.indexTop * rowHeight;
                     }
                 }
             }
@@ -4537,7 +4973,8 @@ Ext.define('Ext.dataview.List', {
             var me = this,
                 store = me.store,
                 renderInfo = me.renderInfo,
-                bottom = top + me.dataItems.length;
+                bottom = top + me.dataItems.length,
+                total;
 
             // TODO (EXTJS-27397) looks wrong
             // Return at initial render if autoLoad is `false` or `undefined`
@@ -4554,6 +4991,11 @@ Ext.define('Ext.dataview.List', {
 
             if (top === bottom && store.isVirtualStore) {
                 bottom = top + store.getPageSize();
+                total = store.getTotalCount();
+
+                if (total !== null) {
+                    bottom = Math.min(total, bottom);
+                }
             }
 
             me.dataRange.goto(top, bottom);

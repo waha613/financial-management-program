@@ -155,6 +155,7 @@ Ext.define('Ext.data.proxy.Memory', {
             }),
             records = resultSet.getRecords(),
             sorters = operation.getSorters(),
+            groupers = operation.getGroupers(),
             grouper = operation.getGrouper(),
             filters = operation.getFilters(),
             start = operation.getStart(),
@@ -177,7 +178,12 @@ Ext.define('Ext.data.proxy.Memory', {
             }
 
             // Remotely, grouper just mean top priority sorters
-            if (grouper) {
+            if (groupers && groupers.length) {
+                // Must concat so as not to mutate passed sorters array which could be
+                // the items property of the sorters collection
+                sorters = sorters ? groupers.concat(sorters) : groupers;
+            }
+            else if (grouper) {
                 // Must concat so as not to mutate passed sorters array which could be the items
                 // property of the sorters collection
                 sorters = sorters ? sorters.concat(grouper) : sorters;

@@ -1,11 +1,12 @@
 /**
  * This Field is useful for containing multiple {@link Ext.field.Checkbox checkbox}.
- * 
- * It plots items into wither horizontal / vertical depending on 
+ *
+ * It plots items into wither horizontal / vertical depending on
  * {@link Ext.field.FieldGroupContainer#vertical} config properties.
- * 
- * 
- *     @example
+ *
+ *
+ * ```javascript
+ * @example({ framework: 'extjs' }
  *     Ext.create('Ext.form.Panel', {
  *         title: 'Checkbox Group',
  *         width: 300,
@@ -14,8 +15,8 @@
  *         items:[{
  *             xtype: 'checkboxgroup',
  *             label: 'Checkbox Group',
- *             // Arrange checkboxes distributed vertically. 
- *             // Automatically latter items flow to next column if 
+ *             // Arrange checkboxes distributed vertically.
+ *             // Automatically latter items flow to next column if
  *             // available height is less to display all the items in single column.
  *             vertical: true,
  *             height: 100,
@@ -28,9 +29,196 @@
  *                 { label: 'Item 6', name: 'cb-common', value: '6' }
  *             ]
  *         }]
- *     });
- * 
+ *     }
+ * );
+ *
  * @since 7.0
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtFormPanel, ExtCheckBoxGroup, ExtCheckBoxField } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *      render() {
+ *           return (
+ *               <ExtFormPanel
+ *                title="Checkbox Group"
+ *                width="300"
+ *                height="125"
+ *                fullscreen={true}
+ *               >
+ *                   <ExtCheckBoxGroup
+ *                       label="Checkbox Group"
+ *                       vertical
+ *                       height="100"
+ *                   >
+ *                       <ExtCheckBoxField
+ *                           label="Item 1"
+ *                           name="cb-item-1"
+ *                           value="1"
+ *                       >
+ *                       </ExtCheckBoxField>
+ *                       <ExtCheckBoxField
+ *                           label="Item 2"
+ *                           name="cb-item-2"
+ *                           value="2"
+ *                           checked="true"
+ *                       >
+ *                       </ExtCheckBoxField>
+ *                       <ExtCheckBoxField
+ *                           label="Item 3"
+ *                           name="cb-item-3"
+ *                           value="3"
+ *                       >
+ *                       </ExtCheckBoxField>
+ *                       <ExtCheckBoxField
+ *                           label="Item 4"
+ *                           name="cb-common"
+ *                           value="4"
+ *                       >
+ *                       </ExtCheckBoxField>
+ *                       <ExtCheckBoxField
+ *                           label="Item 5"
+ *                           name="cb-common"
+ *                           value="5"
+ *                       >
+ *                       </ExtCheckBoxField>
+ *                       <ExtCheckBoxField
+ *                           label="Item 6"
+ *                           name="cb-common"
+ *                           value="6"
+ *                       >
+ *                       </ExtCheckBoxField>
+ *                   </ExtCheckBoxGroup>
+ *               </ExtFormPanel>
+ *           )
+ *      }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'checkboxgroup-component',
+ *     styles: [``],
+ *     template: `
+ *         <ExtFormPanel
+ *              title="Checkbox Group"
+ *              [width]="600"
+ *              [height]="400"
+ *              [fullscreen]="true"
+ *          >
+ *              <ExtCheckBoxGroup
+ *                  label="Checkbox Group"
+ *                  [vertical]="true"
+ *                  [height]="100"
+ *              >
+ *                  <ExtCheckBoxField
+ *                      [label]="'Item 1'"
+ *                      [name]="'cb-item-1'"
+ *                      value="1"
+ *                  >
+ *                  </ExtCheckBoxField>
+ *                  <ExtCheckBoxField
+ *                      [label]="'Item 2'"
+ *                      [name]="'cb-item-2'"
+ *                      value="2"
+ *                      [checked]="true"
+ *                  >
+ *                  </ExtCheckBoxField>
+ *                  <ExtCheckBoxField
+ *                      [label]="'Item 3'"
+ *                      [name]="'cb-item-3'"
+ *                      value="3"
+ *                  >
+ *                  </ExtCheckBoxField>
+ *                  <ExtCheckBoxField
+ *                      [label]="'Item 4'"
+ *                      [name]="'cb-common'"
+ *                      value="4"
+ *                  >
+ *                  </ExtCheckBoxField>
+ *                  <ExtCheckBoxField
+ *                      [label]="'Item 5'"
+ *                      [name]="'cb-common'"
+ *                      value="5"
+ *                  >
+ *                  </ExtCheckBoxField>
+ *                  <ExtCheckBoxField
+ *                      [label]="'Item 6'"
+ *                      [name]="'cb-common'"
+ *                      value="6"
+ *                  >
+ *                  </ExtCheckBoxField>
+ *              </ExtCheckBoxGroup>
+ *          </ExtFormPanel>
+ *      `
+ * })
+ * export class CheckBoxGroupComponent  {}
+ *```
+ *```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-formpanel
+ *      title="Checkbox Group"
+ *      width="300"
+ *      height="125"
+ *      fullscreen="true"
+ *  >
+ *   <ext-checkboxgroup
+ *       label="Checkbox Group"
+ *       vertical="true"
+ *       height="100"
+ *   >
+ *       <ext-checkboxfield
+ *           label="Item 1"
+ *           name="cb-item-1"
+ *           value="1"
+ *       >
+ *       </ext-checkboxfield>
+ *       <ext-checkboxfield
+ *           label="Item 2"
+ *           name="cb-item-2"
+ *           value="2"
+ *           checked="true"
+ *       >
+ *       </ext-checkboxfield>
+ *       <ext-checkboxfield
+ *           label="Item 3"
+ *           name="cb-item-3"
+ *           value="3"
+ *       >
+ *       </ext-checkboxfield>
+ *       <ext-checkboxfield
+ *           label="Item 4"
+ *           name="cb-common"
+ *           value="4"
+ *       >
+ *       </ext-checkboxfield>
+ *       <ext-checkboxfield
+ *           label="Item 5"
+ *           name="cb-common"
+ *           value="5"
+ *       >
+ *       </ext-checkboxfield>
+ *       <ext-checkboxfield
+ *           label="Item 6"
+ *           name="cb-common"
+ *           value="6"
+ *       >
+ *       </ext-checkboxfield>
+ *   </ext-checkboxgroup>
+ * </ext-formpanel>
+ *```
+ *```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-checkboxgroup.component';
+ * import '@sencha/ext-web-components/dist/ext-checkboxfield.component';
+ * export default class CheckBoxGroupComponent {}
+ *```
  */
 Ext.define('Ext.field.CheckboxGroup', {
     extend: 'Ext.field.FieldGroupContainer',

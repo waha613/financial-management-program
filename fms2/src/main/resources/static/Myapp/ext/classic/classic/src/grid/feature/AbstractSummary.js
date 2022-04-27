@@ -11,10 +11,6 @@ Ext.define('Ext.grid.feature.AbstractSummary', {
     summaryRowCls: Ext.baseCSSPrefix + 'grid-row-summary',
     summaryRowSelector: '.' + Ext.baseCSSPrefix + 'grid-row-summary',
 
-    readDataOptions: {
-        recordCreator: Ext.identityFn
-    },
-
     // High priority rowTpl interceptor which sees summary rows early, and renders them correctly
     // and then aborts the row rendering chain. This will only see action when summary rows
     // are being updated and Table.onUpdate->Table.bufferRender renders the individual
@@ -45,6 +41,9 @@ Ext.define('Ext.grid.feature.AbstractSummary', {
 
         me.view.summaryFeature = me;
         me.rowTpl = me.view.self.prototype.rowTpl;
+        me.readDataOptions = {
+            recordCreator: me.readSummaryRecord.bind(me)
+        };
 
         // Add a high priority interceptor which renders summary records simply
         // This will only see action ona bufferedRender situation where summary records are updated.
@@ -69,12 +68,13 @@ Ext.define('Ext.grid.feature.AbstractSummary', {
     },
 
     bindStore: function(grid, store) {
-        var me = this;
+        var me = this,
+            reader = store && store.getProxy() && store.getProxy().getReader();
 
-        Ext.destroy(me.readerListeners);
+        me.readerListeners = Ext.destroy(me.readerListeners);
 
-        if (me.remoteRoot) {
-            me.readerListeners = store.getProxy().getReader().on({
+        if (reader && (me.remoteRoot || reader.getSummaryRootProperty())) {
+            me.readerListeners = reader.on({
                 scope: me,
                 destroyable: true,
                 rawdata: me.onReaderRawData
@@ -256,7 +256,8 @@ Ext.define('Ext.grid.feature.AbstractSummary', {
             summaryRows = me.summaryRows,
             convertedSummaryRow = {},
             remoteData = {},
-            storeReader, reader, rawData, i, len, rows, row;
+            remoteRoot = me.remoteRoot,
+            storeReader, reader, rawData, i, len, rows, store;
 
         // Summary rows may have been cached by previous run
         if (!summaryRows) {
@@ -266,31 +267,32 @@ Ext.define('Ext.grid.feature.AbstractSummary', {
                 return;
             }
 
-            // Construct a new Reader instance of the same type to avoid
-            // munging the one in the Store
-            storeReader = me.view.store.getProxy().getReader();
-            reader = Ext.create('reader.' + storeReader.type, storeReader.getConfig());
+            // Construct a new Reader instance of the same type to avoid munging the one
+            // in the store:
+            store = me.view.store;
+            storeReader = store.getProxy().getReader();
+
+            reader = Ext.apply({
+                type: storeReader.type  // not a config
+            }, storeReader.getConfig());
+
+            // Be sure to create a reader for the summaryModel since it may have different
+            // field types. For example, a count summary on a date column. That may not be
+            // be ideal UX, but there's no clear winner for a summary on a date...
+            reader.model = store.getModel().getSummaryModel();
 
             // reset reader root and rebuild extractors to extract summaries data
-            reader.setRootProperty(me.remoteRoot);
+            if (remoteRoot) {
+                reader.summaryRootProperty = remoteRoot;
+            }
+
+            reader = Ext.Factory.reader(reader);
 
             // At this point summaryRows is still raw data, e.g. XML node
-            summaryRows = reader.getRoot(rawData);
+            summaryRows = reader.getSummaryRoot(rawData);
 
             if (summaryRows) {
-                rows = [];
-
-                if (!Ext.isArray(summaryRows)) {
-                    summaryRows = [summaryRows];
-                }
-
-                len = summaryRows.length;
-
-                for (i = 0; i < len; ++i) {
-                    // Convert a raw data row into a Record's hash object using the Reader.
-                    row = reader.extractRecordData(summaryRows[i], me.readDataOptions);
-                    rows.push(row);
-                }
+                rows = reader.extractData(summaryRows, me.readDataOptions);
 
                 me.summaryRows = summaryRows = rows;
             }
@@ -313,6 +315,23 @@ Ext.define('Ext.grid.feature.AbstractSummary', {
         }
 
         return groupField ? remoteData : convertedSummaryRow;
+    },
+
+    readSummaryRecord: function(data, model) {
+        var idProp = model.idProperty,
+            hasId = data[idProp] != null,
+            rec = new model(data);
+
+        // By instantiating the Model we get proper field types for the summary record,
+        // but since we only want the underlying data, we may need to remove the id it
+        // assigns.
+        data = rec.data;
+
+        if (!hasId) {
+            delete data[idProp];
+        }
+
+        return data;
     },
 
     setSummaryData: function(record, colId, summaryValue, groupName) {

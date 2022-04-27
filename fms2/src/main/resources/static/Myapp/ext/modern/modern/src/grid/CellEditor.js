@@ -116,7 +116,7 @@ Ext.define('Ext.grid.CellEditor', {
             // If we are editing, set up our context.
             if (me.editing) {
                 me.$activeRow = row = location.row;
-                me.$activeGrid = grid = row.getGrid();
+                me.$activeGrid = grid = row.grid;
                 me.editingPlugin.editing = true;
                 // here we update the activeLocation to be used by the remaining events
                 me.editingPlugin.location = me.$activeLocation = result = new Ext.grid.Location(
@@ -136,17 +136,24 @@ Ext.define('Ext.grid.CellEditor', {
     },
 
     onFocusLeave: function(e) {
+        var me = this,
+            location = me.$activeLocation,
+            row = location && location.row;
+
         // FocusLeave result of destruction. Must not do anything.
-        if (!this.editingPlugin.getGrid().destroying) {
-            if (this.isCancelling) {
-                this.cancelEdit();
+        if (!me.editingPlugin.getGrid().destroying) {
+            if (me.isCancelling) {
+                me.cancelEdit();
             }
             else {
-                this.completeEdit(false);
+                me.completeEdit(
+                    /* remainVisible = */ false,
+                    /* followItem = */ row && e && row.isAncestor(e.fromComponent) &&
+                    row.isAncestor(e.toComponent));
             }
         }
 
-        this.isCancelling = false;
+        me.isCancelling = false;
     },
 
     onFocusEnter: function(e) {
@@ -180,16 +187,17 @@ Ext.define('Ext.grid.CellEditor', {
         }
     },
 
-    onEditComplete: function(remainVisible, cancelling) {
+    onEditComplete: function(remainVisible, cancelling, followItem) {
         var me = this,
             location = me.$activeLocation,
             value = me.getValue(),
             record, dataIndex, row, grid, sticky;
 
-        me.callParent([remainVisible, cancelling]);
+        me.callParent([remainVisible, cancelling, followItem]);
 
         if (location) {
-            grid = location.row.getGrid();
+            followItem = followItem || remainVisible;
+            grid = location.row.grid;
 
             // If we are not coming from a cancelEdit, and the field's changed
             // then update the record.
@@ -202,19 +210,20 @@ Ext.define('Ext.grid.CellEditor', {
 
                     // The row may change due to auto sorting, so bring it into view 
                     // and refresh the location
-                    grid.ensureVisible(location.record);
+                    if (followItem) {
+                        grid.ensureVisible(location.record);
+                    }
+
                     location.refresh();
                 }
             }
 
-            if (!remainVisible) {
+            if (!followItem) {
                 row = location.row;
                 sticky = !!row.$sticky;
 
                 if (sticky) {
                     grid.stickItem(row, null);
-                    grid.ensureVisible(location.record,
-                                       { column: location.columnIndex, focus: true });
                 }
 
                 me.$stickyVisibility = me.$activeLocation = me.$activeRow = me.$activeGrid = null;

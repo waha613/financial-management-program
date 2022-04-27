@@ -1,13 +1,16 @@
-topSuite("Ext.layout.component.Component", ['Ext.Window'], function() {
-    var c;
+topSuite("Ext.layout.component.Component", [
+    'Ext.Window',
+    'Ext.layout.container.Fit'
+], function() {
+    var win;
 
     afterEach(function() {
-        c = Ext.destroy(c);
+        win = Ext.destroy(win);
     });
 
     describe("retaining dimensions between layout runs", function() {
         it("should use the last calculated width when running a top level layout & previously had a value", function() {
-            c = new Ext.container.Container({
+            win = new Ext.container.Container({
                 layout: {
                     type: 'vbox',
                     align: 'stretchmax'
@@ -31,7 +34,7 @@ topSuite("Ext.layout.component.Component", ['Ext.Window'], function() {
                 }]
             });
 
-            var child = c.items.first();
+            var child = win.items.first();
 
             expect(child.getWidth()).toBe(150);
 
@@ -43,7 +46,7 @@ topSuite("Ext.layout.component.Component", ['Ext.Window'], function() {
         });
 
         it("should use the last calculated height when running a top level layout & previously had a value", function() {
-            c = new Ext.container.Container({
+            win = new Ext.container.Container({
                 layout: {
                     type: 'hbox',
                     align: 'stretchmax'
@@ -67,7 +70,7 @@ topSuite("Ext.layout.component.Component", ['Ext.Window'], function() {
                 }]
             });
 
-            var child = c.items.first();
+            var child = win.items.first();
 
             expect(child.getHeight()).toBe(150);
 
@@ -82,11 +85,12 @@ topSuite("Ext.layout.component.Component", ['Ext.Window'], function() {
     describe("framed windows with percentage dimensions", function() {
         function makeWindow(cfg) {
             cfg = Ext.apply({
+                xtype: 'window',
                 autoShow: true,
                 header: false
             }, cfg);
 
-            c = new Ext.window.Window(cfg);
+            win = Ext.create(cfg);
         }
 
         it("should accept percentage width and height", function() {
@@ -95,8 +99,8 @@ topSuite("Ext.layout.component.Component", ['Ext.Window'], function() {
                 height: "50%"
             });
 
-            expect(c.getWidth()).toBe(Ext.Element.getViewportWidth() / 2);
-            expect(c.getHeight()).toBe(Ext.Element.getViewportHeight() / 2);
+            expect(win.getWidth()).toBe(Ext.Element.getViewportWidth() / 2);
+            expect(win.getHeight()).toBe(Ext.Element.getViewportHeight() / 2);
         });
 
         it("should accept percentage width and configured height", function() {
@@ -105,8 +109,8 @@ topSuite("Ext.layout.component.Component", ['Ext.Window'], function() {
                 height: 200
             });
 
-            expect(c.getWidth()).toBe(Ext.Element.getViewportWidth() / 2);
-            expect(c.getHeight()).toBe(200);
+            expect(win.getWidth()).toBe(Ext.Element.getViewportWidth() / 2);
+            expect(win.getHeight()).toBe(200);
         });
 
         it("should accept percentage height and configured width", function() {
@@ -115,8 +119,43 @@ topSuite("Ext.layout.component.Component", ['Ext.Window'], function() {
                 height: "50%"
             });
 
-            expect(c.getWidth()).toBe(200);
-            expect(c.getHeight()).toBe(Ext.Element.getViewportHeight() / 2);
+            expect(win.getWidth()).toBe(200);
+            expect(win.getHeight()).toBe(Ext.Element.getViewportHeight() / 2);
+        });
+
+        it('should respect max width/height', function() {
+            var maxWidth = 200,
+                maxHeight = 250,
+                w, h;
+
+            makeWindow({
+                width: '70%',
+                height: '70%',
+                layout: 'fit',
+
+                minWidth: 100,
+                maxWidth: maxWidth,
+                minHeight: 100,
+                maxHeight: maxHeight,
+
+                style: {
+                    backgroundColor: 'green'
+                },
+
+                items: [{
+                    xtype: 'component',
+                    html: 'Test',
+                    style: {
+                        backgroundColor: 'red'
+                    }
+                }]
+            });
+
+            w = win.getWidth();
+            h = win.getHeight();
+
+            expect(w).toBe(maxWidth);
+            expect(h).toBe(maxHeight);
         });
     });
 });

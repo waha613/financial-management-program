@@ -4,23 +4,25 @@
  * that provides additional options to the primary button action, but any custom handler can
  * provide the arrowclick implementation.  Example usage:
  *
- *     @example
- *     // display a dropdown menu:
- *     Ext.create('Ext.SplitButton', {
- *         renderTo: Ext.getBody(),
- *         text: 'Options',
- *         // handle a click on the button itself
- *         handler: function() {
- *             alert("The button was clicked");
- *         },
- *         menu: new Ext.menu.Menu({
- *             items: [
- *                 // these will render as dropdown menu items when the arrow is clicked:
- *                 {text: 'Item 1', handler: function(){ alert("Item 1 clicked"); }},
- *                 {text: 'Item 2', handler: function(){ alert("Item 2 clicked"); }}
- *             ]
- *         })
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * // display a dropdown menu:
+ * Ext.create('Ext.SplitButton', {
+ *     renderTo: Ext.getBody(),
+ *     text: 'Options',
+ *     // handle a click on the button itself
+ *     handler: function() {
+ *         alert("The button was clicked");
+ *     },
+ *     menu: new Ext.menu.Menu({
+ *         items: [
+ *             // these will render as dropdown menu items when the arrow is clicked:
+ *             {text: 'Item 1', handler: function(){ alert("Item 1 clicked"); }},
+ *             {text: 'Item 2', handler: function(){ alert("Item 2 clicked"); }}
+ *         ]
+ *     })
+ * });
+ * ```
  *
  * Provide custom handling to the split button when the dropdown arrow is clicked:
  *
@@ -30,7 +32,118 @@
  *         handler: optionsHandler,
  *         arrowHandler: myCustomHandler
  *     });
+ * 
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container padding="10" layout="vbox">
+ *     <ext-splitbutton 
+ *          text="SplitButton" 
+ *          ontap="splitbutton.sayHello" 
+ *          ui="action alt" 
+ *          iconCls="x-fa fa-heart" 
+ *          margin="10"
+ *          onready="splitbutton.splitButtonReady"
+ *      >
+ *      </ext-splitbutton>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
  *
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-splitbutton.component';
+ *  
+ * export default class SplitButtonComponent {
+ *      splitButtonReady = (event) => {
+ *          const splitButtonCmp = event.detail.cmp;
+ *          splitButtonCmp.setMenu([{
+ *              text: "Menu Item 1",
+ *              handler: () => { alert("Item 1 clicked"); }  
+ *          }, {
+ *              text: "Menu Item 2",
+ *              handler: () => {alert("Item 2 clicked"); }
+ *          }]);  
+ *      }
+ *  
+ *      sayHello = () => {
+ *          alert("Hello! The button was clicked");
+ *      }
+ * }
+ *
+ * window.splitbutton = new SplitButtonComponent();
+ * ```
+ * 
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtSplitButton } from '@sencha/ext-react';
+ *
+ * export default class SplitButtonExample extends Component {
+ *
+ *     render() {
+ *         return (
+ *             <ExtContainer padding="10" layout="vbox">
+ *                 <ExtSplitButton 
+ *                     text="SplitButton" 
+ *                     handler={this.sayHello} 
+ *                     ui="action alt" 
+ *                     iconCls="x-fa fa-heart"
+ *                     {...menuProps} margin="10"
+ *                 />
+ *             </ExtContainer>
+ *         )
+ *     }
+ *     sayHello = () => {
+ *         alert("Hello! The button was clicked");
+ *     }
+ * }
+ * const menuProps ={
+ *     menu: [{
+ *         text: 'Menu Item 1',
+ *         handler: function(){ alert("Item 1 clicked"); }
+ *     }, {
+ *         text: 'Menu Item 2',
+ *         handler: function(){ alert("Item 2 clicked"); }
+ *     }]
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ *  import { Component } from '@angular/core'
+ *  declare var Ext: any;
+ *
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *              <ExtContainer padding="10" layout="vbox">
+ *                  <ExtSplitButton 
+ *                      text="SplitButton" 
+ *                      [handler]="this.sayHello" 
+ *                      ui="action alt" 
+ *                      iconCls="x-fa fa-heart"
+ *                      margin="10"
+ *                      [menu]="this.menu"
+ *                   ></ExtSplitButton>
+ *              </ExtContainer>
+ *              `
+ *  })
+ *  export class AppComponent {
+ *
+ *      sayHello = () => {
+ *          alert("Hello! The button was clicked");
+ *      }
+ *
+ *      menu = [{
+ *          text: 'Menu Item 1',
+ *          handler: function(){ alert("Item 1 clicked"); }
+ *      }, {
+ *          text: 'Menu Item 2',
+ *          handler: function(){ alert("Item 2 clicked"); }
+ *      }];
+ *  }
+ * ```
  */
 Ext.define('Ext.SplitButton', {
     extend: 'Ext.Button',

@@ -1,5 +1,3 @@
-/* eslint-disable one-var, vars-on-top */
-
 topSuite('Ext.panel.Accordion', [
     'Ext.layout.Fit',
     'Ext.panel.Collapser'

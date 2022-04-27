@@ -263,8 +263,7 @@ Ext.define('Ext.event.Event', {
          * @private
          */
         wheelEvents: {
-            wheel: 1,
-            mousewheel: 1
+            wheel: 1
         },
 
         // msPointerTypes in IE10 are numbers, in the w3c spec they are strings.

@@ -1,8 +1,11 @@
-topSuite("Ext.grid.column.Column",
-    ['Ext.grid.Panel', 'Ext.grid.plugin.CellEditing', 'Ext.form.field.Text'],
-function() {
+topSuite("Ext.grid.column.Column", [
+    'Ext.grid.Panel',
+    'Ext.grid.plugin.CellEditing',
+    'Ext.form.field.Text',
+    'Ext.state.Provider'
+], function() {
     var defaultColumns = [
-            { header: 'Name',  dataIndex: 'name', width: 100 },
+            { header: 'Name', dataIndex: 'name', width: 100 },
             { header: 'Email', dataIndex: 'email', flex: 1 },
             { header: 'Phone', dataIndex: 'phone', flex: 1, hidden: true }
         ],
@@ -12,10 +15,10 @@ function() {
         store = new Ext.data.Store(Ext.apply({
             fields: ['name', 'email', 'phone'],
             data: [
-                { 'name': 'Lisa',  "email": "lisa@simpsons.com",  "phone": "555-111-1224"  },
-                { 'name': 'Bart',  "email": "bart@simpsons.com",  "phone": "555-222-1234"  },
-                { 'name': 'Homer', "email": "homer@simpsons.com", "phone": "555-222-1244"  },
-                { 'name': 'Marge', "email": "marge@simpsons.com", "phone": "555-222-1254"  }
+                { name: 'Lisa', email: 'lisa@simpsons.com', phone: '555-111-1224' },
+                { name: 'Bart', email: 'bart@simpsons.com', phone: '555-222-1234' },
+                { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+                { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
             ]
         }, storeCfg));
 
@@ -165,14 +168,17 @@ function() {
                 flex: 1,
                 margin: '2'
             };
+
             createGrid(
                 null, {
                     columns: columns
                 }
             );
+
             var textField = colRef[1].down('textfield');
 
-            // Ensure we do not click onLeftEdge, because that would not sort anyway. Move 20px into field.
+            // Ensure we do not click onLeftEdge, because that would not sort anyway.
+            // Move 20px into field.
             jasmine.fireMouseEvent(textField.inputEl, 'click', textField.inputEl.getX() + 20);
 
             // That click into the text field should not have sorted the columns
@@ -394,6 +400,64 @@ function() {
             });
 
             expect(grid.query('[isGroupHeader]').length).toBe(0);
+        });
+    });
+
+    describe("stateful", function() {
+        var provider;
+
+        beforeEach(function() {
+            provider = new Ext.state.Provider();
+            Ext.state.Manager.setProvider(provider);
+        });
+
+        afterEach(function() {
+            provider = grid = Ext.destroy(grid, provider);
+            Ext.state.Manager.setProvider(new Ext.state.Provider());
+        });
+
+        it("should ignore column state for stateful:false columns", function() {
+            var nameStateChange,
+                emailStateChange,
+                phoneStateChange;
+
+            provider.on('statechange', function(provider, key, value) {
+                if (value) {
+                    Ext.Array.forEach(value.columns, function(col) {
+                        if (col.id === 'name') {
+                            nameStateChange = true;
+                        }
+
+                        if (col.id === 'email') {
+                            emailStateChange = true;
+                        }
+
+                        if (col.id === 'phone') {
+                            phoneStateChange = true;
+                        }
+                    });
+                }
+            });
+
+            createGrid({}, {
+                stateful: true,
+                stateId: 'mygrid',
+                saveDelay: 0, // stateful save delay
+                width: 1000,
+                columns: [
+                    { header: 'Name', dataIndex: 'name', width: 100, stateful: false, stateId: 'name' },
+                    { header: 'Email', dataIndex: 'email', width: 100, stateId: 'email' },
+                    { header: 'Phone', dataIndex: 'phone', width: 100, stateId: 'phone' }
+                ]
+            });
+
+            nameStateChange = false;
+            emailStateChange = false;
+            phoneStateChange = false;
+            grid.getColumns()[0].setWidth(200);
+            expect(nameStateChange).toBe(false);
+            expect(emailStateChange).toBe(true);
+            expect(phoneStateChange).toBe(true);
         });
     });
 

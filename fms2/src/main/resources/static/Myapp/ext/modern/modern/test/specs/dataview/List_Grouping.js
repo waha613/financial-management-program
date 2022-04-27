@@ -1,6 +1,3 @@
-// These conventions are for compression and not worrisome for tests:
-/* eslint-disable vars-on-top, one-var */
-
 topSuite('Ext.dataview.List_Grouping', [
     false,
     'Ext.dataview.List',

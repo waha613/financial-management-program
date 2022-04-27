@@ -7,6 +7,11 @@ Ext.define('Ext.data.summary.Min', {
 
     alias: 'data.summary.min',
 
+    /**
+     * Name of the summary function that appears in the {@link Ext.grid.plugin.Summaries} plugin
+     */
+    text: 'Min',
+
     calculate: function(records, property, root, begin, end) {
         var min = this.extractValue(records[begin], property, root),
             i, v;

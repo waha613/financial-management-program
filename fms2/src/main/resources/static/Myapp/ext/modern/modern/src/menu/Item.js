@@ -2,7 +2,8 @@
  * A base class for all menu items that require menu-related functionality such as click handling,
  * sub-menus, icons, etc.
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     var mainPanel = Ext.create('Ext.Panel', {
  *         fullscreen: true,
  *
@@ -19,6 +20,68 @@
  *             }]
  *         }
  *     });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtButton, ExtContainer, ExtMenu, ExtMenuItem } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtContainer>
+ *                <ExtButton text="Menu">
+ *                    <ExtMenu rel="menu" >
+ *                        <ExtMenuItem text="Mobile" name="ui-type" />
+ *                        <ExtMenuItem text="Desktop" name="ui-type"/>
+ *                    </ExtMenu>
+ *                </ExtButton>
+ *             </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer>
+ *             <ExtButton text="Menu">
+ *                 <ExtMenu rel="menu" >
+ *                     <ExtMenuItem text="Mobile" name="ui-type" ></ExtMenuItem>
+ *                     <ExtMenuItem text="Desktop" name="ui-type"></ExtMenuItem>
+ *                 </ExtMenu>
+ *             </ExtButton>
+ *         </ExtContainer>
+ *    `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ *  *<ext-container>
+ *    <ext-button text="Menu">
+ *        <ext-menu rel="menu" >
+ *            <ext-menuitem text="Mobile" name="ui-type"></ext-menuitem>
+ *            <ext-menuitem text="Desktop" name="ui-type"/></ext-menuitem>
+ *        </ext-menu>
+ *    </ext-button>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-menu.component';
+ * import '@sencha/ext-web-components/dist/ext-menuitem.component';
+ *
+ * export default class ItemComponent{}
+ * ```
  */
 Ext.define('Ext.menu.Item', {
     extend: 'Ext.Component',
@@ -85,7 +148,7 @@ Ext.define('Ext.menu.Item', {
 
         /**
          * @cfg {Function/String} handler
-         * A function called when the menu item is clicked (can be used instead 
+         * A function called when the menu item is clicked (can be used instead
          * of {@link #click} event).
          * @cfg {Ext.menu.Item} handler.item The item that was clicked
          * @cfg {Ext.event.Event} handler.e The underlying {@link Ext.event.Event}.
@@ -101,7 +164,7 @@ Ext.define('Ext.menu.Item', {
 
         /**
          * @cfg {Ext.menu.Menu/Object} menu
-         * Either an instance of {@link Ext.menu.Menu} or a config object for 
+         * Either an instance of {@link Ext.menu.Menu} or a config object for
          * an {@link Ext.menu.Menu} which will act as a sub-menu to this item.
          */
         menu: {
@@ -111,7 +174,7 @@ Ext.define('Ext.menu.Item', {
 
         /**
          * @cfg {String} menuAlign
-         * The default 
+         * The default
          * {@link Ext.util.Positionable#getAlignToXY Ext.util.Positionable.getAlignToXY} anchor
          * position value for this item's sub-menu relative to this item's position.
          */
@@ -146,7 +209,7 @@ Ext.define('Ext.menu.Item', {
 
         /**
          * @cfg {Boolean} [separator=false]
-         * If `true`, this item places an {@link Ext.menu.Separator} above 
+         * If `true`, this item places an {@link Ext.menu.Separator} above
          * itself unless it is the first visible item.
          */
         separator: null
@@ -233,7 +296,7 @@ Ext.define('Ext.menu.Item', {
         // An item can be focused (active), but disabled.
         // Disabled items must not action on click (or left/right arrow)
         // http://www.w3.org/TR/2013/WD-wai-aria-practices-20130307/#menu
-        // "Disabled menu items receive focus but have no action when Enter or Left Arrow/Right 
+        // "Disabled menu items receive focus but have no action when Enter or Left Arrow/Right
         // Arrow is pressed."
         if (!me.getDisabled() && menu) {
 
@@ -281,7 +344,7 @@ Ext.define('Ext.menu.Item', {
 
         // We do not refuse activation if the Item is disabled.
         // http://www.w3.org/TR/2013/WD-wai-aria-practices-20130307/#menu
-        // "Disabled menu items receive focus but have no action when Enter or Left Arrow/Right 
+        // "Disabled menu items receive focus but have no action when Enter or Left Arrow/Right
         // Arrow is pressed."
         me.addCls(me.activeCls);
 
@@ -462,7 +525,7 @@ Ext.define('Ext.menu.Item', {
     privates: {
 
         /**
-        * Function to add click listener for touch devices. 
+        * Function to add click listener for touch devices.
         */
         handleTouch: function() {
             var me = this,
@@ -541,7 +604,7 @@ Ext.define('Ext.menu.Item', {
                 return;
             }
 
-            // We only manually need to trigger the click event if it's come from a key event 
+            // We only manually need to trigger the click event if it's come from a key event
             // and the event has not had preventDefault called.
             if (href && e.type !== 'click' && !browserEvent.defaultPrevented) {
                 me.handlingClick = true;

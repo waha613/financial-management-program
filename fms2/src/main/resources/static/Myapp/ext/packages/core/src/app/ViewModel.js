@@ -1724,6 +1724,8 @@ Ext.define('Ext.app.ViewModel', {
             for (link in links) {
                 this.linkTo(link, links[link]);
             }
+
+            return links;
         },
 
         applySchema: function(schema) {

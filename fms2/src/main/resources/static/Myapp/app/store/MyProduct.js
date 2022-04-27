@@ -16,5 +16,5 @@ Ext.define('MyApp.store.MyProduct', {
             totalProperty:'totalRows',
         }
     },
-    autoLoad: false,
+    autoLoad: true,
 });

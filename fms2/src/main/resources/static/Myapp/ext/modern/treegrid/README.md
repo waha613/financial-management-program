@@ -8,11 +8,11 @@ This package contains the components related to Ext.grid.Tree.
 ## How to install this package
 Install this package using the following command:
     
-    npm install @extjs/ext-react-treegrid --save
+    npm install @sencha/ext-react-treegrid --save
     
 <br />
 
-Copyright (c) 2006-2017, Sencha Inc.  
+Copyright (c) 2006-2020, Sencha Inc.  
 All rights reserved.  
 licensing@sencha.com  
 

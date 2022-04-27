@@ -10,7 +10,8 @@
  *
  * Example usage:
  *
- *      @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *      Ext.create('Ext.form.Panel', {
  *           fullscreen: true,
  *           items: [
@@ -20,6 +21,50 @@
  *               }
  *           ]
  *       });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import { ExtContainer, ExtTimePanel } from '@sencha/ext-react';
+ * import React, { Component } from 'react';
+ * export default class TimeExample extends Component {
+ *     render() {
+ *         return (
+ *            <ExtContainer padding={10} layout={'auto'}>
+ *               <ExtTimePanel shadow/>
+ *            </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *        <ExtContainer [padding]="10" [layout]="'auto'">
+ *            <ExtTimePanel shadow="true"></ExtTimePanel>
+ *        </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container padding={10} layout='{"auto"}'>
+ *    <ext-timepanel shadow></ext-timepanel>
+ *  </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-timepanel.component';
+ *
+ * export default class TimeComponent {}
+
  */
 Ext.define('Ext.panel.Time', {
     extend: 'Ext.Panel',
@@ -130,7 +175,7 @@ Ext.define('Ext.panel.Time', {
                   * @cfg {string} hourDisplayFormat
                   * Accepted values are `G` or `H`
                   * Default G
-                  * See {@link Ext.Date} for details. 
+                  * See {@link Ext.Date} for details.
                   * @since 7.0
                   */
                 'hourDisplayFormat'

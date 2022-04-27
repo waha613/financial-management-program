@@ -1,7 +1,7 @@
 /*
-This file is part of Ext JS 7.0.0.156
+This file is part of Ext JS 7.4.0.42
 
-Copyright (c) 2011-2019 Sencha Inc
+Copyright (c) 2011-2021 Sencha Inc
 
 license: http://www.sencha.com/legal/sencha-software-license-agreement
 Contact: http://www.sencha.com/contact
@@ -14,6 +14,6 @@ terms contained in a written agreement between you and Sencha.
 If you are unsure which license is appropriate for your use, please contact the sales department
 at http://www.sencha.com/contact.
 
-Version: 7.0.0.156 Build date: 2019-08-22 21:19:41 (23a4f5eb33e19b67a3a5d753d762ff78e836bdf1)
+Version: 7.4.0.42 Build date: 2021-05-04 14:42:24 (669f575eb1592a96aa3fb58a602faf3b96d819ea)
 
 */

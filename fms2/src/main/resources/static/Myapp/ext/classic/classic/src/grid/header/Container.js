@@ -274,18 +274,32 @@ Ext.define('Ext.grid.header.Container', {
         // If this is a leaf column header, and is NOT functioning as a container,
         // use Container layout with a no-op calculate method.
         if (me.isColumn && !me.isGroupHeader) {
-            if (!me.items || me.items.length === 0) {
+            if (!me.items || !me.items.length) {
                 me.isContainer = me.isFocusableContainer = false;
-
-                // Allow overriding via instance config
-                if (!me.hasOwnProperty('focusable')) {
-                    me.focusable = true;
-                }
 
                 me.layout = {
                     type: 'container',
                     calculate: Ext.emptyFn
                 };
+            }
+
+            // Allow overriding via instance config
+            if (!me.hasOwnProperty('focusable')) {
+                // It is a bit odd making a container focusable, but column headers must
+                // be focusable or else all kinds of problems arise. For starters, one
+                // cannot click on it to sort unless the first column is visible because
+                // the click will attempt to focus the header, but not being focusable, the
+                // search for a focus target will bubble up to the header container and
+                // back down to the first focusable header. If that causes a scroll, the
+                // original column header that was clicked can scroll out of view and
+                // effectively veto the click/sort. Secondarily, if the header is not
+                // focusable, one cannot navigate to it with arrow keys as you would do
+                // normally. Granted, the addition of components inside the header makes
+                // for an odd (and non-standard) experience. The alternative, however, is
+                // totally unacceptable. Perhaps there is a way to someday "blend" such
+                // focusable container items into the parent container, but until research
+                // into that approach is done, this is the best we can do.
+                me.focusable = true;
             }
         }
         // HeaderContainer and Group header needs a gridcolumn layout.

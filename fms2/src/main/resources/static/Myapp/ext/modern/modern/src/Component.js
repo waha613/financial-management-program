@@ -80,27 +80,29 @@
  * Let's revisit the above example now, this time creating a panel with two child Components and a
  * hbox layout:
  *
- *     @example
- *     var panel = Ext.create('Ext.Panel', {
- *         layout: 'hbox',
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var panel = Ext.create('Ext.Panel', {
+ *     layout: 'hbox',
  *
- *         items: [
- *             {
- *                 xtype: 'panel',
- *                 flex: 1,
- *                 html: 'Left Panel, 1/3rd of total size',
- *                  style: 'background-color: #5E99CC;'
- *             },
- *             {
- *                 xtype: 'panel',
- *                 flex: 2,
- *                 html: 'Right Panel, 2/3rds of total size',
- *                 style: 'background-color: #759E60;'
- *             }
- *         ]
- *     });
+ *     items: [
+ *         {
+ *             xtype: 'panel',
+ *             flex: 1,
+ *             html: 'Left Panel, 1/3rd of total size',
+ *              style: 'background-color: #5E99CC;'
+ *         },
+ *         {
+ *             xtype: 'panel',
+ *             flex: 2,
+ *             html: 'Right Panel, 2/3rds of total size',
+ *             style: 'background-color: #759E60;'
+ *         }
+ *     ]
+ * });
  *
- *     Ext.Viewport.add(panel);
+ * Ext.Viewport.add(panel);
+ * ```
  *
  * This time we created 3 Panels - the first one is created just as before but the inner two are
  * declared inline using an xtype. Xtype is a convenient way of creating Components without having
@@ -122,23 +124,25 @@
  *
  * Sample usage:
  *
- *     @example
- *     Ext.create('Ext.Container', {
- *         fullscreen: true,
- *         layout: 'fit',
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Container', {
+ *     fullscreen: true,
+ *     layout: 'fit',
  *
- *         items: [
- *             {
- *                 xtype: 'panel',
- *                 html: 'This panel is created by xtype'
- *             },
- *             {
- *                 xtype: 'toolbar',
- *                 title: 'So is the toolbar',
- *                 docked: 'top'
- *             }
- *         ]
- *     });
+ *     items: [
+ *         {
+ *             xtype: 'panel',
+ *             html: 'This panel is created by xtype'
+ *         },
+ *         {
+ *             xtype: 'toolbar',
+ *             title: 'So is the toolbar',
+ *             docked: 'top'
+ *         }
+ *     ]
+ * });
+ * ```
  *
  *
  * ### Common xtypes
@@ -203,18 +207,20 @@
  * Component, and modify any of them at any point later. For example, we can easily modify the
  * {@link Ext.Panel#html html content} of a Panel after creating it:
  *
- *     @example
- *     // we can configure the HTML when we instantiate the Component
- *     var panel = Ext.create('Ext.Panel', {
- *         fullscreen: true,
- *         html: 'This is a Panel'
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ *  // we can configure the HTML when we instantiate the Component
+ *  var panel = Ext.create('Ext.Panel', {
+ *      fullscreen: true,
+ *      html: 'This is a Panel'
+ *  });
  *
- *     // we can update the HTML later using the setHtml method:
- *     panel.setHtml('Some new HTML');
+ *  // we can update the HTML later using the setHtml method:
+ *  panel.setHtml('Some new HTML');
  *
- *     // we can retrieve the current HTML using the getHtml method:
- *     Ext.Msg.alert(panel.getHtml()); // displays "Some new HTML"
+ *  // we can retrieve the current HTML using the getHtml method:
+ *  Ext.Msg.alert(panel.getHtml()); // displays "Some new HTML"
+ * ```
  *
  * Every config has a getter method and a setter method - these are automatically generated and
  * always follow the same pattern. For example, a config called `html` will receive `getHtml` and
@@ -651,14 +657,13 @@ Ext.define('Ext.Component', {
         /**
          * @cfg {Boolean/String/Object} [userSelectable=false]
          *
-         * Set to true to allow users to select text within this component.
+         * Setting the value to true implies `auto`, while false implies `none`. Setting the value 
+         * to `text` allows users to select text within this component. The value may also be an 
+         * object keyed by child element name as seen below.
          *
          * Can also be any valid value for the CSS3
          * [user-select](https://developer.mozilla.org/en-US/docs/Web/CSS/user-select) property.
          *
-         * A value of true implies `auto`, while false implies `none`.
-         *
-         * May also be an object keyed by child element name.
          *
          * By default, the user cannot click+drag+select text/elements of the UI.  Applications may
          * want to enable user selection for specific DOM elements, such as the bodyElement of
@@ -1356,7 +1361,7 @@ Ext.define('Ext.Component', {
 
         if (scroller && scroller.isVirtualScroller) {
             scrollbarSize = scroller.getScrollbarSize();
-            region.adjust(0, 0, -scrollbarSize.height, -scrollbarSize.width);
+            region.adjust(0, -scrollbarSize.width, -scrollbarSize.height, 0);
         }
 
         return region;
@@ -3054,15 +3059,33 @@ Ext.define('Ext.Component', {
         },
 
         handleGlobalShow: function(c) {
+            this.maybeRunWhenVisible(c);
+        },
+
+        handleGlobalExpand: function(c) {
+            this.maybeRunWhenVisible(c);
+        },
+
+        maybeRunWhenVisible: function(c) {
             var me = this;
 
-            if (me.isVisible(true) && (c === me || me.isDescendantOf(c))) {
+            if ((c === me || me.isDescendantOf(c)) && me.canLayoutChildren()) {
                 me.runWhenVisible();
             }
         },
 
-        hasHiddenContent: function() {
-            return this.getHidden();
+        canLayoutChildren: function() {
+            var current = this;
+
+            while (current) {
+                if (!current.isVisible() || current.hasHiddenContent()) {
+                    return false;
+                }
+
+                current = current.getRefOwner();
+            }
+
+            return true;
         },
 
         runWhenVisible: function() {
@@ -3092,18 +3115,17 @@ Ext.define('Ext.Component', {
          */
         whenVisible: function(fn, args) {
             var me = this,
-                listener, pending, visible;
+                listener = me.visibleListener,
+                pending = me.pendingVisible,
+                visible = me.canLayoutChildren();
 
             args = args || Ext.emptyArray;
-
-            listener = me.visibleListener;
-            pending = me.pendingVisible;
-            visible = me.isVisible(true);
 
             if (!visible && !listener) {
                 me.visibleListener = Ext.on({
                     scope: me,
                     show: 'handleGlobalShow',
+                    expand: 'handleGlobalExpand',
                     destroyable: true
                 });
             }

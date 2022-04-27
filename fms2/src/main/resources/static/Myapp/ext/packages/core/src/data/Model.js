@@ -897,11 +897,13 @@ Ext.define('Ext.data.Model', {
             field = fields[i];
             summary = field.getSummary();
 
-            if (summary) {
-                result = result || {};
-                name = field.name;
-                prop = field.summaryField || name;
-                result[name] = summary.calculate(records, prop, 'data', 0, recLen);
+            result = result || {};
+            name = field.name;
+            prop = field.summaryField || name;
+
+            if (name !== 'id') {
+                /* eslint-disable-next-line max-len */
+                result[name] = summary ? summary.calculate(records, prop, 'data', 0, recLen) : undefined;
             }
         }
 
@@ -2024,6 +2026,11 @@ Ext.define('Ext.data.Model', {
 
             item = role.getAssociatedItem(me);
 
+            // If the current associated item is null, move to the next item
+            if (!item) {
+                continue;
+            }
+
             if (item.isStore) {
                 items = item.getData().items; // get the records for the store
                 length = items.length;
@@ -2534,10 +2541,42 @@ Ext.define('Ext.data.Model', {
                 });
 
                 summaryModel.isSummaryModel = true;
-                me.summaryModel = proto.summaryModel = summaryModel;
+                // we do not keep the summary model on the prototype
+                // because the model could be used in different stores
+                // that can have different summaries added dynamically
+                me.summaryModel = summaryModel;
             }
 
             return summaryModel || null;
+        },
+
+        /**
+         * Add a new summary field to the model
+         *
+         * @param {String} name Name of the field
+         * @param {Ext.data.summary.Base} summary Name of the summary function
+         */
+        setSummaryField: function(name, summary) {
+            var field = this.getField(name);
+
+            if (!field) {
+                this.addFields([{
+                    name: name,
+                    type: 'auto',
+                    summary: summary,
+                    doneSummary: (summary && summary.isAggregator)
+                }]);
+            }
+            else {
+                if (field.doneSummary && summary && summary.isAggregator) {
+                    field.summary = summary;
+                }
+                else {
+                    field.summary = summary;
+                    field.doneSummary = false;
+                }
+            }
+
         },
 
         /**
@@ -3545,72 +3584,104 @@ Ext.define('Ext.data.Model', {
 
             initSummaries: function(data, cls, proto) {
                 var summaryDefs = data.summary,
-                    superSummaries = proto.summaryFields,
-                    summaries, summaryMap, name, summary,
-                    len, i, index, field;
+                    fields = proto.fields,
+                    superSummaryFields = proto.summaryFields,
+                    field, fieldName, i, index, inlineDefs, len, name, summaryFields,
+                    summaryFieldMap, summaryField, type;
 
-                if (superSummaries) {
-                    summaries = [];
-                    summaryMap = {};
+                if (superSummaryFields) {
+                    summaryFields = [];
+                    summaryFieldMap = {};
 
-                    for (i = 0, len = superSummaries.length; i < len; ++i) {
-                        summary = superSummaries[i];
-                        summaries.push(summary);
-                        summaries[summary.name] = i;
+                    for (i = 0, len = superSummaryFields.length; i < len; ++i) {
+                        summaryField = superSummaryFields[i];
+                        summaryFields.push(summaryField);
+                        summaryFieldMap[summaryField.name] = i;
                     }
+                }
+
+                // We take any "summary: foo" configs on the model fields (but not ones
+                // that were inherited since those come in above) and reform them into an
+                // equivalent "summary: {}" as one would define on the class body.
+                for (i = 0, len = fields.length; i < len; ++i) {
+                    field = fields[i];
+
+                    if (field.summary && field.definedBy === cls) {
+                        inlineDefs = inlineDefs || {};
+                        inlineDefs[field.name] = field.summary;
+                    }
+                }
+
+                // If they've got inline summary configs on the fields, merge them with
+                // whatever is on the class body. The "summary" on the class body wins
+                // when there is a collision. We don't worry about collisions because it
+                // is a common need to use code generation to define model fields, so we
+                // allow the class summary definition to override whatever is on them.
+                if (inlineDefs) {
+                    summaryDefs = Ext.apply(inlineDefs, summaryDefs);
                 }
 
                 if (summaryDefs) {
                     delete data.summary;
 
-                    summaries = summaries || [];
-                    summaryMap = summaryMap || {};
+                    summaryFields = summaryFields || [];
+                    summaryFieldMap = summaryFieldMap || {};
 
                     for (name in summaryDefs) {
-                        summary = summaryDefs[name];
+                        type = typeof(summaryField = summaryDefs[name]);
 
-                        if (typeof summary === 'function') {
-                            summary = {
-                                summary: summary
+                        if (type === 'function' || type === 'string') {
+                            summaryField = {
+                                summary: summaryField
                             };
                         }
 
                         // If it's not in the summaries, it's new here. We've already
                         // applied when copying down so this is safe to do
-                        index = summaryMap[name];
+                        index = summaryFieldMap[name];
 
-                        summary = Ext.apply({
+                        summaryField = Ext.apply({
                             name: name
-                        }, summary);
+                        }, summaryField);
 
-                        field = summary.field;
+                        field = summaryField.field;
 
                         if (field) {
-                            delete summary.field;
-                            summary.summaryField = field;
+                            delete summaryField.field;
+                            summaryField.summaryField = field;
+                        }
+
+                        fieldName = summaryField.summaryField;
+
+                        // Tempting to do the following, but we do not require that all
+                        // fields be defined:
+                        //
+                        // if (fieldName && !proto.fieldsMap[fieldName]) {
+                        //     Ext.raise('No field named "' + fieldName + '" on ' + (
+                        //         proto.hasOwnProperty('$className')
+                        //             ? '"' + proto.$className + '"'
+                        //             : 'anonymous model'
+                        //     ));
+                        // }
+
+                        field = proto.fieldsMap[fieldName || name];
+
+                        if (field && !summaryField.type) {
+                            summaryField.type = field.type;
                         }
 
                         if (index === undefined) {
-                            index = summaries.length;
-                            summaryMap[name] = summary;
+                            index = summaryFields.length;
+                            summaryFieldMap[name] = index;
                         }
 
-                        summaries[index] = summary;
+                        summaryFields[index] = summaryField;
                     }
                 }
 
-                if (summaries) {
-                    //<debug>
-                    for (i = 0, len = summaries.length; i < len; ++i) {
-                        if (summaries[i].name in proto.fieldsMap) {
-                            Ext.raise('Cannot redefine field, use the summary property ' +
-                                      'on the field.');
-                        }
-                    }
-                    //</debug>
-
-                    // Store these in an array so we have a predictable order when subclassing
-                    proto.summaryFields = summaries;
+                // Store these in an array so we have a predictable order when subclassing
+                if (summaryFields) {
+                    proto.summaryFields = summaryFields;
                 }
             },
 

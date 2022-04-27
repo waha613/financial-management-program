@@ -1,6 +1,6 @@
 /**
  * Ext JS Library
- * Copyright(c) 2006-2014 Sencha Inc.
+ * Copyright(c) 2006-2020 Sencha Inc.
  * licensing@sencha.com
  * http://www.sencha.com/license
  * @class Ext.ux.desktop.App

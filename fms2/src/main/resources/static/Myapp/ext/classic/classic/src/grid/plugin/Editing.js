@@ -650,7 +650,7 @@ Ext.define('Ext.grid.plugin.Editing', {
 
         // The record may be removed from the store but the view
         // not yet updated, so check it exists
-        if (!record) {
+        if (!record || record.isNonData) {
             return;
         }
 

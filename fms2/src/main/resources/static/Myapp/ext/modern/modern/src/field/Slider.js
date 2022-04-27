@@ -1,33 +1,198 @@
 /**
- * The slider is a way to allow the user to select a value from a given numerical range. 
- * You might use it for choosing a percentage, combine two of them to get min and max values, 
- * or use three of them to specify the hex values for a color. Each slider contains a single 
- * 'thumb' that can be dragged along the slider's length to change the value. Sliders are equally 
- * useful inside {@link Ext.form.Panel forms} and standalone. Here's how to quickly create a slider 
+ * The slider is a way to allow the user to select a value from a given numerical range.
+ * You might use it for choosing a percentage, combine two of them to get min and max values,
+ * or use three of them to specify the hex values for a color. Each slider contains a single
+ * 'thumb' that can be dragged along the slider's length to change the value. Sliders are equally
+ * useful inside {@link Ext.form.Panel forms} and standalone. Here's how to quickly create a slider
  * in form, in this case enabling a user to choose a percentage:
  *
- *     @example
- *     Ext.create('Ext.form.Panel', {
- *         fullscreen: true,
- *         items: [
- *             {
- *                 xtype: 'sliderfield',
- *                 label: 'Percentage',
- *                 value: 50,
- *                 minValue: 0,
- *                 maxValue: 100
- *             }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.form.Panel', {
+ *     fullscreen: true,
+ *     items: [
+ *         {
+ *             xtype: 'sliderfield',
+ *             label: 'Percentage',
+ *             value: 50,
+ *             minValue: 0,
+ *             maxValue: 100
+ *         }
+ *     ]
+ * });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtFormPanel, ExtSliderField } from '@sencha/ext-react';
+ * export default class SliderFieldExample extends Component {
+ *         state = {
+ *             singleValue: 20,
+ *             multipleValue: [10, 70]
+ *         };
  *
- * In this case we set a starting value of 50%, and defined the min and max values to be 0 and 
- * 100 respectively, giving us a percentage slider. Because this is such a common use case, the 
- * defaults for {@link #minValue} and {@link #maxValue} are already set to 0 and 100 so in the 
+ *         onSingleChange = (field, value) => {
+ *             this.setState({ singleValue: value });
+ *         }
+ *
+ *         onMultipleChange = (field, value) => {
+ *             this.setState({ multipleValue: value });
+ *         }
+ *
+ *         render() {
+ *             const { singleValue, multipleValue } = this.state;
+ *
+ *             return (
+ *                 <ExtContainer layout="center">
+ *                     <ExtFormPanel shadow width="300">
+ *                         <ExtSliderField
+ *                             onChange={this.onSingleChange}
+ *                             label="Single Thumb"
+ *                             value={singleValue}
+ *                         />
+ *                         <div style={{marginBottom: '20px'}}>Value: {singleValue}</div>
+ *                         <ExtSliderField
+ *                             onChange={this.onMultipleChange}
+ *                             label="Multiple Thumbs"
+ *                             values={multipleValue}
+ *                         />
+ *                         <div>Values: {multipleValue.join(', ')}</div>
+ *                     </ExtFormPanel>
+ *                 </ExtContainer>
+ *             )
+ *         }
+ *     }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer [layout]="'center'">
+ *             <ExtFormPanel [shadow]="true" [width]="400" [height]="300">
+ *                 <ExtSliderField
+ *                     (change)="onSingleChange($event)"
+ *                     label="Single Thumb"
+ *                     [value]="singleValue"
+ *                 >
+ *                 </ExtSliderField>
+ *                 <ExtContainer [style]="{marginBottom: 20}"
+ *                      [html]="'Value: '+singleValue">
+ *                 </ExtContainer>
+ *                 <ExtSliderField
+ *                     (change)="onMultipleChange($event)"
+ *                     label="Multiple Thumbs"
+ *                     [value]="multipleValue"
+ *                 >
+ *                 </ExtSliderField>
+ *                 <ExtContainer
+ *                     [html]="'Values: '+multipleValue.join(', ')">
+ *                 </ExtContainer>
+ *             </ExtFormPanel>
+ *         </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {
+ *     singleValue:number = 20;
+ *     multipleValue:number[] = [10, 70];
+ *
+ *     onSingleChange = (params) => {
+ *         this.singleValue = params.newValue;
+ *     }
+ *
+ *     onMultipleChange = (params) => {
+ *         this.multipleValue = params.newValue;
+ *     }
+ * }
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container layout="center">
+ *    <ext-formpanel
+ *         shadow="true"
+ *         width="300"
+ *    >
+ *        <ext-sliderfield
+ *             onChange="sliderfield.onSingleChange"
+ *             label="Single Thumb"
+ *             value="20"
+ *             onready="sliderfield.readySingleChangeSliderField"
+ *        >
+ *        </ext-sliderfield>
+ *        <ext-container
+ *            style='{marginBottom: "20px"}'
+ *            onready="sliderfield.readySingleValueMessage"
+ *        >
+ *        </ext-container>
+ *        <ext-sliderfield
+ *             onChange="sliderfield.onMultipleChange"
+ *             label="Multiple Thumbs"
+ *             value="[10,70]"
+ *             onready="sliderfield.readyMultipleChangeSliderField"
+ *        >
+ *        </ext-sliderfield>
+ *        <ext-container
+ *             onready="sliderfield.readyMultipleValueMessage"
+ *        >
+ *        </ext-container>
+ *    </ext-formpanel>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-sliderfield.component';
+ *
+ * export default class SliderFieldComponent {
+ *
+ *   constructor() {
+ *       this.singleValue = 20;
+ *       this.multipleValue = [10, 70];
+ *   }
+ *
+ *   onSingleChange = (event) => {
+ *       this.singleValueMessageView.setHTML(`Values: ${event.detail.newValue}`)
+ *   }
+ *
+ *   readySingleChangeSliderField = (event) => {
+ *       this.singleValueSliderFieldView = event.detail.cmp;
+ *   }
+ *
+ *   readyMultipleChangeSliderField = (event) => {
+ *       this.multipleValueSliderFieldView = event.detail.cmp;
+ *   }
+ *
+ *   onMultipleChange = (event) => {
+ *       this.multipleValueMessageView.setHTML(`Values: ${event.detail.newValue.join(',')}`)
+ *   }
+ *
+ *   readyMultipleValueMessage = (event) => {
+ *        this.multipleValueMessageView = event.detail.cmp;
+ *        this.multipleValueMessageView.setHtml(`Values: ${this.multipleValue}`)
+ *   }
+ *
+ *   readySingleValueMessage = (event) => {
+ *        this.singleValueMessageView = event.detail.cmp;
+ *        this.singleValueMessageView.setHtml(`Value: ${this.singleValue}`);
+ *   }
+ * }
+ *
+ *  window.sliderfield = new SliderFieldComponent();
+ * ```
+ *
+ * In this case we set a starting value of 50%, and defined the min and max values to be 0 and
+ * 100 respectively, giving us a percentage slider. Because this is such a common use case, the
+ * defaults for {@link #minValue} and {@link #maxValue} are already set to 0 and 100 so in the
  * example above they could be removed.
  *
- * It's often useful to render sliders outside the context of a form panel too. In this example 
- * we create a slider that allows a user to choose the waist measurement of a pair of jeans. 
- * Let's say the online store we're making this for sells jeans with waist sizes from 24 inches 
+ * It's often useful to render sliders outside the context of a form panel too. In this example
+ * we create a slider that allows a user to choose the waist measurement of a pair of jeans.
+ * Let's say the online store we're making this for sells jeans with waist sizes from 24 inches
  * to 60 inches in 2 inch increments - here's how we might achieve that:
  *
  *     @example
@@ -45,9 +210,9 @@
  *         ]
  *     });
  *
- * Now that we've got our slider, we can ask it what value it currently has and listen 
- * to events that it fires. For example, if we wanted our app to show different images 
- * for different sizes, we can listen to the {@link #change} event to be informed whenever 
+ * Now that we've got our slider, we can ask it what value it currently has and listen
+ * to events that it fires. For example, if we wanted our app to show different images
+ * for different sizes, we can listen to the {@link #change} event to be informed whenever
  * the slider is moved:
  *
  *     slider.on('change', function(field, newValue) {
@@ -59,7 +224,7 @@
  *     }, this);
  *
  * Here we listened to the {@link #change} event on the slider and updated the background
- * image of an {@link Ext.Img image component} based on what size the user selected. Of 
+ * image of an {@link Ext.Img image component} based on what size the user selected. Of
  * course, you can use any logic inside your event listener.
  */
 Ext.define('Ext.field.Slider', {

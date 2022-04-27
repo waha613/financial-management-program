@@ -135,9 +135,17 @@
             parameterType="com.fms2.fms2.inboundDetails.page.InboundDetailsPage"
             resultType="com.fms2.fms2.inboundDetails.domain.InboundDetails">
         select * from inbound_details
-        where inboundId in
-        <foreach collection="inboundIds" open="(" close=")" item="item" separator=",">
-            #{item}
-        </foreach>
+        <where>
+            <if test="inboundIds != null &amp;&amp; !inboundIds.size()>0">
+                and inboundId in
+                <foreach collection="inboundIds" open="(" close=")" item="item" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test='inboundId != null'>
+                and inboundId =#{inboundId}
+            </if>
+        </where>
+
     </select>
 </mapper>

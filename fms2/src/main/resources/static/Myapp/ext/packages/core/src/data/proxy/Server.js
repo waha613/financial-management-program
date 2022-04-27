@@ -47,6 +47,13 @@ Ext.define('Ext.data.proxy.Server', {
         groupParam: 'group',
 
         /**
+         * @cfg {String} [summaryParam="summary"]
+         * The name of the 'summary' parameter to send in a request.
+         * Defaults to 'summary'. Set this to `''` if you don't want to send a summary parameter.
+         */
+        summaryParam: 'summary',
+
+        /**
          * @cfg {String} [groupDirectionParam="groupDir"]
          * The name of the direction parameter to send in a request. **This is only used when
          * simpleGroupMode is set to true.**
@@ -466,6 +473,7 @@ Ext.define('Ext.data.proxy.Server', {
         /* eslint-disable-next-line vars-on-top */
         var me = this,
             params = {},
+            groupers = operation.getGroupers(),
             grouper = operation.getGrouper(),
             sorters = operation.getSorters(),
             filters = operation.getFilters(),
@@ -482,7 +490,9 @@ Ext.define('Ext.data.proxy.Server', {
             sortParam = me.getSortParam(),
             filterParam = me.getFilterParam(),
             directionParam = me.getDirectionParam(),
-            hasGroups, index;
+            summaries = operation.getSummaries(),
+            summaryParam = me.getSummaryParam(),
+            hasGrouper, hasGroupers, index;
 
         if (pageParam && page) {
             params[pageParam] = page;
@@ -496,31 +506,54 @@ Ext.define('Ext.data.proxy.Server', {
             params[limitParam] = limit;
         }
 
-        hasGroups = groupParam && grouper;
+        if (summaryParam && summaries && summaries.length > 0) {
+            params[summaryParam] = me.encodeFields(summaries);
+        }
 
-        if (hasGroups) {
+        hasGrouper = groupParam && grouper;
+        hasGroupers = groupParam && groupers && groupers.length;
+
+        // if there's a grouper then create a groupers array with one item
+
+        /* eslint-disable max-len */
+        if (hasGrouper || hasGroupers) {
             // Grouper is a subclass of sorter, so we can just use the sorter method
             if (simpleGroupMode) {
-                params[groupParam] = grouper.getProperty();
+                if (hasGrouper) {
+                    params[groupParam] = grouper.getProperty();
 
-                // Allow for direction to be encoded into the same parameter
-                if (groupDirectionParam === groupParam) {
-                    params[groupParam] += ' ' + grouper.getDirection();
+                    // Allow for direction to be encoded into the same parameter
+                    if (groupDirectionParam === groupParam) {
+                        params[groupParam] += ' ' + grouper.getDirection();
+                    }
+                    else {
+                        params[groupDirectionParam] = grouper.getDirection();
+                    }
                 }
                 else {
-                    params[groupDirectionParam] = grouper.getDirection();
+                    for (index = 0; index < groupers.length; index++) {
+                        // Allow for direction to be encoded into the same parameter
+                        if (groupDirectionParam === groupParam) {
+                            params[groupParam] = Ext.Array.push(params[groupParam] || [], groupers[index].getProperty() + ' ' + groupers[index].getDirection());
+                        }
+                        else {
+                            params[groupParam] = Ext.Array.push(params[groupParam] || [], groupers[index].getProperty());
+                            params[groupDirectionParam] = Ext.Array.push(params[groupDirectionParam] || [], groupers[index].getDirection());
+                        }
+                    }
                 }
             }
             else {
-                params[groupParam] = me.encodeSorters([grouper], true);
+                params[groupParam] = hasGrouper ? me.encodeSorters([grouper], true) : me.encodeSorters(groupers);
             }
         }
+        /* eslint-enable max-len */
 
         /* eslint-disable max-len */
         if (sortParam && sorters && sorters.length > 0) {
             if (simpleSortMode) {
                 // Group will be included in sorters, so skip sorter 0 if groups
-                for (index = (sorters.length > 1 && hasGroups) ? 1 : 0; index < sorters.length; index++) {
+                for (index = 0; index < sorters.length; index++) {
                     // Allow for direction to be encoded into the same parameter
                     if (directionParam === sortParam) {
                         params[sortParam] = Ext.Array.push(params[sortParam] || [], sorters[index].getProperty() + ' ' + sorters[index].getDirection());
@@ -542,6 +575,36 @@ Ext.define('Ext.data.proxy.Server', {
         }
 
         return params;
+    },
+
+    /**
+     * Encodes the array of {@link Ext.data.field.Field} objects into a string to
+     * be sent in the request url. By default, this simply JSON-encodes the fields data
+     * @param {Ext.data.field.Field[]} fields The array of
+     * {@link Ext.data.field.Field Field} objects
+     * @return {String} The encoded fields
+     * @private
+     */
+    encodeFields: function(fields) {
+        var out = [],
+            length = fields.length,
+            i, field, encodedField, summary;
+
+        for (i = 0; i < length; i++) {
+            field = fields[i];
+            encodedField = {
+                name: field.getName()
+            };
+
+            summary = field.getSummary();
+
+            if (summary && summary.isAggregator) {
+                encodedField.summary = summary.type;
+                out.push(encodedField);
+            }
+        }
+
+        return this.applyEncoding(out);
     },
 
     /**

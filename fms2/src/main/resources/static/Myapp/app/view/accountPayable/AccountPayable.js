@@ -103,7 +103,9 @@ Ext.define('MyApp.view.accountPayable.AccountPayable', {
                     fieldLabel: '供应商',
                     labelWidth: 60,
                     width: 200,
-                    store: Ext.create('MyApp.store.Supplier'),
+                    store: Ext.create('MyApp.store.Supplier', {
+                        autoLoad: true
+                    }),
                     displayField: 'supplierID',
                     valueField: 'supplierID',
                     queryMode: 'remote',

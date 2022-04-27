@@ -1,5 +1,3 @@
-/* eslint-disable max-len, no-multi-spaces, vars-on-top, one-var */
-
 topSuite('Ext.grid.plugin.Summary', [
     'Ext.grid.Grid',
     'Ext.data.ArrayStore',

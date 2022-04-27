@@ -4,29 +4,145 @@
  *
  * ## Example usage:
  *
- *     @example
- *     var segmentedButton = Ext.create('Ext.SegmentedButton', {
- *         allowMultiple: true,
- *         items: [
- *             {
- *                 text: 'Option 1'
- *             },
- *             {
- *                 text: 'Option 2',
- *                 pressed: true
- *             },
- *             {
- *                 text: 'Option 3'
- *             }
- *         ],
- *         listeners: {
- *             toggle: function(container, button, pressed){
- *                 alert("User toggled the '" + button.getText() + "' button: " +
- *                 (pressed ? 'on' : 'off'));
- *             }
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var segmentedButton = Ext.create('Ext.SegmentedButton', {
+ *     allowMultiple: true,
+ *     items: [
+ *         {
+ *             text: 'Option 1'
+ *         },
+ *         {
+ *             text: 'Option 2',
+ *             pressed: true
+ *         },
+ *         {
+ *             text: 'Option 3'
  *         }
- *     });
- *     Ext.Viewport.add({ xtype: 'container', padding: 10, items: [segmentedButton] });
+ *     ],
+ *     listeners: {
+ *         toggle: function(container, button, pressed){
+ *             alert("User toggled the '" + button.getText() + "' button: " +
+ *             (pressed ? 'on' : 'off'));
+ *         }
+ *     }
+ * });
+ * Ext.Viewport.add({ xtype: 'container', padding: 10, items: [segmentedButton] });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtPicker, ExtButton } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     showPicker = () => this.picker.show();
+ *     render() {
+ *         return (
+ *              <ExtContainer>
+ *                  <ExtButton ui="action" handler={this.showPicker} text="Show Picker"/>
+ *                   <ExtPicker
+ *                      ref={picker => this.picker = picker}
+ *                      slots={[
+ *                          {
+ *                              name: 'limit_speed',
+ *                              title: 'Speed',
+ *                              data: [
+ *                                  {text: '50 KB/s', value: 50},
+ *                                  {text: '100 KB/s', value: 100},
+ *                                  {text: '200 KB/s', value: 200},
+ *                                  {text: '300 KB/s', value: 300}
+ *                              ]
+ *                          }
+ *                      ]}
+ *                 />
+ *             </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer>
+ *             <ExtButton ui="action" [handler]="this.showPicker"
+ *                    text="Show Picker"></ExtButton>
+ *             <ExtPicker
+ *                 (ready)='this.onPickerReady($event)'
+ *                 [slots]="[
+ *                     {
+ *                         name: 'limit_speed',
+ *                         title: 'Speed',
+ *                         data: [
+ *                             {text: '50 KB/s', value: 50},
+ *                             {text: '100 KB/s', value: 100},
+ *                             {text: '200 KB/s', value: 200},
+ *                             {text: '300 KB/s', value: 300}
+ *                         ]
+ *                     }
+ *                 ]"
+ *             >
+ *             </ExtPicker>
+ *         </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {
+ *         pickerComp;
+ *
+ *         onPickerReady = (event) => {
+ *             this.pickerComp = event.detail.cmp;
+ *         }
+ *
+ *         showPicker = () => {
+ *             this.pickerComp.show();
+ *         }
+ * }
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ *  @example({tab: 1})
+ * <ext-container>
+ *     <ext-button ui="action" ontap="picker.showPicker" text="Show Picker"></ext-button>
+ *     <ext-picker
+ *         onready="picker.pickerReady"
+ *         slots='[{
+ *                 "name": "limit_speed",
+ *                 "title": "Speed",
+ *                 "data": [
+ *                             {"text": "50 KB/s", "value": "50"},
+ *                             {"text": "100 KB/s", "value": "100"},
+ *                             {"text": "200 KB/s", "value": "200"},
+ *                             {"text": "300 KB/s", "value": "300"}
+ *                         ]
+ *                 }]'
+ *     >
+ *     </ext-picker>
+ * </ext-container>
+ * ```
+ *
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-picker.component';
+ *
+ * export default class PickerComponent {
+ *     pickerReady = (event) => {
+ *         this.pickerCmp = event.detail.cmp;
+ *     }
+ *
+ *     showPicker = () => {
+ *          this.pickerCmp.show();
+ *     }
+ * }
+ * window.picker = new PickerComponent();
+ * ```
+ *
  */
 Ext.define('Ext.SegmentedButton', {
     extend: 'Ext.Container',
@@ -116,7 +232,8 @@ Ext.define('Ext.SegmentedButton', {
          *
          * Using the `value` config of the child buttons with single toggle:
          *
-         *     @example
+         *```javascript
+         * @example({ framework: 'extjs' })
          *     var button = Ext.create('Ext.SegmentedButton', {
          *         renderTo: Ext.getBody(),
          *         value: 'optTwo', // begin with "Option Two" selected
@@ -131,6 +248,7 @@ Ext.define('Ext.SegmentedButton', {
          *             value:  'optThree'
          *         }]
          *     });
+         * ```
          *
          *     console.log(button.getValue()); // 'optTwo'
          *
@@ -141,7 +259,8 @@ Ext.define('Ext.SegmentedButton', {
          *
          * Using multiple toggle, and index-based values:
          *
-         *     @example
+         * ```javascript
+         * @example({ framework: 'extjs' })
          *     var button = Ext.create('Ext.SegmentedButton', {
          *         renderTo: Ext.getBody(),
          *         allowMultiple: true
@@ -154,6 +273,7 @@ Ext.define('Ext.SegmentedButton', {
          *             text: 'Option Three'
          *         }]
          *     });
+         * ```
          *
          *     // Sets value to [0, 2], and sets pressed state of "Option One" and "Option Three"
          *     button.setValue([0, 2]);
@@ -604,7 +724,7 @@ Ext.define('Ext.SegmentedButton', {
                 button = items[i];
 
                 // If we're currently pressing the item, the state will already
-                // be set, but for the purpose of setting the value we want to 
+                // be set, but for the purpose of setting the value we want to
                 // treat it as though it's in the old state
                 if (button === pressingItem) {
                     pressed = !button.getPressed();

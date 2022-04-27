@@ -533,7 +533,7 @@ $gridcolumn-menu-sort-desc-icon: dynamic($fa-var-sort-alpha-up);
  * @var {string/list}
  * Column hide/show menu item icon.
  */
-$gridcolumn-menu-columns-icon: dynamic($fa-var-columns);
+$gridcolumn-menu-columns-icon: dynamic($ext-var-columns ExtJS);
 
 /**
  * @var {string/list}

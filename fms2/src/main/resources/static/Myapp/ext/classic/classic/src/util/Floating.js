@@ -308,6 +308,30 @@ Ext.define('Ext.util.Floating', {
         }
     },
 
+    /**
+     * Registers the floating descendants of a component with the correct
+     * ZIndexManager when the component is being removed from a container
+     * and is not being destroyed.
+     * @param {Ext.Component} item The component that is being removed
+     */
+    moveFloatingDescendants: function(item) {
+        var me = this,
+            floatingEls, el, i;
+
+        // Find if the container has floating descendants
+        if (me.floatingDescendants && me.floatingDescendants.zIndexStack) {
+            floatingEls = me.floatingDescendants.zIndexStack.getSource();
+
+            for (i = 0; i < floatingEls.length; i++) {
+                el = floatingEls.getAt(i);
+
+                if (el.up('#' + item.id)) {
+                    el.registerWithOwnerCt();
+                }
+            }
+        }
+    },
+
     registerWithOwnerCt: function() {
         var me = this,
             ownerCt = me.ownerCt,

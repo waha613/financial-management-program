@@ -335,7 +335,7 @@ Ext.apply(Ext, {
      * prototype as well as the instance.
      * @return {Object} The `dest` object.
      * @deprecated 6.0.1 Use {@link Ext#copy Ext.copy} instead. This old method
-     * would copy the named preoperties even if they did not exist in the source which
+     * would copy the named properties even if they did not exist in the source which
      * could produce `undefined` values in the destination.
      */
     copyTo: function(dest, source, names, usePrototypeKeys) {
@@ -561,6 +561,8 @@ Ext.apply(Ext, {
     }()),
 
     /**
+     * @method isOnline
+     * @member Ext
      * Indicates if the page is currently running in online or offline mode, according
      * to the `navigator.onLine` property.
      * @return {Boolean} `true` if the page is currently running in an online mode.

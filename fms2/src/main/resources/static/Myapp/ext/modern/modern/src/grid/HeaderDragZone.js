@@ -27,6 +27,6 @@ Ext.define('Ext.grid.HeaderDragZone', {
     getDragText: function(info) {
         var targetCmp = Ext.dd.Manager.getTargetComp(info);
 
-        return targetCmp.getText();
+        return (targetCmp.getText && targetCmp.getText()) || '';
     }
 });

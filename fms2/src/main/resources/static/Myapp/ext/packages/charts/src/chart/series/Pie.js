@@ -67,6 +67,12 @@ Ext.define('Ext.chart.series.Pie', {
     seriesType: 'pieslice',
     isPie: true,
 
+    /**
+     * @cfg {Object} style Custom style configuration for the sprite used in the series.
+     * It overrides the style that is provided by the current theme. See
+     * {@link Ext.chart.theme.series.Pie}
+     */
+
     config: {
         /**
          * @cfg {String} radiusField
@@ -112,13 +118,13 @@ Ext.define('Ext.chart.series.Pie', {
          * @cfg {Ext.chart.series.sprite.PieSlice/Object} highlightCfg
          * Default highlight config for the pie series.
          * Slides highlighted pie sector outward by default.
-         * 
-         * highlightCfg accepts as its value a config object (or array of configs) for a 
+         *
+         * highlightCfg accepts as its value a config object (or array of configs) for a
          * {@link Ext.chart.series.sprite.PieSlice pie sprite}.
-         * 
-         * 
+         *
+         *
          * Example config:
-         * 
+         *
          *     Ext.create('Ext.chart.PolarChart', {
          *         renderTo: document.body,
          *         width: 600,
@@ -167,7 +173,7 @@ Ext.define('Ext.chart.series.Pie', {
             Ext.apply(newLabel = Ext.Object.chain(newLabel), { orientation: 'vertical' });
         }
 
-        return this.callParent([newLabel, oldLabel]);
+        return newLabel;
     },
 
     updateLabelData: function() {
@@ -247,11 +253,15 @@ Ext.define('Ext.chart.series.Pie', {
         }
 
         for (i = 0; i < recordCount; i++) {
-            sprites[i].setAttributes({
-                startAngle: lastAngle,
-                endAngle: lastAngle = (unit ? clockwise * summation[i] * unit : 0),
-                globalAlpha: 1
-            });
+            sprite = sprites[i];
+
+            if (sprite) {
+                sprite.setAttributes({
+                    startAngle: lastAngle,
+                    endAngle: lastAngle = (unit ? clockwise * summation[i] * unit : 0),
+                    globalAlpha: 1
+                });
+            }
         }
 
         if (recordCount < sprites.length) {
@@ -349,6 +359,8 @@ Ext.define('Ext.chart.series.Pie', {
     getSprites: function() {
         var me = this,
             chart = me.getChart(),
+            xField = me.getXField(),
+            yField = me.getYField(),
             store = me.getStore();
 
         if (!chart || !store) {
@@ -372,16 +384,16 @@ Ext.define('Ext.chart.series.Pie', {
 
         rendererData = {
             store: store,
-            field: me.getXField(), // for backward compatibility only (deprecated in 5.5)
-            angleField: me.getXField(),
-            radiusField: me.getYField(),
+            field: xField, // for backward compatibility only (deprecated in 5.5)
+            angleField: xField,
+            radiusField: yField,
             series: me
         };
 
         for (i = 0; i < length; i++) {
             sprite = sprites[i];
 
-            if (!sprite) {
+            if (!sprite && items[i].get(xField)) {
                 sprite = me.createSprite();
 
                 if (me.getHighlight()) {
@@ -401,8 +413,10 @@ Ext.define('Ext.chart.series.Pie', {
                 spriteCreated = true;
             }
 
-            sprite.setRendererIndex(spriteIndex++);
-            sprite.setAnimation(animation);
+            if (sprite) {
+                sprite.setRendererIndex(spriteIndex++);
+                sprite.setAnimation(animation);
+            }
         }
 
         if (spriteCreated) {

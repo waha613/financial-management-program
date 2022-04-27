@@ -205,6 +205,52 @@ topSuite('Ext.tab.Panel', ['Ext.Panel'], function() {
             expect(panel.getActiveItem()).toBe(panel.getInnerItems()[1]);
             expect(tabBar.getActiveTab()).toBe(tabBar.getInnerItems()[1]);
         });
+
+        it("should trigger painted listeners", function() {
+            var counter = 0,
+                config, tabBar, tab1, tab2,
+                spy1 = jasmine.createSpy(),
+                spy2 = jasmine.createSpy(),
+                tabpanelItems = [{
+                    itemId: 'tab1',
+                    title: 'tab1',
+                    html: 'Screen1',
+                    listeners: {
+                        painted: spy1
+                        }
+                    }, {
+                    itemId: 'tab2',
+                    title: 'tab2',
+                    html: 'Screen2',
+                    listeners: {
+                        painted: spy2
+                        }
+                    }];
+
+            config = Ext.apply({
+                        fullscreen: true,
+                        renderTo: document.body,
+                        items: tabpanelItems
+                    }, config);
+
+            panel = new Ext.tab.Panel(config);
+
+            tabBar = panel.getTabBar(),
+            tab1 = tabBar.getAt(0).el.dom,
+            tab2 = tabBar.getAt(1).el.dom;
+
+            jasmine.fireMouseEvent(tab2, 'click');
+            waitsForSpy(spy2);
+            runs(function() {
+                expect(spy2).toHaveBeenCalled();
+            });
+
+            jasmine.fireMouseEvent(tab1, 'click');
+            waitsForSpy(spy1);
+            runs(function() {
+                expect(spy1).toHaveBeenCalled();
+            });
+        });
     });
 
     describe("tabBarPosition", function() {

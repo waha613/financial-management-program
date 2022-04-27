@@ -969,12 +969,6 @@ Ext.define('Ext.dd.DragDropManager', {
             }
         }
         else {
-            // fire enter events
-            for (i = 0, len = enterEvts.length; i < len; ++i) {
-                // dc.b4DragEnter(e, oDD.id);
-                dragCurrent.onDragEnter(e, enterEvts[i].id);
-            }
-
             // fire over events
             for (i = 0, len = overEvts.length; i < len; ++i) {
                 dragCurrent.b4DragOver(e, overEvts[i].id);
@@ -994,6 +988,13 @@ Ext.define('Ext.dd.DragDropManager', {
                 dragCurrent.b4DragOut(e, outEvts[i].id);
                 dragCurrent.onDragOut(e, outEvts[i].id);
             }
+
+            // fire enter events
+            for (i = 0, len = enterEvts.length; i < len; ++i) {
+                // dc.b4DragEnter(e, oDD.id);
+                dragCurrent.onDragEnter(e, enterEvts[i].id);
+            }
+
         }
 
         // notify about a drop that did not find a target

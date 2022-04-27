@@ -6,38 +6,124 @@
  *
  * ## Examples
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     var datePicker = Ext.create('Ext.picker.Date');
  *     Ext.Viewport.add(datePicker);
  *     datePicker.show();
+ * ```
  *
  * You may want to adjust the {@link #yearFrom} and {@link #yearTo} properties:
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     var datePicker = Ext.create('Ext.picker.Date', {
  *         yearFrom: 2000,
  *         yearTo  : 2015
  *     });
  *     Ext.Viewport.add(datePicker);
  *     datePicker.show();
+ * ```
  *
  * You can set the value of the {@link Ext.picker.Date} to the current date using `new Date()`:
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     var datePicker = Ext.create('Ext.picker.Date', {
  *         value: new Date()
  *     });
  *     Ext.Viewport.add(datePicker);
  *     datePicker.show();
+ * ```
  *
  * And you can hide the titles from each of the slots by using the {@link #useTitles} configuration:
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     var datePicker = Ext.create('Ext.picker.Date', {
  *         useTitles: false
  *     });
  *     Ext.Viewport.add(datePicker);
  *     datePicker.show();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtDatePicker, ExtButton } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     showPicker = () => this.picker.show();
+ *     render() {
+ *         return (
+ *             <ExtContainer>
+ *                 <ExtButton ui="action" handler={this.showPicker} text="Show Picker"/>
+ *                 <ExtDatePicker
+ *                     ref={picker => this.picker = picker}
+ *                 />
+ *             </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer>
+ *             <ExtButton ui="action" [handler]="this.showPicker"
+ *                   text="Show Picker"></ExtButton>
+ *             <ExtDatePicker
+ *                 (ready)="onPickerReady($event)"
+ *             ></ExtDatePicker>
+ *         </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {
+ *    pickerComp;
+ *
+ *    onPickerReady = (event) => {
+ *        this.pickerComp = event.detail.cmp;
+ *    }
+ *
+ *    showPicker = () => {
+ *        this.pickerComp.show();
+ *    }
+ * }
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container>
+ *     <ext-button ui="action" ontap="date.showPicker" text="Show Picker"></ext-button>
+ *     <ext-datepicker
+ *         onready="datepickerCmp.datepickerReady"
+ *     >
+ *     </ext-datepicker>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ *
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-datepicker.component';
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ *
+ * export default class DatePickerComponent {
+ *     datepickerReady = (event) => {
+ *         this.pickerCmp = event.detail.cmp;
+ *     }
+ *
+ *     showPicker = () => {
+ *         this.pickerCmp.show();
+ *     }
+ * }
+ * window.datepickerCmp = new DatePickerComponent();
+ *```
+ *
  */
 Ext.define('Ext.picker.Date', {
     extend: 'Ext.picker.Picker',
@@ -490,6 +576,7 @@ Ext.define('Ext.picker.Date', {
         var me = this,
             oldValue = me._value,
             newValue = me.getValue(true),
+            ownerField = me.ownerField,
             testValue = newValue;
 
         if (Ext.isDate(newValue)) {
@@ -501,7 +588,10 @@ Ext.define('Ext.picker.Date', {
         }
 
         if (testValue !== oldValue) {
-            me.ownerField.onPickerChange(me, newValue);
+            if (ownerField) {
+                ownerField.onPickerChange(me, newValue);
+            }
+
             me.fireEvent('change', me, newValue);
         }
 

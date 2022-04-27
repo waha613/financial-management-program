@@ -10,17 +10,19 @@
  *
  * ## Simple Slider
  *
- *     @example
- *     Ext.create({
- *         xtype: 'container',
- *         fullscreen: true,
- *         padding: 20,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'container',
+ *     fullscreen: true,
+ *     padding: 20,
  *
- *         items: [{
- *             xtype: 'slider',
- *             value: 42
- *         }]
- *     });
+ *     items: [{
+ *         xtype: 'slider',
+ *         value: 42
+ *     }]
+ * });
+ * ```
  *
  * ## Slider with Bound Value
  *
@@ -28,31 +30,33 @@
  * `twoWayBindable` in order to publish bound values.  You can also use Ext.field.Slider
  * directly for a more feature-rich component.
  *
- *     @example
- *     Ext.create({
- *         xtype: 'container',
- *         fullscreen: true,
- *         padding: 20,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'container',
+ *     fullscreen: true,
+ *     padding: 20,
  *
- *         layout: {
- *             type: 'hbox',
- *             pack: 'center'
- *         },
- *         
- *         viewModel: {
- *             data: {
- *                 value: 42
- *             }
- *         },
+ *     layout: {
+ *         type: 'hbox',
+ *         pack: 'center'
+ *     },
+ *     
+ *     viewModel: {
+ *         data: {
+ *             value: 42
+ *         }
+ *     },
  *
- *         items: [{
- *             xtype: 'slider',
- *             value: '{value}'
- *         }, {
- *             xtype: 'label',
- *             bind: '{value}'
- *         }]
- *     })
+ *     items: [{
+ *         xtype: 'slider',
+ *         value: '{value}'
+ *     }, {
+ *         xtype: 'label',
+ *         bind: '{value}'
+ *     }]
+ * })
+ * ```
  *
  */
 Ext.define('Ext.slider.Slider', {

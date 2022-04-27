@@ -295,7 +295,10 @@ Ext.define('Ext.resizer.Resizer', {
         // be wrapped
         tag = me.el.dom.tagName.toUpperCase();
 
-        if (tag === 'TEXTAREA' || tag === 'IMG' || tag === 'TABLE') {
+        // We have to wrap table elements; otherwise, the resize handle becomes a child of the table
+        // which can cause problems with the table layout since it is not display:table-cell
+        if (tag === 'TEXTAREA' || tag === 'IMG' || tag === 'TABLE' ||
+            me.el.isStyle('display', 'table')) {
             /**
              * @property {Ext.dom.Element/Ext.Component} originalTarget
              * Reference to the original resize target if the element of the original
@@ -413,7 +416,6 @@ Ext.define('Ext.resizer.Resizer', {
                 handleEl = me[pos] = me.el.createChild({
                     id: me.el.id + '-' + pos + '-handle',
                     cls: Ext.String.format(handleCls, pos) + ' ' + unselectableCls,
-                    unselectable: 'on',
                     role: 'presentation'
                 });
 
@@ -449,7 +451,15 @@ Ext.define('Ext.resizer.Resizer', {
      * @param {Ext.event.Event} e The event
      */
     onBeforeResize: function(tracker, e) {
-        return this.fireResizeEvent('beforeresize', tracker, e);
+        var result = this.fireResizeEvent('beforeresize', tracker, e);
+
+        // Force the element to be un-selectable when resizing due to complications
+        // with drop down lists and other overlays during resizing.
+        if (result !== false) {
+            this.el.unselectable();
+        }
+
+        return result;
     },
 
     /**
@@ -469,6 +479,8 @@ Ext.define('Ext.resizer.Resizer', {
      * @param {Ext.event.Event} e The event
      */
     onResizeEnd: function(tracker, e) {
+        this.el.selectable();
+
         return this.fireResizeEvent('resize', tracker, e);
     },
 

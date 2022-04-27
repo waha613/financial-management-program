@@ -238,4 +238,73 @@ topSuite("Ext.form.RadioGroup", ['Ext.app.ViewModel'], function() {
             });
         });
     });
+
+    describe('reset', function() {
+        describe('change event fired', function() {
+            it('should fire the change event when a sub-radio is selected, reset and reselected', function() {
+
+                var changes = [];
+
+                makeGroup([{
+                    name: 'foo',
+                    inputValue: 'a'
+                },
+                {
+                    name: 'foo',
+                    inputValue: 'b'
+                }]);
+
+                group.on('change', function(sender, newVal, oldVal) {
+                    expect(sender).toBe(group);
+                    changes.push([newVal, oldVal]);
+                });
+
+                group.setValue({
+                    foo: 'a'
+                });
+                expect(group.getValue()).toEqual({
+                    foo: 'a'
+                });
+
+                expect(changes).toEqual([
+                    [{ foo: 'a' }, {}]
+                ]);
+
+                group.setValue({
+                    foo: 'b'
+                });
+                expect(group.getValue()).toEqual({
+                    foo: 'b'
+                });
+
+                expect(changes).toEqual([
+                    [{ foo: 'a' }, {}],
+                    [{ foo: 'b' }, { foo: 'a' }]
+                ]);
+
+                group.reset();
+                expect(group.getValue()).toEqual({});
+
+                expect(changes).toEqual([
+                    [{ foo: 'a' }, {}],
+                    [{ foo: 'b' }, { foo: 'a' }],
+                    [{}, { foo: 'b' }]
+                ]);
+
+                group.setValue({
+                    foo: 'b'
+                });
+                expect(group.getValue()).toEqual({
+                    foo: 'b'
+                });
+
+                expect(changes).toEqual([
+                    [{ foo: 'a' }, {}],
+                    [{ foo: 'b' }, { foo: 'a' }],
+                    [{}, { foo: 'b' }],
+                    [{ foo: 'b' }, {}]
+                ]);
+            });
+        });
+    });
 });

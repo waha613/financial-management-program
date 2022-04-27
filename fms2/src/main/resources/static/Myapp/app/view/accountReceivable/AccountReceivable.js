@@ -6,7 +6,9 @@ var toolbarTop = Ext.create('Ext.toolbar.Toolbar', {
             fieldLabel: '仓库',
             labelWidth: 60,
             width: 200,
-            store: Ext.create('MyApp.store.Buyer'),
+            store: Ext.create('MyApp.store.Buyer', {
+                autoLoad: true
+            }),
             displayField: 'warehouse',
             valueField: 'warehouse',
             queryMode: 'remote',

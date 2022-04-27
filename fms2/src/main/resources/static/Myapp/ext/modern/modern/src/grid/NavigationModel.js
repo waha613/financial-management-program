@@ -183,10 +183,12 @@ Ext.define('Ext.grid.NavigationModel', {
         },
 
         triggerActionable: function(actionable, e) {
-            var actionLocation;
+            var actionLocation = this.createLocation(e);
 
-            // Request the Actionable to activate a *cell* Location based on the event location.
-            actionLocation = actionable.activateCell(this.createLocation(e));
+            // Request the Actionable to activate a *cell* Location based on the event
+            // location. The location could not relate to a cell if, for example, the
+            // touchend event occurs on a scrollbar or other non-cell element.
+            actionLocation = actionLocation.cell && actionable.activateCell(actionLocation);
 
             // If we successfully started actionable mode, set our location.
             // Note that this may pass the already active location if the trigger

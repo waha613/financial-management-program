@@ -7725,6 +7725,10 @@ Ext.define('Ext.dom.Element', function(Element) {
             bodyCls.push(Ext.baseCSSPrefix + 'chrome');
         }
 
+        if (Ext.isChromeMobile) {
+            bodyCls.push(Ext.baseCSSPrefix + 'chromemobile');
+        }
+
         if (Ext.isMac) {
             bodyCls.push(Ext.baseCSSPrefix + 'mac');
         }

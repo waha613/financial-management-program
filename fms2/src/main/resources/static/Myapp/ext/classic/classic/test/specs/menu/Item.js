@@ -27,6 +27,84 @@ topSuite("Ext.menu.Item", ['Ext.app.ViewModel', 'Ext.app.ViewController'], funct
         }
     }
 
+    describe('empty text', function() {
+        function expectNodeText(expected) {
+            // IE11 normalizes \u00a0 to a normal space as innerText
+            var actual = item.textEl.dom.innerText;
+
+            if (actual.length === 1 && actual.charCodeAt(0) === 32) {
+                actual = '\u00a0';
+            }
+
+            expect(actual).toBe(expected);
+        }
+
+        it('should match item height with text', function() {
+            makeMenu([{
+                text: ''
+            }, {
+                text: 'Foo'
+            }]);
+            expect(menu.items.getAt(0).getHeight()).toBe(menu.items.getAt(1).getHeight());
+        });
+
+        describe('at configuration', function() {
+            it('should not use empty text when a value is provided', function() {
+                makeMenu({
+                    text: 'Foo'
+                });
+                expect(item.textEl).toHaveHtml('Foo');
+            });
+
+            it('should use empty text for empty string', function() {
+                makeMenu({
+                    text: ''
+                });
+                expectNodeText(item.emptyText);
+            });
+
+            it('should use empty text for null', function() {
+                makeMenu({
+                    text: null
+                });
+                expectNodeText(item.emptyText);
+            });
+
+            it('should use empty text for undefined', function() {
+                makeMenu({
+                    text: undefined
+                });
+                expectNodeText(item.emptyText);
+            });
+        });
+
+        describe('dynamic', function() {
+            it('should use empty text for empty string', function() {
+                makeMenu({
+                    text: 'Foo'
+                });
+                item.setText('');
+                expectNodeText(item.emptyText);
+            });
+
+            it('should use empty text for null', function() {
+                makeMenu({
+                    text: 'Foo'
+                });
+                item.setText(null);
+                expectNodeText(item.emptyText);
+            });
+
+            it('should use empty text for undefined', function() {
+                makeMenu({
+                    text: 'Foo'
+                });
+                item.setText(undefined);
+                expectNodeText(item.emptyText);
+            });
+        });
+    });
+
     describe('on click', function() {
         describe("click event/handler", function() {
             var spy;
@@ -539,11 +617,12 @@ topSuite("Ext.menu.Item", ['Ext.app.ViewModel', 'Ext.app.ViewController'], funct
         });
 
         describe("with submenu", function() {
-            describe("via config", function() {
+            describe("via config without hidden menu", function() {
                 beforeEach(function() {
                     makeMenu({
                         text: 'submenu',
                         menu: {
+                            hidden: false,
                             items: [{
                                 text: 'sub-item'
                             }]
@@ -558,6 +637,29 @@ topSuite("Ext.menu.Item", ['Ext.app.ViewModel', 'Ext.app.ViewController'], funct
                 });
 
                 it("should have aria-owns", function() {
+                    expect(item).toHaveAttr('aria-owns', item.menu.id);
+                });
+            });
+
+            describe("via config with hidden menu", function() {
+                beforeEach(function() {
+                    makeMenu({
+                        text: 'submenu',
+                        menu: {
+                            hidden: true,
+                            items: [{
+                                text: 'sub-item'
+                            }]
+                        }
+                    });
+
+                    menu.show();
+                });
+
+                it("should have aria-owns when menu item is expanded", function() {
+                    item.activated = true;
+                    item.expandMenu(null, 0);
+
                     expect(item).toHaveAttr('aria-owns', item.menu.id);
                 });
             });

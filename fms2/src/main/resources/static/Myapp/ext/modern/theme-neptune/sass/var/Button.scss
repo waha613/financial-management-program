@@ -1651,3 +1651,55 @@ $button-raised-ui: dynamic((
     @include button-alt-invert-ui($button-decline-ui, #{$prefix}button-decline);
     @include button-alt-invert-ui($button-confirm-ui, #{$prefix}button-confirm);
 }
+/**
+ * To make the font-awesome mentioned class styles applicable if .#{$prefix}icon-el class is present.
+ * Because .#{$prefix}icon-el styles overrides font-awesome icon sizes
+ */
+@for $i from 1 through 10 {
+    .#{$prefix}button .#{$prefix}icon-el.#{$fa-css-prefix}-#{$i}x {
+        width: 100%;
+        height: 100%;
+    }
+    .#{$prefix}button .#{$prefix}icon-el.#{$fa-css-prefix}-#{$i}x:before {
+        font-size:1em;
+    }
+    // To fix font-awesome icon-size issue in IE11
+    .#{$prefix}ie11 {
+        .#{$prefix}button .#{$prefix}icon-el.#{$fa-css-prefix}-#{$i}x:before {
+            font-size: $i * 1em;
+        }
+    }
+}
+
+.#{$prefix}button {
+    .#{$prefix}icon-el.#{$fa-css-prefix}-lg,
+    .#{$prefix}icon-el.#{$fa-css-prefix}-sm,
+    .#{$prefix}icon-el.#{$fa-css-prefix}-xs {
+        width: 100%;
+        height: 100%;
+    }
+}
+.#{$prefix}button {
+    .#{$prefix}icon-el.#{$fa-css-prefix}-lg:before,
+    .#{$prefix}icon-el.#{$fa-css-prefix}-sm:before,
+    .#{$prefix}icon-el.#{$fa-css-prefix}-xs:before {
+        font-size:1em;
+    }
+}
+// To fix font-awesome icon-size issue in IE11
+.#{$prefix}ie11 {
+    .#{$prefix}button {
+        .#{$prefix}icon-el.#{$fa-css-prefix}-lg:before {
+            font-size: (4em / 3);
+        }
+        
+        .#{$prefix}icon-el.#{$fa-css-prefix}-xs:before {
+            font-size: .75em;
+        }
+        
+        .#{$prefix}icon-el.#{$fa-css-prefix}-sm:before {
+            font-size: .875em;
+        }
+    }
+}
+

@@ -23,7 +23,8 @@
  * use {@link Ext.Component Ext.Components} as child {@link #cfg-items items}. However,
  * to illustrate simply rendering a Panel into the document, here's how to do it:
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     Ext.create({
  *         xtype: 'panel',
  *         title: 'Panel Title',
@@ -34,6 +35,7 @@
  *         html: 'Sample HTML text',
  *         renderTo: Ext.getBody()
  *     });
+ * ```
  *
  * ### Panel Example (with child items)
  *
@@ -41,7 +43,8 @@
  * being configured with a {@link Ext.Container#layout layout}, and containing child
  * {@link Ext.Component Components}.
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     Ext.create({
  *         xtype: 'panel',
  *         bodyPadding: true, // don't want content to crunch against the borders
@@ -56,6 +59,7 @@
  *         }],
  *         renderTo: Ext.getBody()
  *     });
+ * ```
  *
  * Panel also provides built-in {@link #cfg-collapsible collapsible, expandable}, and
  * {@link #cfg-closable closable} behavior. Panels can be easily dropped into any
@@ -69,7 +73,8 @@
  * {@link #method-showBy showBy} another component, there will be an anchor arrow
  * pointing to the reference component.
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     var panel = Ext.create({
  *         xtype: 'panel',
  *         title: 'Floated',
@@ -94,6 +99,220 @@
  *         },
  *         renderTo: Ext.getBody()
  *     });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtPanel, ExtButton } from '@sencha/ext-react';
+ * Ext.require('Ext.Toast');
+ *
+ * export default class MyExample extends Component {
+ * 	    render() {
+ * 	        function toolHandler(owner, tool) {
+ * 	            Ext.toast(`You clicked ${tool.config.type}`);
+ *	        }
+ *	        return (
+ *	            <ExtContainer>
+ *	                <ExtPanel
+ *	                    shadow
+ *	                    title="Panel"
+ *	                    height={300}
+ *	                    width={500}
+ *	                    tools={[
+ *	                        { type: 'minimize', handler: toolHandler },
+ *	                        { type: 'refresh', handler: toolHandler },
+ *	                        { type: 'save', handler: toolHandler },
+ *	                        { type: 'search', handler: toolHandler },
+ *	                        { type: 'close', handler: toolHandler }
+ *	                    ]}
+ *	                >
+ *	                    <p>Panel Body</p>
+ *	                </ExtPanel>
+ *	                <ExtButton ui="action" handler={() => this.modal.cmp.show()}
+ *                       margin="20 0 0 0" text="Show Modal"/>
+ *	                <ExtPanel
+ *	                    ref={modal => this.modal = modal}
+ *	                    title="Floated Panel"
+ *	                    modal
+ *	                    floated
+ *	                    centered
+ *	                    hideOnMaskTap
+ *	                    width={Ext.filterPlatform('ie10') ? '100%' :
+ *                            (Ext.os.deviceType == 'Phone') ? 260 : 400}
+ *	                    maxHeight={Ext.filterPlatform('ie10') ? '30%' :
+ *                          (Ext.os.deviceType == 'Phone') ? 220 : 400}
+ *	                    showAnimation={{
+ *	                        type: 'popIn',
+ *	                        duration: 250,
+ *	                        easing: 'ease-out'
+ *	                    }}
+ *	                    hideAnimation={{
+ *	                        type: 'popOut',
+ *	                        duration: 250,
+ *	                        easing: 'ease-out'
+ *	                    }}
+ *	                >
+ *	                    <p>
+ *	                        This is a modal, centered and floated panel.
+ *                          hideOnMaskTap is true by default so we can tap anywhere
+ *                          outside the overlay to hide it.
+ *                      </p>
+ *	                </ExtPanel>
+ *	            </ExtContainer>
+ *	        )
+ *	    }
+ *	}
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * declare var Ext: any;
+ * import {Component} from '@angular/core';
+ * Ext.require('Ext.Toast');
+ *
+ * @Component({
+ *		  selector: 'app-component',
+ *		  template: `<ExtContainer>
+ *		    <ExtPanel
+ *		        [shadow]="true"
+ *		        title="Panel"
+ *		        [height]="300"
+ *		        [width]="500"
+ *		        (ready)="this.onMainPanelReady($event)"
+ *		        [html]= "'<p>Panel Body</p>'"
+ *		    >
+ *		    </ExtPanel>
+ *		    <ExtButton [ui]="'action'" (tap)="modalClick()"
+ *              margin="20 0 0 0" text="Show Modal">
+ *        </ExtButton>
+ *		    <ExtPanel
+ *		        title="Floated Panel"
+ *		        [modal]="true"
+ *		        [floated]="true"
+ *		        [centered]="true"
+ *		        hideOnMaskTap="true"
+ *		        [width]="400"
+ *		        maxHeight="400"
+ *		        (ready)="this.onModalPanelReady($event)"
+ *		        [showAnimation]="{
+ *		        type: 'popIn',
+ *		        duration: 250,
+ *		        easing: 'ease-out'
+ *		        }"
+ *		        [hideAnimation]="{
+ *		        type: 'popOut',
+ *		        duration: 250,
+ *		        easing: 'ease-out'
+ *		        }"
+ *		        [html]="'<p>This is a modal, centered and floated panel.
+ *              hideOnMaskTap is true by default so we can tap anywhere
+ *              outside the overlay to hide it.</p>'"
+ *		    >
+ *		    </ExtPanel>
+ *		  </ExtContainer>`,
+ *		  styles: [``]
+ *		})
+ *
+ *		  export class AppComponent  {
+ *		  mainPanel:any;
+ *		  modalPanelCmp:any;
+ *		  toolHandler = (owner, tool) => {
+ *		     Ext.toast(`You clicked ${tool.config.type}`);
+ *		  }
+ *
+ *		  onMainPanelReady = (event) => {
+ *		    this.mainPanel = event.detail.cmp;
+ *		    this.mainPanel.setTools([
+ *		      { type: "minimize", handler: this.toolHandler.bind(this) },
+ *		      { type: "refresh", handler: this.toolHandler.bind(this) },
+ *		      { type: "save", handler: this.toolHandler.bind(this) },
+ *		      { type: "search", handler: this.toolHandler.bind(this) },
+ *		      { type: "close", handler: this.toolHandler.bind(this) }
+ *		    ]);
+ *		  }
+ *
+ *		  onModalPanelReady = (event) => {
+ *		    this.modalPanelCmp = event.detail.cmp;
+ *		  }
+ *
+ *		  modalClick = (owner, tool) => {
+ *		    this.modalPanelCmp.show();
+ *		  }
+ *		}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container>
+ *    <ext-panel
+ *        shadow="true"
+ *        title="Panel"
+ *        height="300"
+ *        width="500"
+ *        onready="mainPanel.onMainPanelReady"
+ *    >
+ *        <p>Panel Body</p>
+ *    </ext-panel>
+ *    <ext-button ui="action" ontap="mainPanel.modalClick"
+ *      margin="20 0 0 0" text="Show Modal"></ext-button>
+ *    <ext-panel
+ *        title="Floated Panel"
+ *        modal="true"
+ *        floated="true"
+ *        centered="true"
+ *        hideOnMaskTap="true"
+ *        width="400"
+ *        maxHeight="400"
+ *        onready="mainPanel.onModalPanelReady"
+ *        showAnimation='{
+ *             "type": "popIn",
+ *             "duration": 250,
+ *             "easing": "ease-out"
+ *        }'
+ *        hideAnimation='{
+ *             "type": "popOut",
+ *             "duration": 250,
+ *             "easing": "ease-out"
+ *        }'
+ *    >
+ *        <p>This is a modal, centered and floated panel.
+ *          hideOnMaskTap is true by default so
+ *          we can tap anywhere outside the overlay to hide it.</p>
+ *    </ext-panel>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-panel.component';
+ *
+ * Ext.require('Ext.Toast');
+ *
+ * export default class MainPanelComponent {
+ *   toolHandler = (owner, tool) => {
+ *      Ext.toast(`You clicked ${tool.config.type}`);
+ *   }
+ *
+ *   onMainPanelReady = (event) => {
+ *       this.mainPanel = event.detail.cmp;
+ *       this.mainPanel.setTools([
+ *          { type: "minimize", handler: this.toolHandler.bind(this) },
+ *          { type: "refresh", handler: this.toolHandler.bind(this) },
+ *          { type: "save", handler: this.toolHandler.bind(this) },
+ *          { type: "search", handler: this.toolHandler.bind(this) },
+ *          { type: "close", handler: this.toolHandler.bind(this) }
+ *       ]);
+ *   }
+ *
+ *   onModalPanelReady = (event) => {
+ *      this.modalPanelCmp = event.detail.cmp;
+ *   }
+ *
+ *   modalClick = (owner, tool) => {
+ *      this.modalPanelCmp.show();
+ *   }
+ * }
+ * window.mainPanel = new MainPanelComponent();
+ * ```
  *
  * **Note:** By default, the `{@link #cfg-closable close}` header tool _destroys_ the
  * Panel resulting in removal of the Panel and the destruction of any descendant
@@ -209,7 +428,8 @@ Ext.define('Ext.Panel', {
          * @cfg {Object/Object[]} bbar
          * Convenience config. Short for 'Bottom Bar'.
          *
-         *     @example
+         * ```javascript
+         * @example({ framework: 'extjs' })
          *     Ext.create({
          *         xtype: 'panel',
          *         fullscreen: true,
@@ -220,10 +440,12 @@ Ext.define('Ext.Panel', {
          *             text : 'Button 1'
          *         }]
          *     });
+         * ```
          *
          * is equivalent to
          *
-         *     @example
+         * ```javascript
+         * @example({ framework: 'extjs' })
          *     Ext.create({
          *         xtype: 'panel',
          *         fullscreen: true,
@@ -238,6 +460,7 @@ Ext.define('Ext.Panel', {
          *             }]
          *         }]
          *     });
+         * ```
          *
          * @since 6.5.0
          */
@@ -249,7 +472,8 @@ Ext.define('Ext.Panel', {
          * @cfg {Object/Object[]} lbar
          * Convenience config. Short for 'Left Bar' (left-docked, vertical toolbar).
          *
-         *     @example
+         * ```javascript
+         * @example({ framework: 'extjs' })
          *     Ext.create({
          *         xtype: 'panel',
          *         fullscreen: true,
@@ -260,10 +484,12 @@ Ext.define('Ext.Panel', {
          *             text : 'Button 1'
          *         }]
          *     });
+         * ```
          *
          * is equivalent to
          *
-         *     @example
+         * ```javascript
+         * @example({ framework: 'extjs' })
          *     Ext.create({
          *         xtype: 'panel',
          *         fullscreen: true,
@@ -278,6 +504,7 @@ Ext.define('Ext.Panel', {
          *             }]
          *         }]
          *     });
+         * ```
          *
          * @since 6.5.0
          */
@@ -289,7 +516,8 @@ Ext.define('Ext.Panel', {
          * @cfg {Object/Object[]} rbar
          * Convenience config. Short for 'Right Bar' (right-docked, vertical toolbar).
          *
-         *     @example
+         * ```javascript
+         * @example({ framework: 'extjs' })
          *     Ext.create({
          *         xtype: 'panel',
          *         fullscreen: true,
@@ -300,10 +528,12 @@ Ext.define('Ext.Panel', {
          *             text : 'Button 1'
          *         }]
          *     });
+         * ```
          *
          * is equivalent to
          *
-         *     @example
+         * ```javascript
+         * @example({ framework: 'extjs' })
          *     Ext.create({
          *         xtype: 'panel',
          *         fullscreen: true,
@@ -318,6 +548,7 @@ Ext.define('Ext.Panel', {
          *             }]
          *         }]
          *     });
+         * ```
          *
          * @since 6.5.0
          */
@@ -329,7 +560,8 @@ Ext.define('Ext.Panel', {
          * @cfg {Object/Object[]} tbar
          * Convenience config. Short for 'Top Bar'.
          *
-         *     @example
+         * ```javascript
+         * @example({ framework: 'extjs' })
          *     Ext.create({
          *         xtype: 'panel',
          *         fullscreen: true,
@@ -340,10 +572,12 @@ Ext.define('Ext.Panel', {
          *             text : 'Button 1'
          *         }]
          *     });
+         * ```
          *
          * is equivalent to
          *
-         *     @example
+         * ```javascript
+         * @example({ framework: 'extjs' })
          *     Ext.create({
          *         xtype: 'panel',
          *         fullscreen: true,
@@ -358,6 +592,7 @@ Ext.define('Ext.Panel', {
          *             }]
          *         }]
          *     });
+         * ```
          *
          * @since 6.5.0
          */
@@ -427,7 +662,8 @@ Ext.define('Ext.Panel', {
          * The buttons for this panel to be displayed in the `buttonToolbar` as a keyed
          * object (or array) of button configuration objects.
          *
-         *     @example
+         *```javascript
+         * @example({ framework: 'extjs' })
          *     Ext.create({
          *         xtype: 'panel',
          *         html: 'hello world',
@@ -436,11 +672,13 @@ Ext.define('Ext.Panel', {
          *            ok: {text: 'OK', handler: 'onOK'}
          *         }
          *     });
+         * ```
          *
          * For buttons that are defined in `standardButtons` (such as `'ok'`), there is a
          * more convenient short-hand for this config:
          *
-         *     @example
+         * ```javascript
+         * @example({ framework: 'extjs' })
          *     Ext.create({
          *         fullscreen: true,
          *         xtype: 'panel',
@@ -451,6 +689,7 @@ Ext.define('Ext.Panel', {
          *            cancel: 'onCancel'
          *         }
          *     });
+         * ```
          *
          * The {@link #minButtonWidth} is used as the default
          * {@link Ext.Button#minWidth minWidth} for the buttons in the buttons toolbar.

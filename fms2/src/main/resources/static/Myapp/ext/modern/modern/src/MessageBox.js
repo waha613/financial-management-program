@@ -11,8 +11,10 @@
  * a callback function (see the `fn` configuration option parameter for the
  * {@link #method-show show} method for more details).
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     Ext.Msg.alert('Title', 'The quick brown fox jumped over the lazy dog.', Ext.emptyFn);
+ * ```
  *
  * Checkout {@link Ext.Msg} for more examples.
  */
@@ -372,8 +374,9 @@ Ext.define('Ext.MessageBox', {
      *
      * Example usage:
      *
-     *     @example
-     *     Ext.Msg.show({
+     * ```javascript
+     * @example({ framework: 'extjs' })
+     *      Ext.Msg.show({
      *        title: 'Address',
      *        message: 'Please enter your address:',
      *        width: 300,
@@ -384,6 +387,7 @@ Ext.define('Ext.MessageBox', {
      *            alert('You pressed the "' + buttonId + '" button.');
      *        }
      *     });
+     * ```
      *
      * @param {Object} msgBoxOptions An object with the following config msgBoxOptions:
      *
@@ -593,7 +597,8 @@ Ext.define('Ext.MessageBox', {
      *
      * Example usage:
      *
-     *     @example
+     * ```javascript
+     * @example({ framework: 'extjs' }
      *     Ext.Msg.prompt(
      *         'Welcome!',
      *         'What\'s your name going to be today?',
@@ -608,6 +613,7 @@ Ext.define('Ext.MessageBox', {
      *             placeHolder: 'First-name please...'
      *         }
      *     );
+     * ```
      *
      * @param {String} title The title bar text.
      * @param {String} message The message box body text.
@@ -675,26 +681,31 @@ Ext.define('Ext.MessageBox', {
          * ### Alert
          * Use the {@link #alert} method to show a basic alert:
          *
-         *     @example
-         *     Ext.Msg.alert('Title', 'The quick brown fox jumped over the lazy dog.', Ext.emptyFn);
+         * ```javascript
+         * @example({ framework: 'extjs' })
+         * Ext.Msg.alert('Title', 'The quick brown fox jumped over the lazy dog.', Ext.emptyFn);
+         * ```
          *
          * ### Prompt
          * Use the {@link #method-prompt} method to show an alert which has a textfield:
          *
-         *     @example
-         *     Ext.Msg.prompt('Name', 'Please enter your name:', function(text) {
-         *         // process text value and close...
-         *     });
+         * ```javascript
+         * @example({ framework: 'extjs' })
+         * Ext.Msg.prompt('Name', 'Please enter your name:', function(text) {
+         *    // process text value and close...
+         * });
+         * ```
          *
          * ### Confirm
          * Use the {@link #confirm} method to show a confirmation alert (shows yes and no buttons).
          *
-         *     @example
-         *     Ext.Msg.confirm("Confirmation", "Are you sure you want to do that?", Ext.emptyFn);
+         * ```javascript
+         * @example({ framework: 'extjs' })
+         *    Ext.Msg.confirm("Confirmation", "Are you sure you want to do that?", Ext.emptyFn);
+         * ```
          */
         Ext.Msg = new Ext.MessageBox({
             id: 'ext-messagebox'
         });
     });
 });
-

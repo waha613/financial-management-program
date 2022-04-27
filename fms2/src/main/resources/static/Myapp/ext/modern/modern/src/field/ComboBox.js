@@ -19,7 +19,8 @@
  *
  * # Example usage:
  *
- *      @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *      Ext.create({
  *          fullscreen: true,
  *          xtype: 'container',
@@ -39,6 +40,7 @@
  *              ]
  *          }]
  *      });
+ * ```
  *
  * # Events
  *
@@ -50,8 +52,8 @@
  * ## Customized combobox
  *
  * Both the text shown in dropdown list and text field can be easily customized:
- *
- *      @example
+ *```javascript
+ *     @example({ framework: 'extjs' })
  *      Ext.create({
  *          fullscreen: true,
  *          xtype: 'container',
@@ -82,6 +84,109 @@
  *
  * See also the {@link #cfg!floatedPicker} and {@link #cfg!edgePicker} options for additional
  * configuration of the options list.
+ *
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer [layout]='"center"'>
+ *             <ExtFormPanel [shadow]>
+ *                 <ExtComboBox
+ *                     [width]="200"
+ *                     [label]='"State"'
+ *                     [options]='data'
+ *                     [displayField]='"name"'
+ *                     [valueField]='"code"'
+ *                     [queryMode]='"local"'
+ *                     [labelAlign]='"placeholder"'
+ *                     [typeAhead]
+ *                 ></ExtComboBox>
+ *             </ExtFormPanel>
+ *         </ExtContainer>
+ * })
+ * export class AppComponent {
+ *     data = [
+ *         {"name":"Alabama","abbrev":"AL"},
+ *         {"name":"Alaska","abbrev":"AK"},
+ *         {"name":"Arizona","abbrev":"AZ"}
+ *     ];
+ *  }
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-formpanel
+ *    shadow="true"
+ * >
+ *    <ext-combobox
+ *        width="200"
+ *        label="State"
+ *        displayField="name"
+ *        valueField="code"
+ *        queryMode="local"
+ *        labelAlign="placeholder"
+ *        typeAhead="true"
+ *        onready="comboboxfield.comboboxFieldReady"
+ *     >
+ *     </ext-combobox>
+ * </ext-formpanel>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-combobox.component';
+ *
+ * export default class ComboBoxFieldComponent {
+ *    constructor() {
+ *         this.data = [
+ *             {"name":"Alabama","abbrev":"AL"},
+ *             {"name":"Alaska","abbrev":"AK"},
+ *             {"name":"Arizona","abbrev":"AZ"}
+ *         ]
+ *   }
+ *   comboboxFieldReady(event) {
+ *       this.combobox = event.detail.cmp;
+ *       this.combobox.setOptions(this.data);
+ *   }
+ * }
+ *
+ * window.comboboxfield = new ComboBoxFieldComponent();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtFormPanel, ExtComboBox } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *          const data = [
+ *               {"name":"Alabama","abbrev":"AL"},
+ *               {"name":"Alaska","abbrev":"AK"},
+ *               {"name":"Arizona","abbrev":"AZ"}
+ *          ]
+ *
+ *          return (
+ *              <ExtFormPanel shadow>
+ *                  <ExtComboBox
+ *                      width={200}
+ *                      label="State"
+ *                      options={data}
+ *                      displayField="name"
+ *                      valueField="code"
+ *                      queryMode="local"
+ *                      labelAlign="placeholder"
+ *                      typeAhead
+ *                  />
+ *              </ExtFormPanel>
+ *          )
+ *      }
+ * }
+ * ```
  *
  * @since 6.5.0
  */
@@ -340,6 +445,12 @@ Ext.define('Ext.field.ComboBox', {
         ENTER: 'onEnterKey'
     },
 
+    platformConfig: {
+        phone: {
+            editable: false
+        }
+    },
+
     /**
      * @private
      * Respond to selection. Needed if we are multiselect
@@ -358,8 +469,6 @@ Ext.define('Ext.field.ComboBox', {
 
         this.callParent([valueCollection, adds]);
     },
-
-    picker: 'floated',
 
     onInput: function(e) {
         var me = this,
@@ -670,8 +779,22 @@ Ext.define('Ext.field.ComboBox', {
         var me = this,
             inputValue = me.getInputValue(),
             value = me.getValue(),
-            selection = me.getSelection();
+            selection = me.getSelection(),
+            valueField,
+            displayField,
+            displayValueField;
 
+        // displayValueField is the field wherein combobox values are set/selected
+        // in case of displayTpl check the entire diplayTpl value 
+        // else just check the value of displayField
+        if (me.getDisplayTpl() && selection) {
+            valueField = selection.get(this.getValueField());
+            displayField = selection.get(this.getDisplayField());
+            displayValueField = me.getDisplayTpl().apply({ abbr: valueField, name: displayField });
+        }
+        else {
+            displayValueField = selection && selection.get(this.getDisplayField());
+        }
         // Don't want to callParent here, we need custom handling
 
         if (me.doFilterTask) {
@@ -700,7 +823,8 @@ Ext.define('Ext.field.ComboBox', {
                 // Prevent an issue where we have duplicate display values with
                 // different underlying values. If the typed value exactly matches
                 // the selection Record, we must not do a syncValue.
-                if (!selection || selection.get(this.getDisplayField()) !== inputValue) {
+
+                if (!selection || displayValueField !== inputValue) {
                     me.syncMode = 'input';
                     me.syncValue();
 

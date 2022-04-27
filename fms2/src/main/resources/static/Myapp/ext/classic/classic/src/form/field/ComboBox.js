@@ -55,7 +55,7 @@
  *     cb.on('select', yourFunction, yourScope);
  *
  * # Multiple Selection
- * The {@link #multiSelect} config is deprecated.  For multiple selection use 
+ * The {@link #multiSelect} config is deprecated.  For multiple selection use
  * {@link Ext.form.field.Tag} or {@link Ext.view.MultiSelector}.
  *
  * # Filtered Stores
@@ -153,7 +153,7 @@ Ext.define('Ext.form.field.ComboBox', {
          * @cfg {String} delimiter
          * The character(s) used to separate the {@link #displayField display values} of multiple
          * selected items when `{@link #multiSelect} = true`.
-         * @deprecated 5.1.0 For multiple selection use {@link Ext.form.field.Tag} or 
+         * @deprecated 5.1.0 For multiple selection use {@link Ext.form.field.Tag} or
          * {@link Ext.view.MultiSelector}
          * @locale
          */
@@ -201,7 +201,7 @@ Ext.define('Ext.form.field.ComboBox', {
      * Has no effect if {@link #multiSelect} is `false`
      *
      * Configure as `false` to automatically collapse the pick list after a selection is made.
-     * @deprecated 5.1.0 For multiple selection use {@link Ext.form.field.Tag} or 
+     * @deprecated 5.1.0 For multiple selection use {@link Ext.form.field.Tag} or
      * {@link Ext.view.MultiSelector}
      */
 
@@ -210,7 +210,7 @@ Ext.define('Ext.form.field.ComboBox', {
      * Has no effect if {@link #multiSelect} is `false`
      *
      * Configure as true to automatically collapse the pick list after a selection is made.
-     * @deprecated 5.1.0 For multiple selection use {@link Ext.form.field.Tag} or 
+     * @deprecated 5.1.0 For multiple selection use {@link Ext.form.field.Tag} or
      * {@link Ext.view.MultiSelector}
      */
     collapseOnSelect: false,
@@ -266,28 +266,28 @@ Ext.define('Ext.form.field.ComboBox', {
 
     /**
      * @cfg {Ext.data.Store/String/Array/Object} store (required)
-     * The data source to which the combo / tagfield is bound. Acceptable values for this 
+     * The data source to which the combo / tagfield is bound. Acceptable values for this
      * property are:
      *
      *   - **any {@link Ext.data.Store Store} class / subclass**
      *   - **an {@link Ext.data.Store#storeId ID of a store}**
-     *   - **an Array** : Arrays will be converted to a {@link Ext.data.Store} internally, 
-     *     automatically generating {@link Ext.data.Field#name field names} to work with all 
+     *   - **an Array** : Arrays will be converted to a {@link Ext.data.Store} internally,
+     *     automatically generating {@link Ext.data.Field#name field names} to work with all
      *     data components.
      *
      *     - **1-dimensional array** : (e.g., `['Foo','Bar']`)
      *
-     *       A 1-dimensional array will automatically be expanded (each array item will be 
+     *       A 1-dimensional array will automatically be expanded (each array item will be
      *       used for both the combo {@link #valueField} and {@link #displayField})
      *
      *     - **2-dimensional array** : (e.g., `[['f','Foo'],['b','Bar']]`)
      *
-     *       For a multi-dimensional array, the value in index 0 of each item will be assumed 
-     *       to be the combo {@link #valueField}, while the value at index 1 is assumed to be 
+     *       For a multi-dimensional array, the value in index 0 of each item will be assumed
+     *       to be the combo {@link #valueField}, while the value at index 1 is assumed to be
      *       the combo {@link #displayField}.
-     *   - **a {@link Ext.data.Store Store} config object**.  When passing a config you can 
-     *     specify the store type by alias.  Passing a config object with a store type will 
-     *     dynamically create a new store of that type when the combo / tagfield is 
+     *   - **a {@link Ext.data.Store Store} config object**.  When passing a config you can
+     *     specify the store type by alias.  Passing a config object with a store type will
+     *     dynamically create a new store of that type when the combo / tagfield is
      *     instantiated.
      *
      *     Ext.define('MyApp.store.States', {
@@ -295,7 +295,7 @@ Ext.define('Ext.form.field.ComboBox', {
      *         alias: 'store.states',
      *         fields: ['name']
      *     });
-     *     
+     *
      *     Ext.create({
      *         xtype: 'combobox',
      *         renderTo: document.body,
@@ -468,6 +468,13 @@ Ext.define('Ext.form.field.ComboBox', {
     caseSensitive: false,
 
     /**
+     * @cfg {Boolean} autoSelectMatches
+     *`true` to automatically highlight the record from the store that closest matches the query.
+     * A false value will fall back to autoSelectLast.
+     */
+    autoSelectMatches: true,
+
+    /**
      * @cfg {Boolean} autoSelect
      * `true` to automatically highlight the first result gathered by the data store in the
      * dropdown list when it is opened. A false value would cause nothing in the list to be
@@ -523,13 +530,23 @@ Ext.define('Ext.form.field.ComboBox', {
     /**
      * @cfg {Boolean} clearFilterOnBlur
      * *When {@link #queryMode} is `'local'` only*
-     * 
+     *
      * As text is entered, the underlying store is filtered to match the value. When this option
      * is `true`, any filtering applied by this field will be cleared when focus is removed
      * & reinstated on focus.
      * If `false`, the filters will be left in place.
      */
     clearFilterOnBlur: true,
+
+    /**
+     * @cfg {Boolean} forceResetCaret
+     *
+     * A long text can scroll the field to it's end when combobox trigger is clicked /
+     * on selecting another long text from list depending upon browser behavior .
+     * When this option is set to `true`, it prevents the above mentioned behavior
+     * and the field shows beginning of text.
+     */
+    forceResetCaret: false,
 
     /**
      * @cfg {Boolean} enableRegEx
@@ -588,7 +605,7 @@ Ext.define('Ext.form.field.ComboBox', {
 
     /**
      * @cfg {Boolean} transformInPlace
-     * `true` to automatically render this combo box in place of the select element that is being 
+     * `true` to automatically render this combo box in place of the select element that is being
      * {@link #transform transformed}. If `false`, this combo will be rendered using the normal
      * rendering, either as part of a layout, or using {@link #renderTo} or {@link #method-render}.
      */
@@ -678,8 +695,8 @@ Ext.define('Ext.form.field.ComboBox', {
      * @event select
      * Fires when at least one list item is selected.
      * @param {Ext.form.field.ComboBox} combo This combo box
-     * @param {Ext.data.Model/Ext.data.Model[]} record With {@link #multiSelect} 
-     * `false`, the value will be a single record. With {@link #multiSelect} `true`, the 
+     * @param {Ext.data.Model/Ext.data.Model[]} record With {@link #multiSelect}
+     * `false`, the value will be a single record. With {@link #multiSelect} `true`, the
      * value will be an array of records.
      */
 
@@ -914,9 +931,12 @@ Ext.define('Ext.form.field.ComboBox', {
     },
 
     updateDisplayField: function(displayField) {
-        // force displayTpl refresh when displayField changes
-        if (displayField && !this.displayTpl || this.displayTpl.auto) {
-            this.setDisplayTpl(false);
+        var me = this;
+
+        // Force auto generated displayTpl refresh when displayField changes
+        if (displayField && me.displayTpl && me.displayTpl.auto) {
+            me.setDisplayTpl(false);
+            me.setRawValue(me.getDisplayValue());
         }
     },
 
@@ -1001,12 +1021,23 @@ Ext.define('Ext.form.field.ComboBox', {
     onFocus: function(e) {
         var me = this;
 
+        // For touch devices move focus to the picker
+        if (Ext.isTouchMode()) {
+            me.getPicker().getEl().focus();
+        }
+
         me.callParent([e]);
 
         if (me.triggerAction !== 'all' && me.queryFilter && me.queryMode === 'local' &&
             me.clearFilterOnBlur) {
             delete me.lastQuery;
             me.doRawQuery();
+        }
+
+        // Long inputs shouldn't scorll to end in IE/Safari
+        // prevent setting caret at start in other browsers if mid of field is clicked
+        if (me.forceResetCaret && me.inputEl && (Ext.isIE || Ext.isSafari)) {
+            me.setCaretPos(0);
         }
     },
 
@@ -1068,7 +1099,7 @@ Ext.define('Ext.form.field.ComboBox', {
                     if (!rec && lastRecords && (!me.allowBlank || me.rawValue)) {
                         rec = lastRecords[0];
 
-                        // Can't get rec from display value, so resetting previous one. 
+                        // Can't get rec from display value, so resetting previous one.
                         // We should must fire select for this (As we will change display value)
                         needToSelect = true;
                     }
@@ -1107,8 +1138,8 @@ Ext.define('Ext.form.field.ComboBox', {
         else if ((value = me.getValue()) && value == rawValue) {
             rec = me.findRecordByDisplay(value);
 
-            if (rec && (rec !== (lastRecords && lastRecords[0]) ||
-                me.displayField !== me.valueField)) {
+            // fire select if the new record is different from the last record
+            if (rec && (rec !== (lastRecords && lastRecords[0]))) {
                 me.select(rec, true);
                 me.fireEvent('select', me, rec);
             }
@@ -1474,7 +1505,7 @@ Ext.define('Ext.form.field.ComboBox', {
             refreshFilters = !!queryString && (!me.queryFilter || me.queryFilter &&
                              (filters.indexOf(me.queryFilter) < 0));
 
-            // If they're using the same value as last time (and not being asked to query all), 
+            // If they're using the same value as last time (and not being asked to query all),
             // and the filters don't need to be refreshed, just show the dropdown
             if (me.queryCaching && !refreshFilters && queryPlan.query === me.lastQuery) {
                 // The filter changing was done with events suppressed, so
@@ -1663,7 +1694,10 @@ Ext.define('Ext.form.field.ComboBox', {
             }
 
             if (queryPlan.rawQuery) {
-                if (me.picker && !me.picker.getSelectionModel().hasSelection()) {
+                if (me.autoSelectMatches && me.picker && queryPlan.query) {
+                    me.doAutoSelectMatch(queryPlan.query);
+                }
+                else if (me.picker && !me.picker.getSelectionModel().hasSelection()) {
                     me.doAutoSelect();
                 }
             }
@@ -1738,6 +1772,42 @@ Ext.define('Ext.form.field.ComboBox', {
         }
     },
 
+    doAutoSelectMatch: function(queryString) {
+        var me = this,
+            store = me.store,
+            picker = me.picker,
+            autoSelectMatches = me.autoSelectMatches,
+            displayField = me.getDisplayField(),
+            index = 0,
+            value, valueStore, valueType,
+            filterValue = typeof queryString === 'string' ? queryString.toLowerCase() : queryString,
+            minLength = Number.MAX_SAFE_INTEGER;
+
+        if (picker && me.autoSelect && autoSelectMatches) {
+            store.each(function(record, indexRecord) {
+                value = record.get(displayField);
+                valueType = typeof value;
+                valueStore = valueType === 'string' ? value.toLowerCase() : value;
+
+                if (valueStore === filterValue) {
+                    index = indexRecord;
+
+                    return false;
+                }
+                else if (valueType === 'string' && value.length < minLength) {
+                    minLength = value.length;
+                    index = indexRecord;
+                }
+                else if (valueType === 'number' && value < minLength) {
+                    minLength = value;
+                    index = indexRecord;
+                }
+            });
+        }
+
+        picker.getNavigationModel().setPosition(index);
+    },
+
     doTypeAhead: function(queryPlan) {
         var me = this;
 
@@ -1760,6 +1830,11 @@ Ext.define('Ext.form.field.ComboBox', {
         if (!me.readOnly && !me.disabled) {
             if (me.isExpanded) {
                 me.collapse();
+
+                // Hide keyboard for touch devices when the picker list is collapsed
+                if (e && e.pointerType !== 'mouse') {
+                    trigger.getEl().focus();
+                }
             }
             else {
                 // Alt-Down arrow opens the picker but does not select items:
@@ -1781,6 +1856,10 @@ Ext.define('Ext.form.field.ComboBox', {
                         me.doQuery(me.getRawValue(), false, true);
                     }
                 }
+            }
+
+            if (me.forceResetCaret && me.inputEl) {
+                me.setCaretPos(0);
             }
         }
     },
@@ -2245,8 +2324,8 @@ Ext.define('Ext.form.field.ComboBox', {
             }
         }
         else {
-            // This is the value used to forceSelection in assertValue if 
-            // an invalid value is left in the field at completeEdit. Must be cleared so 
+            // This is the value used to forceSelection in assertValue if
+            // an invalid value is left in the field at completeEdit. Must be cleared so
             // that the next usage of the field is not affected, but only if we are setting
             // a new value.
             me.lastSelectedRecords = null;
@@ -2366,7 +2445,7 @@ Ext.define('Ext.form.field.ComboBox', {
             if (!record || !record.isModel) {
                 record = me.findRecordByValue(key = record);
 
-                // The value might be in a new record created from an unknown value 
+                // The value might be in a new record created from an unknown value
                 // (if !me.forceSelection).
                 // Or it could be a picked record which is filtered out of the main store.
                 // Or it could be a setValue(record) passed to an empty store with autoLoadOnValue
@@ -2511,6 +2590,11 @@ Ext.define('Ext.form.field.ComboBox', {
         if (inputEl && me.typeAhead && me.hasFocus) {
             // if typeahead is configured, deselect any partials
             me.selectText(displayValue.length);
+        }
+
+        // long inputs shouldn't scroll to end in Chrome/Edge/Firefox
+        if (me.forceResetCaret && inputEl && !Ext.isIE && !Ext.isSafari) {
+            me.setCaretPos(0);
         }
     },
 

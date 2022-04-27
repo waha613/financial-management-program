@@ -6,12 +6,14 @@
  *
  * ## Example
  *
- *     @example
- *     Ext.Viewport.add({
+ * ```javascript
+ * @example({ framework: 'extjs' })    
+ *   Ext.Viewport.add({
  *         masked: {
  *            xtype: 'loadmask'
  *         }
  *     });
+ * ```
  *
  * You can customize the loading {@link #message} and whether or not you want to show the
  * {@link #indicator}:

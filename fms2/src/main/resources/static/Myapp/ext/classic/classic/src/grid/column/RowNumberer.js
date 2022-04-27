@@ -167,7 +167,7 @@ Ext.define('Ext.grid.column.RowNumberer', {
         var me = this,
             rowspan = me.rowspan,
             page = dataSource.currentPage,
-            result = record ? view.store.indexOf(record) : value - 1;
+            result = record ? dataSource.indexOf(record) : value - 1;
 
         if (metaData && rowspan) {
             metaData.tdAttr = 'rowspan="' + rowspan + '"';

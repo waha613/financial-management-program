@@ -1,28 +1,123 @@
 /**
  * Simple Select field wrapper. Example usage:
  *
- *     @example
- *     Ext.create('Ext.form.Panel', {
- *         fullscreen: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.form.Panel', {
+ *     fullscreen: true,
+ *     items: [{
+ *         xtype: 'fieldset',
+ *         title: 'Select',
  *         items: [{
- *             xtype: 'fieldset',
- *             title: 'Select',
- *             items: [{
- *                 xtype: 'selectfield',
- *                 label: 'Choose one',
- *                 options: [{
- *                     text: 'First Option',
- *                     value: 'first'
- *                 }, {
- *                     text: 'Second Option',
- *                     value: 'second'
- *                 }, {
- *                     text: 'Third Option',
- *                     value: 'third'
- *                 }]
+ *             xtype: 'selectfield',
+ *             label: 'Choose one',
+ *             options: [{
+ *                 text: 'First Option',
+ *                 value: 'first'
+ *             }, {
+ *                 text: 'Second Option',
+ *                 value: 'second'
+ *             }, {
+ *                 text: 'Third Option',
+ *                 value: 'third'
  *             }]
  *         }]
- *     });
+ *     }]
+ * });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtFormPanel, ExtSelectField, ExtContainer } from '@sencha/ext-react';
+ *
+ * Ext.require('Ext.Toast');
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtContainer layout="center">
+ *                 <ExtFormPanel shadow>
+ *                     <ExtSelectField
+ *                         label="Select"
+ *                         width="200"
+ *                         onChange={(field, newValue)
+ *                              => Ext.toast(`You selected ${newValue.get('value')}`)}
+ *                         options={[
+ *                             { text: 'Option 1', value: 1 },
+ *                             { text: 'Option 2', value: 2 },
+ *                             { text: 'Option 3', value: 3 }
+ *                         ]}
+ *                     />
+ *                 </ExtFormPanel>
+ *             </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *             <ExtContainer layout="center">
+ *                 <ExtFormPanel shadow="true" >
+ *                     <ExtSelectField
+ *                         label="Select"
+ *                         width="200"
+ *                         (change)="onChange($event)"
+ *                         [options]="[
+ *                             { text: 'Option 1', value: 1 },
+ *                             { text: 'Option 2', value: 2 },
+ *                             { text: 'Option 3', value: 3 }
+ *                         ]"
+ *                      ></ExtSelectField>
+ *                 </ExtFormPanel>
+ *             </ExtContainer>
+ *         `
+ * })
+ * export class AppComponent {
+ *     onChange = (event) => {
+ *         Ext.toast(`You selected ${event.newValue}`)
+ *     }
+ *  }
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container layout="center">
+ *    <ext-formpanel shadow="true">
+ *        <ext-selectfield
+ *             label="Select"
+ *             width="200"
+ *             onChange="selectfield.onchangeselectfield"
+ *             options='[
+ *                 { "text": "Option 1", "value": "1" },
+ *                 { "text": "Option 2", "value": "2" },
+ *                 { "text": "Option 3", "value": "3" }
+ *             ]'
+ *        >
+ *        </ext-selectfield>
+ *    </ext-formpanel>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-selectfield.component';
+ *
+ * export default class SelectFieldComponent {
+ *
+ *    onchangeselectfield = (event) => {
+ *         return Ext.toast(`You selected the item with value ${event.detail.newValue}`);
+ *    }
+ * }
+ *
+ * window.selectfield = new SelectFieldComponent();
+ * ```
  */
 Ext.define('Ext.field.Select', {
     extend: 'Ext.field.Picker',
@@ -52,11 +147,11 @@ Ext.define('Ext.field.Select', {
     /**
      * @event change
      * Fires when selection has changed.
-     *
+     * 
      * This includes keystrokes that edit the text (if editable).
-     * @param {Ext.field.Select} this
-     * @param {Ext.data.Model} newValue The corresponding record for the new value
-     * @param {Ext.data.Model} oldValue The corresponding record for the old value
+     * @param {Ext.field.Select} this This field
+     * @param {Mixed} newValue The new value
+     * @param {Mixed} oldValue The original value
      */
 
     /**

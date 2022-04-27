@@ -240,9 +240,12 @@ Ext.define('Ext.form.RadioGroup', {
         key = typeof value === 'object' && Ext.Object.getKeys(value)[0];
 
         // If the value is an array we skip out here because it's during a change
-        // between multiple items, so we never want to fire a change
-        if (me.simpleValue || (key && !Ext.isArray(value[key]))) {
-            me.callParent(arguments);
+        // between multiple items, so we never want to fire a change.
+        // Check if we have a radio group not using simpleValue that has been
+        // reset for which we want to fire a change event
+        if (me.simpleValue || ((key && !Ext.isArray(value[key])) ||
+            (Ext.isObject(value) && Ext.Object.isEmpty(value)))) {
+            me.callParent();
         }
     },
 

@@ -1,6 +1,8 @@
-topSuite("grid-general-locking-from-no-locking",
-    [false, 'Ext.grid.Panel', 'Ext.data.ArrayStore'],
-function() {
+topSuite("grid-general-locking-from-no-locking", [
+    false,
+    'Ext.grid.Panel',
+    'Ext.data.ArrayStore'
+], function() {
     var grid, store,
         synchronousLoad = true,
         proxyStoreLoad = Ext.data.ProxyStore.prototype.load,
@@ -34,19 +36,19 @@ function() {
         // affects the presence of a scrollbar in the other dimension.
         visibleScrollbarsIt = scrollbarsTakeSpace ? it : xit;
 
-        function getViewTop(el) {
-            var dom = Ext.getDom(el),
-                transform;
+    function getViewTop(el) {
+        var dom = Ext.getDom(el),
+            transform;
 
-            if (Ext.supports.CssTransforms && !Ext.isIE9m) {
-                transform = dom.style[transformStyleName];
+        if (Ext.supports.CssTransforms && !Ext.isIE9m) {
+            transform = dom.style[transformStyleName];
 
-                return transform ? parseInt(transform.split(',')[1], 10) : 0;
-            }
-            else {
-                return parseInt(dom.style.top || '0', 10);
-            }
+            return transform ? parseInt(transform.split(',')[1], 10) : 0;
         }
+        else {
+            return parseInt(dom.style.top || '0', 10);
+        }
+    }
 
     describe('Locking a column when grid configured with enableLocking, but no locked columns', function() {
         var scrollY,

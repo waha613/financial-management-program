@@ -306,7 +306,7 @@ Ext.define('Ext.grid.column.Widget', {
         var me = this,
             widget;
 
-        me.callParent(arguments);
+        me.callParent();
 
         widget = me.widget;
 
@@ -645,15 +645,21 @@ Ext.define('Ext.grid.column.Widget', {
 
         updateWidget: function(record) {
             var dataIndex = this.dataIndex,
+                view = this.getView(),
                 widget;
 
             if (this.rendered && this.bindDataIndex) {
-                widget = this.getWidget(record);
+                if (this.isVisible(true)) {
+                    widget = this.getWidget(record);
 
-                // Call the appropriate setter with this column's data field
-                // unless it's using binding
-                if (widget) {
-                    widget.setConfig(widget.defaultBindProperty, record.get(dataIndex));
+                    // Call the appropriate setter with this column's data field
+                    // unless it's using binding
+                    if (widget) {
+                        widget.setConfig(widget.defaultBindProperty, record.get(dataIndex));
+                    }
+                }
+                else {
+                    view.refreshNeeded = false;
                 }
             }
         },

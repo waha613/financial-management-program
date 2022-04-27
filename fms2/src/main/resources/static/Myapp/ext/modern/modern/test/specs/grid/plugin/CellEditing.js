@@ -1,12 +1,12 @@
 /* global Ext, expect, jasmine, xit, topSuite */
 /* eslint indent: off */
-topSuite("Ext.grid.plugin.CellEditing",
+topSuite('Ext.grid.plugin.CellEditing',
     ['Ext.grid.Grid', 'Ext.grid.Tree', 'Ext.grid.plugin.CellEditing', 'Ext.form.Panel',
      'Ext.data.ChainedStore', 'Ext.field.*'],
 function() {
     var webkitIt = Ext.isWebKit ? it : xit,
         grid, store, plugin, navigationModel,
-GridEventModel = Ext.define(null, {
+        GridEventModel = Ext.define(null, {
             extend: 'Ext.data.Model',
             fields: [
                 'field1',
@@ -63,7 +63,7 @@ GridEventModel = Ext.define(null, {
                         column: column
                     });
                 }
- else {
+                else {
                     triggerCellMouseEvent('mousedown', row, column);
                 }
             });
@@ -88,11 +88,11 @@ GridEventModel = Ext.define(null, {
                         Ext.testHelper.tap(cell);
                     }
                 }
- else {
+                else {
                     if (double) {
                         jasmine.fireMouseEvent(cell, 'dblclick');
                     }
- else {
+                    else {
                         jasmine.fireMouseEvent(cell, 'click');
                     }
                 }
@@ -126,13 +126,39 @@ GridEventModel = Ext.define(null, {
             }, 'move to cell ' + x + ',' + y + '');
         }
 
+        function makeData(dataSize, ident) {
+            var data = [];
+
+            ident = ident || 0;
+            dataSize = dataSize || 10;
+
+            for (var i = 0; i < dataSize; ++i) {
+                ++ident;
+
+                data.push({
+                    id: ident,
+                    field1: ident + '.' + 1,
+                    field2: ident + '.' + 2,
+                    field3: ident + '.' + 3,
+                    field4: ident + '.' + 4,
+                    field5: ident + '.' + 5,
+                    field6: ident + '.' + 6,
+                    field7: ident + '.' + 7,
+                    field8: ident + '.' + 8,
+                    field9: ident + '.' + 9,
+                    field10: ident + '.' + 10
+                });
+            }
+
+            return data;
+        }
+
         function getRec(index) {
             return store.getAt(index);
         }
 
         function makeGrid(columns, pluginCfg, gridCfg, dataSize) {
-            var data = [],
-                defaultCols = [],
+            var defaultCols = [],
                 i;
 
             if (!columns) {
@@ -149,24 +175,9 @@ GridEventModel = Ext.define(null, {
                 }
             }
 
-            for (i = 1; i <= (dataSize || 10); ++i) {
-                data.push({
-                    field1: i + '.' + 1,
-                    field2: i + '.' + 2,
-                    field3: i + '.' + 3,
-                    field4: i + '.' + 4,
-                    field5: i + '.' + 5,
-                    field6: i + '.' + 6,
-                    field7: i + '.' + 7,
-                    field8: i + '.' + 8,
-                    field9: i + '.' + 9,
-                    field10: i + '.' + 10
-                });
-            }
-
             store = new Ext.data.Store({
                 model: GridEventModel,
-                data: data
+                data: makeData(dataSize)
             });
 
             if (pluginCfg !== null) {
@@ -192,8 +203,8 @@ GridEventModel = Ext.define(null, {
             Ext.data.Model.schema.clear();
         });
 
-        describe("plugin configuration", function() {
-            it("should be able to add the plugin after rendering the grid", function() {
+        describe('plugin configuration', function() {
+            it('should be able to add the plugin after rendering the grid', function() {
                 makeGrid(null, null);
                 plugin = new Ext.grid.plugin.CellEditing({});
                 grid.addPlugin(plugin);
@@ -238,8 +249,8 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        xdescribe("resolveListenerScope", function() {
-            it("should resolve the scope to the grid", function() {
+        xdescribe('resolveListenerScope', function() {
+            it('should resolve the scope to the grid', function() {
                 var fooScope = {
                     someFn: function() {}
                 };
@@ -261,8 +272,8 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        describe("renderer values", function() {
-            it("should use the underlying data value", function() {
+        describe('renderer values', function() {
+            it('should use the underlying data value', function() {
                 makeGrid([{
                     dataIndex: 'field1',
                     renderer: function() {
@@ -274,7 +285,7 @@ GridEventModel = Ext.define(null, {
                 expect(plugin.getActiveEditor().getField().getValue()).toBe('1.1');
             });
 
-            it("should not use the rendered value if the value is ''", function() {
+            it('should not use the rendered value if the value is ""', function() {
                 makeGrid([{
                     dataIndex: 'field1',
                     renderer: function() {
@@ -287,7 +298,7 @@ GridEventModel = Ext.define(null, {
                 expect(plugin.getActiveEditor().getField().getValue()).toBe('');
             });
 
-            it("should not use the rendered value if the value is 0", function() {
+            it('should not use the rendered value if the value is 0', function() {
                 makeGrid([{
                     dataIndex: 'field1',
                     renderer: function() {
@@ -300,7 +311,7 @@ GridEventModel = Ext.define(null, {
                 expect(plugin.getActiveEditor().getField().getValue()).toBe(0);
             });
 
-            it("should not use the rendered value if the value is null", function() {
+            it('should not use the rendered value if the value is null', function() {
                 makeGrid([{
                     dataIndex: 'field1',
                     renderer: function() {
@@ -313,7 +324,7 @@ GridEventModel = Ext.define(null, {
                 expect(plugin.getActiveEditor().getField().getValue()).toBe('');
             });
 
-            it("should not use the rendered value if the value is undefined", function() {
+            it('should not use the rendered value if the value is undefined', function() {
                 makeGrid([{
                     dataIndex: 'field1',
                     renderer: function() {
@@ -334,7 +345,7 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        describe("basic editing", function() {
+        describe('basic editing', function() {
             var editorParentNode;
 
             beforeEach(function() {
@@ -373,7 +384,7 @@ GridEventModel = Ext.define(null, {
                 expect(plugin.location.record).toBe(store.getAt(900));
             });
 
-            it("should trigger the edit on cell interaction", function() {
+            it('should trigger the edit on cell interaction', function() {
                 triggerCellMouseEvent('dblclick', 0, 0);
                 expect(plugin.editing).toBe(true);
                 expect(plugin.location.column).toBe(colRef[0]);
@@ -383,31 +394,31 @@ GridEventModel = Ext.define(null, {
                 expect(plugin.getActiveEditor().el.dom.parentNode).toBe(editorParentNode);
             });
 
-            it("should be able to be trigger by passing numeric coordinates", function() {
+            it('should be able to be trigger by passing numeric coordinates', function() {
                 plugin.startEdit(0, 2);
                 expect(plugin.editing).toBe(true);
                 expect(plugin.location.column).toBe(colRef[2]);
                 expect(plugin.location.record).toBe(store.getAt(0));
             });
 
-            it("should be able to be trigger by passing a record/header", function() {
+            it('should be able to be trigger by passing a record/header', function() {
                 plugin.startEdit(store.getAt(1), colRef[3]);
                 expect(plugin.editing).toBe(true);
                 expect(plugin.location.column).toBe(colRef[3]);
                 expect(plugin.location.record).toBe(store.getAt(1));
             });
 
-            it("should use the specified column field", function() {
+            it('should use the specified column field', function() {
                 triggerCellMouseEvent('dblclick', 0, 0);
                 expect(plugin.getActiveEditor().getField().getId()).toBe('field1');
             });
 
-            it("should get the underlying record value", function() {
+            it('should get the underlying record value', function() {
                 triggerCellMouseEvent('dblclick', 0, 1);
                 expect(plugin.getActiveEditor().getField().getValue()).toBe('1.2');
             });
 
-            it("should cancel editing on removing a column", function() {
+            it('should cancel editing on removing a column', function() {
                 var col0 = colRef[0],
                     col0Editor;
 
@@ -429,7 +440,7 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            it("should cancel editing on destruction of a column", function() {
+            it('should cancel editing on destruction of a column', function() {
                 var col0Editor;
 
                 triggerCellMouseEvent('dblclick', 0, 0);
@@ -442,7 +453,7 @@ GridEventModel = Ext.define(null, {
                 expect(col0Editor.destroyed).toBe(true);
             });
 
-            it("should not cancel editing scroll active editor out of view", function() {
+            it('should not cancel editing scroll active editor out of view', function() {
                 var data = [],
                     i;
 
@@ -474,7 +485,7 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            it("should continue editing after a refresh", function() {
+            it('should continue editing after a refresh', function() {
                 triggerCellMouseEvent('dblclick', 0, 0);
 
                 // Editing must have started.
@@ -500,11 +511,11 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            it("should not cancel the SPACE key", function() {
+            it('should not cancel the SPACE key', function() {
                 triggerCellMouseEvent('dblclick', 0, 1);
                 expect(plugin.getActiveEditor().getField().getValue()).toBe('1.2');
 
-                var e = document.createEvent("Events");
+                var e = document.createEvent('Events');
 
                 e.initEvent('keydown', true, true);
                 Ext.apply(e, {
@@ -515,7 +526,7 @@ GridEventModel = Ext.define(null, {
                 expect(e.defaultPrevented).toBe(false);
             });
 
-            it("should not cancel Home key", function() {
+            it('should not cancel Home key', function() {
                 var event;
 
                 grid.el.on('keydown', function(e) {
@@ -533,7 +544,7 @@ GridEventModel = Ext.define(null, {
                 expect(event.browserEvent.defaultPrevented).toBe(false);
             });
 
-            it("should not cancel End key", function() {
+            it('should not cancel End key', function() {
                 var event;
 
                 grid.el.on('keydown', function(e) {
@@ -552,9 +563,9 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        describe("clean up", function() {
+        describe('clean up', function() {
             function makeCleanupSuite(withLocking) {
-                describe(withLocking ? "with locking" : "without locking", function() {
+                describe(withLocking ? 'with locking' : 'without locking', function() {
                     var CM;
 
                     beforeEach(function() {
@@ -565,10 +576,10 @@ GridEventModel = Ext.define(null, {
                         CM = null;
                     });
 
-                    describe("not activated " + (withLocking ? 'with locking' : 'with no locking'), function() {
+                    describe('not activated ' + (withLocking ? 'with locking' : 'with no locking'), function() {
                         function makeRenderSuite(beforeRender) {
-                            describe(beforeRender ? "before render" : "after render", function() {
-                                it("should destroy an editor instance", function() {
+                            describe(beforeRender ? 'before render' : 'after render', function() {
+                                it('should destroy an editor instance', function() {
                                     var count = CM.getCount();
 
                                     makeGrid([{
@@ -584,7 +595,7 @@ GridEventModel = Ext.define(null, {
                                     expect(CM.getCount()).toBe(count);
                                 });
 
-                                it("should not leave an instance with an editor config", function() {
+                                it('should not leave an instance with an editor config', function() {
                                     var count = CM.getCount();
 
                                     makeGrid([{
@@ -602,7 +613,7 @@ GridEventModel = Ext.define(null, {
                                     expect(CM.getCount()).toBe(count);
                                 });
 
-                                it("should not leave an instance with a field config", function() {
+                                it('should not leave an instance with a field config', function() {
                                     var count = CM.getCount();
 
                                     makeGrid([{
@@ -626,8 +637,8 @@ GridEventModel = Ext.define(null, {
                         makeRenderSuite(true);
                     });
 
-                    describe("after activation", function() {
-                        it("should destroy an editor instance", function() {
+                    describe('after activation', function() {
+                        it('should destroy an editor instance', function() {
                             var count = CM.getCount();
 
                             makeGrid([{
@@ -642,7 +653,7 @@ GridEventModel = Ext.define(null, {
                             expect(CM.getCount()).toBe(count);
                         });
 
-                        it("should destroy an editor config", function() {
+                        it('should destroy an editor config', function() {
                             var count = CM.getCount();
 
                             makeGrid([{
@@ -659,7 +670,7 @@ GridEventModel = Ext.define(null, {
                             expect(CM.getCount()).toBe(count);
                         });
 
-                        it("should destroy a field config", function() {
+                        it('should destroy a field config', function() {
                             var count = CM.getCount();
 
                             makeGrid([{
@@ -700,7 +711,7 @@ GridEventModel = Ext.define(null, {
                             }
                         }));
                     }
- else {
+                    else {
                         cols.push(new Ext.grid.column.Column({
                             name: 'F' + i,
                             dataIndex: 'field' + i
@@ -749,13 +760,13 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        describe("events", function() {
+        describe('events', function() {
             beforeEach(function () {
                 makeGrid(null);
             });
 
-            describe("beforestartedit", function() {
-                 it("should fire the event in grid", function() {
+            describe('beforestartedit', function() {
+                 it('should fire the event in grid', function() {
                     var called = false;
                     runs(function () {
                         grid.on('beforestartedit', function() {
@@ -769,7 +780,7 @@ GridEventModel = Ext.define(null, {
                     });
                 });
 
-                it("should fire the event with the grid, element, value and location", function() {
+                it('should fire the event with the grid, element, value and location', function() {
                     var p, inputValue, context;
                   
                     runs(function() {
@@ -795,7 +806,7 @@ GridEventModel = Ext.define(null, {
                     });
                 });
 
-                it("should prevent editing if false is returned from the plugin's beforeedit event", function() {
+                it('should prevent editing if plugin beforeedit event returns false', function() {
                     runs(function() {
                         grid.on('beforestartedit', function(editor, el, value, location) {
                             // Only allow editing on rows other than the first
@@ -820,14 +831,14 @@ GridEventModel = Ext.define(null, {
                     });
                 });
 
-                it("should prevent editing if false is returned from the CellEditor's beforestartedit event", function() {
+                it('should prevent editing if CellEditor beforestartedit event returns false', function() {
                     runs(function() {
                         plugin.getEditor({ record: store.getAt(0), column: colRef[0] }).on('beforestartedit', function(editor) {
                             // Only allow editing on rows other than the first
 
                             plugin.editing = editor.editing;
 
-                            return editor.getField().id != 'field1';
+                            return editor.getField().id !== 'field1';
                         });
 
                         triggerCellMouseEvent('dblclick', 0, 0);
@@ -841,8 +852,8 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            describe("canceledit", function() {
-                it("should fire the event when editing is cancelled", function() {
+            describe('canceledit', function() {
+                it('should fire the event when editing is cancelled', function() {
                     var called = false;
 
                     runs(function() {
@@ -861,7 +872,7 @@ GridEventModel = Ext.define(null, {
                     });
                 });
 
-                it("should fire the event on grid when editing is cancelled", function() {
+                it('should fire the event on grid when editing is cancelled', function() {
                     var called = false;
 
                     runs(function() {
@@ -881,7 +892,7 @@ GridEventModel = Ext.define(null, {
                     });
                 });
 
-                it("should pass the editor and the current value", function() {
+                it('should pass the editor and the current value', function() {
                     var p, inputValue;
 
                     runs(function() {
@@ -906,8 +917,8 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            describe("startedit", function() {
-                it("should fire the startedit event on grid", function() {
+            describe('startedit', function() {
+                it('should fire the startedit event on grid', function() {
                     var called = false;
 
                     grid.on('startedit', function() {
@@ -930,7 +941,7 @@ GridEventModel = Ext.define(null, {
                     });
                 });
 
-                it("should pass the editor element, value and the context", function() {
+                it('should pass the editor element, value and the context', function() {
                     var p, inputValue, context;
 
                     grid.on('startedit', function(editor, editorEl, value, location) {
@@ -963,7 +974,7 @@ GridEventModel = Ext.define(null, {
                     });
                 });
 
-                it("should update the value in the model", function() {
+                it('should update the value in the model', function() {
                     triggerCellMouseEvent('dblclick', 0, 0);
 
                     runs(function() {
@@ -980,7 +991,7 @@ GridEventModel = Ext.define(null, {
                     });
                 });
 
-                it("should be able to refresh the grid on edit", function() {
+                it('should be able to refresh the grid on edit', function() {
 
                     var refreshCounter = grid.refreshCounter;
 
@@ -1005,8 +1016,8 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            describe("specialkey", function() {
-                it("should fire the event when special key is pressed", function() {
+            describe('specialkey', function() {
+                it('should fire the event when special key is pressed', function() {
                     var called = false;
 
                     runs(function() {
@@ -1026,8 +1037,8 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            describe("beforecomplete", function() {
-                it("should fire the event before reflecting the edited changes", function() {
+            describe('beforecomplete', function() {
+                it('should fire the event before reflecting the edited changes', function() {
                     var called = false;
 
                     runs(function() {
@@ -1045,7 +1056,7 @@ GridEventModel = Ext.define(null, {
                         expect(plugin.editing).toBe(false);
                     });
                 }); 
-                it("should prevent saving edited values if false is returned from the beforecomplete event", function () {
+                it('should prevent saving edited values if false is returned from the beforecomplete event', function () {
                     runs(function() {
                         grid.on('beforecomplete', function() {
                             return false;
@@ -1063,8 +1074,8 @@ GridEventModel = Ext.define(null, {
                 }); 
             });
 
-             describe("complete", function() {
-                it("should fire the event after edit complete", function() {
+             describe('complete', function() {
+                it('should fire the event after edit complete', function() {
                     var called = false;
 
                     runs(function() {
@@ -1081,7 +1092,7 @@ GridEventModel = Ext.define(null, {
                         expect(called).toBe(true);
                     });
                 }); 
-                it("should prevent saving edited values if false is returned from the beforecomplete event", function() {
+                it('should prevent saving edited values if false is returned from the beforecomplete event', function() {
                     runs(function() {
                         grid.on('complete', function() {
                             return false;
@@ -1099,18 +1110,18 @@ GridEventModel = Ext.define(null, {
                 }); 
             });
         });
-        describe("positioning", function() {
+        describe('positioning', function() {
             function getCellXY(rowIdx, colIdx) {
                 return Ext.fly(findCell(rowIdx, colIdx)).getXY();
             }
 
-            it("should position correctly on first render", function() {
+            it('should position correctly on first render', function() {
                 makeGrid();
                 triggerCellMouseEvent('dblclick', 0, 3);
                 expect(plugin.getActiveEditor().el.getXY()).toEqual(getCellXY(0, 3));
             });
 
-            it("should position correctly on subsequent shows", function() {
+            it('should position correctly on subsequent shows', function() {
                 makeGrid();
                 triggerCellMouseEvent('dblclick', 0, 3);
                 plugin.getActiveEditor().completeEdit();
@@ -1122,20 +1133,20 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        xdescribe("dynamic editors", function() {
+        xdescribe('dynamic editors', function() {
             beforeEach(function() {
                 // Suppress console warnings about Trigger field being deprecated
                 spyOn(Ext.log, 'warn');
             });
 
-            it("should allow the editor to change dynamically", function() {
+            it('should allow the editor to change dynamically', function() {
                 makeGrid();
                 colRef[0].setEditor(new Ext.field.Trigger());
                 triggerCellMouseEvent('dblclick', 0, 0);
                 expect(plugin.getActiveEditor().getField().getXType()).toBe('triggerfield');
             });
 
-            it("should allow the editor to change in the beforeedit event", function() {
+            it('should allow the editor to change in the beforeedit event', function() {
                 makeGrid();
                 plugin.on('beforeedit', function() {
                     colRef[0].setEditor(new Ext.field.Trigger());
@@ -1144,7 +1155,7 @@ GridEventModel = Ext.define(null, {
                 expect(plugin.getActiveEditor().getField().getXType()).toBe('triggerfield');
             });
 
-            it("should allow us to set an editor if one wasn't there before", function() {
+            it('should allow us to set an editor once after construction', function() {
                 var called = false;
 
                 makeGrid([{
@@ -1162,7 +1173,7 @@ GridEventModel = Ext.define(null, {
                 expect(called).toBe(true);
             });
 
-            it("should allow us to clear out an editor", function() {
+            it('should allow us to clear out an editor', function() {
                 var called = false;
 
                 makeGrid();
@@ -1174,7 +1185,7 @@ GridEventModel = Ext.define(null, {
                 expect(called).toBe(false);
             });
 
-            it("should destroy the old field", function() {
+            it('should destroy the old field', function() {
                 var field = new Ext.field.Text();
 
                 makeGrid([{
@@ -1187,7 +1198,7 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        xdescribe("hidden columns", function() {
+        xdescribe('hidden columns', function() {
             beforeEach(function() {
                 makeGrid([{
                     dataIndex: 'field1',
@@ -1238,7 +1249,7 @@ GridEventModel = Ext.define(null, {
                 colRef = grid.getHeaderContainer().getColumns();
             });
 
-            it("should start the edit before any hidden columns", function() {
+            it('should start the edit before any hidden columns', function() {
                 var c;
 
                 plugin.on('beforeedit', function(p, context) {
@@ -1249,7 +1260,7 @@ GridEventModel = Ext.define(null, {
                 expect(c.value).toBe('1.1');
             });
 
-            it("should start the edit in between hidden columns", function() {
+            it('should start the edit in between hidden columns', function() {
                 var c;
 
                 plugin.on('beforeedit', function(p, context) {
@@ -1260,7 +1271,7 @@ GridEventModel = Ext.define(null, {
                 expect(c.value).toBe('1.4');
             });
 
-            it("should start the edit after hidden columns", function() {
+            it('should start the edit after hidden columns', function() {
                 var c;
 
                 plugin.on('beforeedit', function(p, context) {
@@ -1271,8 +1282,8 @@ GridEventModel = Ext.define(null, {
                 expect(c.value).toBe('1.7');
             });
 
-            describe("calling on a hidden column", function() {
-                it("should choose the next visible column when called on a hidden column", function() {
+            describe('calling on a hidden column', function() {
+                it('should choose the next visible column when called on a hidden column', function() {
                     var c;
 
                     plugin.on('beforeedit', function(p, context) {
@@ -1282,7 +1293,7 @@ GridEventModel = Ext.define(null, {
                     expect(c.column).toBe(colRef[3]);
                 });
 
-                it("should use a previous visible column if next is not available", function() {
+                it('should use a previous visible column if next is not available', function() {
                     colRef[6].hide();
                     var c;
 
@@ -1294,8 +1305,8 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            describe("dynamic", function() {
-                it("should trigger an edit after showing the column", function() {
+            describe('dynamic', function() {
+                it('should trigger an edit after showing the column', function() {
                     colRef[2].show();
                     var c;
 
@@ -1307,7 +1318,7 @@ GridEventModel = Ext.define(null, {
                     expect(c.value).toBe('1.3');
                 });
 
-                it("should trigger an edit after hiding a column", function() {
+                it('should trigger an edit after hiding a column', function() {
                     colRef[3].hide();
                     var c;
 
@@ -1321,7 +1332,7 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        xdescribe("locking", function() {
+        xdescribe('locking', function() {
             beforeEach(function() {
                 makeGrid([{
                     locked: true,
@@ -1351,7 +1362,7 @@ GridEventModel = Ext.define(null, {
 
             // The API clones the plugins, need to do weird
             // stuff to actually access the events. Gross.
-            it("should trigger an edit on the locked part", function() {
+            it('should trigger an edit on the locked part', function() {
                 var context,
                     activeView = grid.lockedGrid.getView();
 
@@ -1385,7 +1396,7 @@ GridEventModel = Ext.define(null, {
                 expect(grid.normalGrid.view.getScrollX()).toBe(normalViewScrollX);
             });
 
-            it("should not scroll the partner grid when start editing", function() {
+            it('should not scroll the partner grid when start editing', function() {
                 grid.destroy();
 
                 makeGrid([{
@@ -1431,7 +1442,7 @@ GridEventModel = Ext.define(null, {
 
             });
 
-            it("should trigger an edit on the unlocked part", function() {
+            it('should trigger an edit on the unlocked part', function() {
                 var context,
                     activeView = grid.normalGrid.getView();
 
@@ -1456,7 +1467,7 @@ GridEventModel = Ext.define(null, {
                 expect(plugin.getActiveEditor().el.dom.parentNode).toBe(context.cell);
             });
 
-            it("should move the editor when a column is locked", function() {
+            it('should move the editor when a column is locked', function() {
                 var context,
                     activeView = grid.normalGrid.getView(),
                     activeEditor;
@@ -1567,7 +1578,7 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        describe("reconfigure", function() {
+        describe('reconfigure', function() {
             var old;
 
             beforeEach(function() {
@@ -1587,13 +1598,13 @@ GridEventModel = Ext.define(null, {
                 colRef = grid.getHeaderContainer().getColumns();
             });
 
-            it("should destroy old editors", function() {
+            it('should destroy old editors', function() {
                 Ext.Array.forEach(old, function(item) {
                     expect(item.destroyed).toBe(true);
                 });
             });
 
-            it("should update columns with no editors", function() {
+            it('should update columns with no editors', function() {
                 // Column 1 now has no editor
                 startEditing(0, 1, true);
 
@@ -1602,7 +1613,7 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            it("should use new editors", function() {
+            it('should use new editors', function() {
                 startEditing(0, 0);
                 runs(function() {
                     expect(plugin.getActiveEditor().getField().getId()).toBe('newEd');
@@ -1611,12 +1622,12 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        describe("key handling", function() {
+        describe('key handling', function() {
             beforeEach(function() {
                 makeGrid();
             });
 
-            it("should move to the next cell when tabbing", function() {
+            it('should move to the next cell when tabbing', function() {
                 startEditing(0, 0);
 
                 runs(function() {
@@ -1636,7 +1647,7 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            it("should move to the next row if at the last cell", function() {
+            it('should move to the next row if at the last cell', function() {
                 startEditing(0, 4);
 
                 runs(function() {
@@ -1650,7 +1661,7 @@ GridEventModel = Ext.define(null, {
                });
             });
 
-            it("should complete the edit on enter", function() {
+            it('should complete the edit on enter', function() {
                 startEditing(1, 1);
 
                 runs(function() {
@@ -1663,7 +1674,7 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            it("should complete the edit on focus leave of the editor", function() {
+            it('should complete the edit on focus leave of the editor', function() {
                 var toolbar = grid.add({
                         docked: 'top',
                         xtype: 'toolbar',
@@ -1686,7 +1697,7 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            it("should not complete the edit on enter if we are selecting an item from a ComboBox", function() {
+            it('should not complete the edit on enter if we are selecting an item from a ComboBox', function() {
                 var field;
 
                 grid.destroy();
@@ -1714,7 +1725,7 @@ GridEventModel = Ext.define(null, {
                 });
             });
 
-            it("should cancel the edit on ESC", function() {
+            it('should cancel the edit on ESC', function() {
                 startEditing(1, 1);
 
                 runs(function() {
@@ -1772,8 +1783,43 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        describe("misc", function() {
-            it("should not have the editors participate as part of a form", function() {
+        describe('misc', function() {
+            it('should navigate to bottom row on tap when first row is stuck', function() {
+                makeGrid(null, {}, {}, 64);
+                startEditing(0, 0);
+
+                var scroller = grid.getScrollable();
+
+                waitsFor(function() {
+                    return plugin.editing;
+                });
+                waits(10);
+
+                runs(function() {
+                    scroller.scrollTo([ 0, scroller.getMaxPosition().y ]);
+                });
+                runs(function() {
+                    triggerCellMouseEvent('click', 63, 0);
+                });
+
+                waitsFor(function() {
+                    // clicking on the bottom row should end edit mode
+                    return !plugin.editing;
+                });
+
+                waitsFor(function() {
+                    // and stay scrolled at the bottom
+                    return scroller.getMaxPosition().y === scroller.getPosition().y;
+                });
+
+                waitsFor(function() {
+                    // with the clicked record as the current location
+                    var loc = grid.getNavigationModel().getLocation();
+                    return loc && loc.recordIndex === 63;
+                });
+            });
+
+            it('should not have the editors participate as part of a form', function() {
                 var values;
 
                 makeGrid(undefined, undefined, {
@@ -1808,8 +1854,8 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        xdescribe("locking with group headers", function() {
-            it("should start edit after moving a locked column to a group header in the unlocked grid (EXTJSIV-11294)", function() {
+        xdescribe('locking with group headers', function() {
+            it('should start edit after moving a locked column to a group header in the unlocked grid (EXTJSIV-11294)', function() {
                 makeGrid([{
                     dataIndex: 'name',
                     locked: true,
@@ -1844,7 +1890,7 @@ GridEventModel = Ext.define(null, {
                     docked: 'top',
                     xtype: 'toolbar',
                     items: [{
-                        text: "button",
+                        text: 'button',
                         listeners: {
                             focus: function() {
                                 buttonFocused = true;
@@ -2101,7 +2147,7 @@ GridEventModel = Ext.define(null, {
         });
 
         describe('Autorepeat TAB in grouped grid', function() {
-            webkitIt("should not lose track of editing position when autotabbing over group headers", function() {
+            webkitIt('should not lose track of editing position when autotabbing over group headers', function() {
                 makeGrid([{
                     dataIndex: 'field1',
                     editor: 'textfield'
@@ -2256,13 +2302,13 @@ GridEventModel = Ext.define(null, {
                     activeEditor = plugin.getActiveEditor();
                     expect(activeEditor.isVisible()).toBe(true);
 
-                    // Tab down from "created" to "grouping"
+                    // Tab down from 'created' to 'grouping'
                     tabAndWaitFor(4, 1);
                 });
 
                 runs(function() {
 
-                    // A different editor should be active on "grouping".
+                    // A different editor should be active on 'grouping'.
                     expect(plugin.getActiveEditor()).not.toBe(activeEditor);
                     activeEditor = plugin.getActiveEditor();
                     expect(activeEditor.isVisible()).toBe(true);
@@ -2273,7 +2319,7 @@ GridEventModel = Ext.define(null, {
                         }
                     });
 
-                    // Tab down from "grouping" to "productionQuality"
+                    // Tab down from 'grouping' to 'productionQuality'
                     jasmine.fireKeyEvent(activeEditor.getField().inputElement, 'keydown', TAB);
                 });
 
@@ -2283,12 +2329,12 @@ GridEventModel = Ext.define(null, {
 
                 runs(function() {
 
-                    // The same editor should be active on "productionQuality", and it should not have blurred
+                    // The same editor should be active on 'productionQuality', and it should not have blurred
                     expect(plugin.getActiveEditor()).toBe(activeEditor);
                     expect(activeEditor.isVisible()).toBe(true);
                     expect(activeEditor.getField().getValue()).toEqual(false);
 
-                    // Tab down from "productionQuality" to "QA"
+                    // Tab down from 'productionQuality' to 'QA'
                     jasmine.fireKeyEvent(activeEditor.getField().inputElement, 'keydown', TAB);
                 });
 
@@ -2298,18 +2344,18 @@ GridEventModel = Ext.define(null, {
 
                 runs(function() {
 
-                    // The same editor should be active on "QA", and it should not have blurred
+                    // The same editor should be active on 'QA', and it should not have blurred
                     expect(plugin.getActiveEditor()).toBe(activeEditor);
                     expect(activeEditor.isVisible()).toBe(true);
                     expect(activeEditor.getField().getValue()).toEqual(false);
 
-                    // Tab down from "QA" to "version"
+                    // Tab down from 'QA' to 'version'
                     tabAndWaitFor(7, 1);
                 });
 
                 runs(function() {
 
-                    // A different editor should be active on "version"
+                    // A different editor should be active on 'version'
                     expect(plugin.getActiveEditor()).not.toBe(activeEditor);
 
                     // To avoid focus leaving the panel, it's hidden only after the new editor takes focus.
@@ -2323,8 +2369,8 @@ GridEventModel = Ext.define(null, {
             });
         });
 
-        describe("with combos", function() {
-            it("should retain the value when tabbing and not modifying the value after reusing the editor", function() {
+        describe('with combos', function() {
+            it('should retain the value when tabbing and not modifying the value after reusing the editor', function() {
                 var field;
 
                 makeGrid([{
@@ -2355,7 +2401,7 @@ GridEventModel = Ext.define(null, {
                         activeEditor.getField().getValue() === '2.1' &&
                         activeEditor.containsFocus;
 
-                }, "next cell's editor to be focused");
+                }, 'next cell editor to be focused');
 
                 runs(function() {
                     jasmine.fireKeyEvent(field.inputElement, 'keydown', TAB);
@@ -2409,7 +2455,7 @@ GridEventModel = Ext.define(null, {
                     jasmine.fireKeyEvent(field.inputElement, 'keydown', Ext.event.Event.TAB);
                 });
 
-                // The change to "zzzzzz" should have moved the record to row 99, and then
+                // The change to 'zzzzzz' should have moved the record to row 99, and then
                 // TAB moves to column 1.
                 waitsFor(function() {
                     return isEditing(99, 1);
@@ -2509,8 +2555,8 @@ GridEventModel = Ext.define(null, {
         });
     });
 
-    xdescribe("misc", function() {
-        describe("property grid editing with textfield and triggerfield - blurring test", function() {
+    xdescribe('misc', function() {
+        describe('property grid editing with textfield and triggerfield - blurring test', function() {
             var tree, cellEditing;
 
             beforeEach(function() {
@@ -2539,7 +2585,7 @@ GridEventModel = Ext.define(null, {
                     height: 200,
                     renderTo: document.body,
                     source: {
-                        text: "abc",
+                        text: 'abc',
                         autoFitColumns: true
                     }
                 });
@@ -2549,7 +2595,7 @@ GridEventModel = Ext.define(null, {
                 Ext.destroy(tree, grid);
             });
 
-            webkitIt("should blur and hide the cell editor on focusing the tree", function() {
+            webkitIt('should blur and hide the cell editor on focusing the tree', function() {
                 var cell01_editor;
 
                 // Wait until the grid has rendered rows

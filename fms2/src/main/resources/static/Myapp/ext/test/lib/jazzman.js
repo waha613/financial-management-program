@@ -3429,12 +3429,6 @@ jazzman.PrettyPrinter = function(depth) {
 jazzman.PrettyPrinter.prototype.format = function(value) {
     var className, superclass;
 
-    if (this._ppNestLevel > this._ppDepth) {
-        throw new Error('jazzman.PrettyPrinter: format() nested too deeply!');
-    }
-    
-    this._ppNestLevel++;
-    
     try {
         if (value === jazzman.undefined) {
             this.emitScalar('undefined');
@@ -3495,9 +3489,20 @@ jazzman.PrettyPrinter.prototype.format = function(value) {
                 this.emitArray(value);
             }
             else {
-                this.emitObject(value);
+                if (this._ppNestLevel > this._ppDepth) {
+                    throw new Error('jazzman.PrettyPrinter: format() nested too deeply!');
+                }
+
+                this._ppNestLevel++;
+
+                try {
+                    this.emitObject(value);
+                }
+                finally {
+                    this._ppNestLevel--;
+                }
             }
-            
+
             delete value.__Jasmine_been_here_before__;
         }
         else {
@@ -3506,9 +3511,6 @@ jazzman.PrettyPrinter.prototype.format = function(value) {
     }
     catch (e) {
         // ignore
-    }
-    finally {
-        this._ppNestLevel--;
     }
 };
 
@@ -5193,7 +5195,7 @@ jazzman.Block.prototype.execute = function(onComplete) {
             func.call(spec, done);
         }
         catch (e) {
-            if (jazzman.DEBUG_ON_ERROR) {
+            if (jazzman.DEBUG_ON_ERROR || jazzman.BREAK_ON_FAIL) {
                 // The function below contains only one debugger statement and nothing else.
                 // This is because some browsers have trouble optimizing functions with
                 // debugger statements even if conditional. We can't afford Block.execute

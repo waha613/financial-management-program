@@ -122,8 +122,9 @@ Ext.define('Ext.grid.locked.Grid', {
 
         /**
          * @cfg {Object} leftGridDefaults
-         * This config is applied to the child `grid` in all left-side regions (those of
-         * negative `weight`)
+         *  This config is applied to all left-side regions (those of negative 'weight').
+         *  To set defaults for all grids within left-side regions configure the `grid` 
+         *  property within this config.
          */
         leftRegionDefaults: {
             locked: true,
@@ -182,8 +183,9 @@ Ext.define('Ext.grid.locked.Grid', {
 
         /**
          * @cfg {Object} rightGridDefaults
-         * This config is applied to the child `grid` in all right-side regions (those of
-         * positive `weight`)
+         *  This config is applied to all right-side regions (those of positive 'weight').
+         *  To set defaults for all grids within right-side regions configure the `grid` 
+         *  property within this config.
          */
         rightRegionDefaults: {
             locked: true,
@@ -654,7 +656,7 @@ Ext.define('Ext.grid.locked.Grid', {
                     // logic assumes that anything after the current item has
                     // scrollers visible.
                     hide = false;
-                    found = !region.hasHiddenContent();
+                    found = me.isRegionVisible(region);
                 }
 
                 grid.setHideScrollbar(hide);

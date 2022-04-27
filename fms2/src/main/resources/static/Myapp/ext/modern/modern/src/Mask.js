@@ -6,17 +6,18 @@
  *
  * ## Example
  *
- *     @example
- *     // Create our container
- *     var container = Ext.create('Ext.Container', {
- *         html: 'My container!'
- *     });
+ * ```javascript
+ * @example({framework: 'extjs'})
+ * var container = Ext.create('Ext.Container', {
+ *    html: 'My container!'
+ * });
  *
- *     // Add the container to the Viewport
- *     Ext.Viewport.add(container);
+ * // Add the container to the Viewport
+ * Ext.Viewport.add(container);
  *
- *     // Mask the container
- *     container.setMasked(true);
+ * // Mask the container
+ * container.setMasked(true);
+ * ```
  */
 Ext.define('Ext.Mask', {
     extend: 'Ext.Component',

@@ -886,6 +886,31 @@ function() {
                     jasmine.fireKeyEvent(byPos(0, 0), 'keydown', Ext.event.Event.SPACE);
                     expect(checkboxModel.isSelected(donRec)).toBe(true);
                 });
+
+                describe('with allowDeselect configured', function() {
+                    it('should unselect row when clicking the same row twice with allowDeselect:true', function() {
+
+                        grid.getSelectionModel().setConfig('allowDeselect', true);
+                        var checker = byPos(0, 0).querySelector(checkboxModel.checkSelector);
+
+                        jasmine.fireMouseEvent(checker, 'click');
+                        expect(checkboxModel.isSelected(donRec)).toBe(true);
+                        jasmine.fireMouseEvent(checker, 'click');
+                        expect(checkboxModel.isSelected(donRec)).toBe(false);
+                    });
+
+                    it('should keep row selected when clicking the same row twice and having allowDeselect:false', function() {
+
+                        grid.getSelectionModel().setConfig('allowDeselect', false);
+                        var checker = byPos(0, 0).querySelector(checkboxModel.checkSelector);
+
+                        jasmine.fireMouseEvent(checker, 'click');
+                        expect(checkboxModel.isSelected(donRec)).toBe(true);
+                        jasmine.fireMouseEvent(checker, 'click');
+                        expect(checkboxModel.isSelected(donRec)).toBe(true);
+                    });
+                });
+
             });
 
             describe("with checkOnly: false", function() {

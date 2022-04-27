@@ -1,8 +1,12 @@
-topSuite("grid-celledit",
-    ['Ext.tree.Panel', 'Ext.grid.plugin.CellEditing', 'Ext.grid.feature.Grouping',
-     'Ext.grid.property.*', 'Ext.tree.plugin.TreeViewDragDrop', 'Ext.form.Panel',
-     'Ext.form.field.*'],
-function() {
+topSuite("grid-celledit", [
+    'Ext.tree.Panel',
+    'Ext.grid.plugin.CellEditing',
+    'Ext.grid.feature.Grouping',
+    'Ext.grid.property.*',
+    'Ext.tree.plugin.TreeViewDragDrop',
+    'Ext.form.Panel',
+    'Ext.form.field.*'
+], function() {
     var itNotIE = Ext.isIE || Ext.isiOS ? xit : it,
         grid,
         GridEventModel = Ext.define(null, {
@@ -93,7 +97,8 @@ function() {
             }
 
             function isEditing(rowIndex, columnIndex) {
-                return plugin.editing && plugin.activeColumn === colRef[columnIndex] && plugin.activeRecord === store.getAt(rowIndex);
+                return plugin.editing && plugin.activeColumn === colRef[columnIndex] &&
+                    plugin.activeRecord === store.getAt(rowIndex);
             }
 
             function tabAndWaitFor(x, y) {
@@ -101,7 +106,8 @@ function() {
 
                 triggerEditorKey(TAB);
                 waitsFor(function() {
-                    return activeEditor.el.dom.parentNode === Ext.getDetachedBody().dom && isEditing(x, y);
+                    return activeEditor.el.dom.parentNode === Ext.getDetachedBody().dom &&
+                        isEditing(x, y);
                 }, 'move to cell ' + x + ',' + y + '');
             }
 
@@ -189,7 +195,7 @@ function() {
             });
 
             describe('configuring the CellEditor', function() {
-                it('should apply the editor config to the CellEditor if it contains a "field" property', function() {
+                it('should apply editor config to CellEditor if it defines "field"', function() {
                     var colCfg = [{
                         dataIndex: 'field1',
                         editor: {
@@ -2166,32 +2172,73 @@ function() {
                 }); // eo: it
 
                 itNotIE('should be able to veto editing', function() {
-                     grid.on({
-                         beforeedit: function(editor, context) {
-                             if (context.column === colRef[1]) {
-                                 return false;
-                             }
-                         },
-                         validateedit: function(editor, context) {
-                             if (context.column === colRef[2]) {
-                                 return false;
-                             }
-                         }
-                     });
+                    grid.on({
+                        beforeedit: function(editor, context) {
+                            if (context.column === colRef[1]) {
+                                return false;
+                            }
+                        },
+                        validateedit: function(editor, context) {
+                            if (context.column === colRef[2]) {
+                                return false;
+                            }
+                        }
+                    });
 
-                     triggerCellMouseEvent('dblclick', 0, 0);
-                     expect(plugin.editing).toBe(true);
-                     jasmine.fireKeyEvent(Ext.Element.getActiveElement(), 'keydown', TAB);
-                     waitsFor(function() {
-                         return isEditing(0, 2);
-                     }, 'skip cell 0,1 and go to 0,2');
-                     runs(function() {
-                         triggerCellMouseEvent('dblclick', 0, 2);
-                         jasmine.fireKeyEvent(Ext.Element.getActiveElement(), 'keydown', TAB);
-                         expect(plugin.editing).toBe(true);
-                         expect(plugin.context.column).toBe(colRef[2]);
-                     });
-                 });// eo: it
+                    triggerCellMouseEvent('dblclick', 0, 0);
+                    expect(plugin.editing).toBe(true);
+                    jasmine.fireKeyEvent(Ext.Element.getActiveElement(), 'keydown', TAB);
+                    waitsFor(function() {
+                        return isEditing(0, 2);
+                    }, 'skip cell 0,1 and go to 0,2');
+                    runs(function() {
+                        triggerCellMouseEvent('dblclick', 0, 2);
+                        jasmine.fireKeyEvent(Ext.Element.getActiveElement(), 'keydown', TAB);
+                        expect(plugin.editing).toBe(true);
+                        expect(plugin.context.column).toBe(colRef[2]);
+                    });
+                });// eo: it
+            });
+
+            describe('Cell editing in grouped grid', function() {
+                it('should activate editor on single click after change', function() {
+                    makeGrid([{
+                        dataIndex: 'field1',
+                        editor: 'textfield'
+                    }, {
+                        dataIndex: 'field2',
+                        editor: 'textfield'
+                    }, {
+                        dataIndex: 'field3',
+                        editor: 'textfield'
+                    }], {
+                        clicksToEdit: 1
+                    }, {
+                        features: {
+                            ftype: 'grouping'
+                        }
+                    });
+
+                    plugin.startEdit(0, 0);
+
+                    waitsFor(function() {
+                        return plugin.editing;
+                    });
+
+                    runs(function() {
+                        plugin.getActiveEditor().setValue('42');
+                    });
+
+                    runs(function() {
+                        jasmine.fireMouseEvent(findCell(1, 0), 'click');
+                    });
+
+                    waitsFor(function() {
+                        var editor = plugin.getActiveEditor();
+
+                        return editor && editor.getValue() === '2.1';
+                    });
+                });
             });
 
             describe('Autorepeat TAB in grouped grid', function() {

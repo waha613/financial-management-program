@@ -2,7 +2,8 @@
  * A menu item that contains a togglable checkbox by default, but that can also be
  * a part of a radio group.
  *
- *      @example
+ * ```javascript
+ *  @example({ framework: 'extjs' })
  *      Ext.create({
  *          xtype: 'menu',
  *          renderTo: Ext.getBody(),
@@ -20,6 +21,70 @@
  *              text: 'regular item'
  *          }]
  *      });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtButton, ExtContainer, ExtMenu, ExtMenuCheckItem } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *            <ExtContainer>
+ *                <ExtButton text="Menu">
+ *                    <ExtMenu rel="menu" >
+ *                        <ExtMenuCheckItem text="Mobile" name="ui-type" />
+ *                        <ExtMenuCheckItem text="Desktop" name="ui-type"/>
+ *                    </ExtMenu>
+ *                </ExtButton>
+ *            </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ * selector: 'app-root',
+ * styles: [``],
+ * template: `
+ *       <ExtContainer>
+ *            <ExtButton text="Menu">
+ *                <ExtMenu rel="menu" >
+ *                    <ExtMenuCheckItem text="Mobile" name="ui-type" >
+ *                    </ExtMenuCheckItem>
+ *                    <ExtMenuCheckItem text="Desktop" name="ui-type">
+ *                    </ExtMenuCheckItem>
+ *                </ExtMenu>
+ *            </ExtButton>
+ *        </ExtContainer>
+ * `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container>
+ *    <ext-button text="Menu">
+ *        <ext-menu rel="menu" >
+ *            <ext-menucheckitem text="Mobile" name="ui-type"></ext-menucheckitem>
+ *            <ext-menucheckitem text="Desktop" name="ui-type"></ext-menucheckitem>
+ *        </ext-menu>
+ *    </ext-button>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-menu.component';
+ * import '@sencha/ext-web-components/dist/ext-menucheckitem.component';
+ *
+ * export default class CheckItemComponent {}
+ * ```
  *
  * @since 6.5.0
  */
@@ -29,7 +94,7 @@ Ext.define('Ext.menu.CheckItem', {
 
     /**
      * @property {Boolean} isMenuCheckItem
-     * `true` in this class to identify an object as an instantiated Menu CheckItem, 
+     * `true` in this class to identify an object as an instantiated Menu CheckItem,
      * or subclass thereof.
      */
     isMenuCheckItem: true,
@@ -64,7 +129,7 @@ Ext.define('Ext.menu.CheckItem', {
 
         /**
          * @cfg {Boolean} checkChangeDisabled
-         * True to prevent the checked item from being toggled. Any submenu will still be 
+         * True to prevent the checked item from being toggled. Any submenu will still be
          * accessible.
          */
         checkChangeDisabled: false,
@@ -326,7 +391,7 @@ Ext.define('Ext.menu.CheckItem', {
         },
 
         onCheckboxMousedown: function(e) {
-            // Prevent focus movement away from the checkboxElement on mousedown outside of 
+            // Prevent focus movement away from the checkboxElement on mousedown outside of
             // the checkboxElement. The mouseover will have focused it.
             // Also, checkboxes are not focusable by default on Apple Operating Systems.
             // See http://www.weba11y.com/blog/2014/07/07/keyboard-navigation-in-mac-browsers/

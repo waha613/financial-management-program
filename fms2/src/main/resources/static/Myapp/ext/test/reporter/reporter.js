@@ -2128,6 +2128,8 @@ Test.panel.TabPanel.prototype.resize = function(val) {
  */
 Test.panel.TreeGrid = function(config) {
     var me = this,
+        body = document.body,
+        theme = Test.getCookie('testrunner-theme'),
         toolbar;
     
     me.options = Test.Options.get();
@@ -2140,14 +2142,18 @@ Test.panel.TreeGrid = function(config) {
         Test.Options.renderCheckbox("disableTryCatch", "No Jazzman try/catch"),
         Test.Options.renderCheckbox("breakOnFail", "Break on fail")
     ];
-    
+
+    if (theme === 'dark') {
+        Test.Dom.addCls(body, 'dark-mode');
+    }
+
     toolbar.push(Test.Options.renderCheckbox("disableLeakChecks", "Disable leak checks"));
     
     if (window.console && window.console.profile) {
         toolbar.push(Test.Options.renderCheckbox("profile", "Profile CPU"));
     }
-        
-    me.el = document.body.appendChild(new Test.Dom({
+
+    me.el = body.appendChild(new Test.Dom({
         tag: "div",
         cls: "treegrid" + (Test.browser.isIE9m ? ' x-ie9m' : ''),
         children: [{
@@ -2340,10 +2346,12 @@ Test.panel.TreeGrid = function(config) {
     };
     
     if (document.addEventListener) {
-        document.body.addEventListener('scroll', me.bodyScrollListener, { capture: true, passive: true });
+        body.addEventListener('keypress', Test.toggleDarkMode);
+        body.addEventListener('scroll', me.bodyScrollListener, { capture: true, passive: true });
     }
     else {
-        document.body.attachEvent('onscroll', me.bodyScrollListener);
+        body.attachEvent('onkeypress', Test.toggleDarkMode);
+        body.attachEvent('onscroll', me.bodyScrollListener);
     }
 };
 
@@ -3030,16 +3038,16 @@ Test.panel.TreeGrid.prototype.updateRunningSpec = function() {
 };
 
 Test.toggleDarkMode = function(ev) {
-    if (ev.charCode === 100) { // 'd'
+    if (ev.charCode === 'd'.charCodeAt(0)) { // 100
         var body = document.body;
 
         if (/dark-mode/.test(body.className)) {
             Test.Dom.removeCls(body, 'dark-mode');
-            Test.removeCookie('testrunner-dark-mode');
+            Test.removeCookie('testrunner-theme');
         }
         else {
             Test.Dom.addCls(body, 'dark-mode');
-            Test.setCookie('testrunner-dark-mode', '1');
+            Test.setCookie('testrunner-theme', 'dark');
         }
     }
 };

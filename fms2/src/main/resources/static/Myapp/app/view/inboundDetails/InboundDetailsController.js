@@ -20,16 +20,16 @@ Ext.define('MyApp.view.inboundDetails.InboundDetailsController', {
                     rootProperty: 'data',
                 }
             },
-            autoLoad: false,
-        })
+            autoLoad: false
+        });
         statisticsStore.getProxy().setExtraParams({
             'supplier': supplier,
             'inboundStartDate': startDate,
             'inboundEndDate': inboundEndDate,
             'productID': productID,
             'warehouse': warehouse,
-            'statistics':0,
-        })
+            'statistics':0
+        });
         this.getView().setStore(statisticsStore);
         this.getView().getStore().reload();
     },
@@ -386,33 +386,15 @@ Ext.define('MyApp.view.inboundDetails.InboundDetailsController', {
 
     getInboundsDetailFromExcel:function (btn, record){
         var select = this.getView().getSelectionModel().getSelection();
-        var inboundIds = [];
+        if(select.length === 0){
+            Ext.Msg.alert("ERROR","请选择至少一条入库明细");
+            return;
+        }
         for (var i = 0; i < select.length; i++) {
             var inboundDetail = select[i];
-           inboundIds.push(inboundDetail.get('inboundId'))
+            window.open('/inboundDetails/generateInvoice' +
+                '?inboundId=' + inboundDetail.get('inboundId') , '_blank');
         }
-        Ext.Ajax.request({
-            url: '../../inboundDetails/generateInvoice',
-            params: {
-                         inboundIds:inboundIds
-                    },
 
-        // for (var i = 0; i < select.length; i++) {
-        //     if(i === select.length - 1){
-        //         inboundIds += select[i].get('inboundId')
-        //     }else {
-        //         inboundIds += select[i].get('inboundId') + ','
-        //     }
-        // }
-        // Ext.Ajax.request({
-        //     url: '../../inboundDetails/getInboundsDetailFromExcel',
-        //     params: {
-        //         inboundIds:inboundIds
-        //     },
-
-            failure: function () {
-                Ext.Msg.alert('ERROR', '通讯失败!检查是否已经连接上互联网');
-            },
-        });
     }
 })

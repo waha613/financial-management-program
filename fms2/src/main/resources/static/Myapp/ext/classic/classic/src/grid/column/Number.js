@@ -66,6 +66,17 @@ Ext.define('Ext.grid.column.Number', {
      */
     producesHTML: false,
 
+    summaries: {
+        sum: true,
+        min: true,
+        max: true,
+        average: true,
+        variance: true,
+        variancep: true,
+        stddev: true,
+        stddevp: true
+    },
+
     defaultRenderer: function(value) {
         return Ext.util.Format.number(value, this.format);
     },

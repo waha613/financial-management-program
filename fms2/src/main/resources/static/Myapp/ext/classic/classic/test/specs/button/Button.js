@@ -1376,11 +1376,12 @@ function() {
             });
         });
 
-        describe("ARIA attributes", function() {
+        describe("ARIA attributes without hidden menu", function() {
             var menu;
 
             beforeEach(function() {
                 menu = new Ext.menu.Menu({
+                    hidden: false,
                     items: [{
                         text: 'foo'
                     }]
@@ -1426,6 +1427,38 @@ function() {
                     button.setMenu(null);
 
                     expect(button).not.toHaveAttr('aria-owns');
+                });
+
+                it("should be set when menu is added", function() {
+                    button.setMenu(null, false);
+                    button.setMenu(menu);
+
+                    expect(button).toHaveAttr('aria-owns', menu.id);
+                });
+            });
+        });
+
+        describe("ARIA attributes with hidden menu", function() {
+            var menu;
+
+            beforeEach(function() {
+                menu = new Ext.menu.Menu({
+                    hidden: true,
+                    items: [{
+                        text: 'foo'
+                    }]
+                });
+
+                makeButton({
+                    renderTo: Ext.getBody(),
+                    menu: menu
+                });
+            });
+
+            describe("aria-owns", function() {
+                it("should be set to menu id when menu is shown", function() {
+                    button.showMenu();
+                    expect(button).toHaveAttr('aria-owns', menu.id);
                 });
 
                 it("should be set when menu is added", function() {

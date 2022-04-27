@@ -1144,6 +1144,12 @@ function() {
         });
 
         describe("autoCapitalize", function() {
+            // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize
+            // both on and sentences is a valid as well as off and none
+            // Firefox uses sentences and none, other browsers seem to just use on and off
+            var onRegExp = /^(on|sentences)$/i
+            var offRegExp = /^(off|none)$/i
+            
             describe("using value 'on'", function() {
                 var defaultConfig = {
                     autoCapitalize: 'on'
@@ -1153,7 +1159,7 @@ function() {
                     it("should add the autocapitalize attribute to the inputEl", function() {
                         create(defaultConfig);
 
-                        expect(field.inputElement).toHaveAttribute('autocapitalize', 'on');
+                        expect(field.inputElement).toHaveAttribute('autocapitalize', onRegExp);
                     });
                 });
 
@@ -1164,7 +1170,7 @@ function() {
                                 create();
                                 field.setAutoCapitalize('on');
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'on');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', onRegExp);
                             });
                         });
 
@@ -1173,7 +1179,7 @@ function() {
                                 create();
                                 field.setAutoCapitalize('on');
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'on');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', onRegExp);
                             });
                         });
                     });
@@ -1184,7 +1190,7 @@ function() {
                                 create(defaultConfig);
                                 field.setAutoCapitalize(null);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
 
                         });
@@ -1194,7 +1200,7 @@ function() {
                                 create(defaultConfig);
                                 field.setAutoCapitalize(null);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
                         });
                     });
@@ -1210,7 +1216,7 @@ function() {
                     it("should add the autocapitalize attribute to the inputEl", function() {
                         create(defaultConfig);
 
-                        expect(field.inputElement).toHaveAttribute('autocapitalize', 'on');
+                        expect(field.inputElement).toHaveAttribute('autocapitalize', onRegExp);
                     });
                 });
 
@@ -1221,7 +1227,7 @@ function() {
                                 create();
                                 field.setAutoCapitalize(true);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'on');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', onRegExp);
                             });
                         });
 
@@ -1230,7 +1236,7 @@ function() {
                                 create();
                                 field.setAutoCapitalize(true);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'on');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', onRegExp);
                             });
                         });
                     });
@@ -1241,7 +1247,7 @@ function() {
                                 create(defaultConfig);
                                 field.setAutoCapitalize(null);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
 
                         });
@@ -1251,7 +1257,7 @@ function() {
                                 create(defaultConfig);
                                 field.setAutoCapitalize(null);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
                         });
                     });
@@ -1267,7 +1273,7 @@ function() {
                     it("should add the autocapitalize attribute to the inputEl", function() {
                         create(defaultConfig);
 
-                        expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                        expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                     });
                 });
 
@@ -1278,7 +1284,7 @@ function() {
                                 create();
                                 field.setAutoCapitalize('off');
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
                         });
 
@@ -1287,7 +1293,7 @@ function() {
                                 create();
                                 field.setAutoCapitalize('off');
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
                         });
                     });
@@ -1298,7 +1304,7 @@ function() {
                                 create(defaultConfig);
                                 field.setAutoCapitalize(null);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
                         });
 
@@ -1307,7 +1313,7 @@ function() {
                                 create(defaultConfig);
                                 field.setAutoCapitalize(null);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
                         });
                     });
@@ -1323,7 +1329,7 @@ function() {
                     it("should add the autocapitalize attribute to the inputEl", function() {
                         create(defaultConfig);
 
-                        expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                        expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                     });
                 });
 
@@ -1334,7 +1340,7 @@ function() {
                                 create();
                                 field.setAutoCapitalize(false);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
                         });
 
@@ -1343,7 +1349,7 @@ function() {
                                 create();
                                 field.setAutoCapitalize(false);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
                         });
                     });
@@ -1354,7 +1360,7 @@ function() {
                                 create(defaultConfig);
                                 field.setAutoCapitalize(null);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
                         });
 
@@ -1363,7 +1369,7 @@ function() {
                                 create(defaultConfig);
                                 field.setAutoCapitalize(null);
 
-                                expect(field.inputElement).toHaveAttribute('autocapitalize', 'off');
+                                expect(field.inputElement).toHaveAttribute('autocapitalize', offRegExp);
                             });
                         });
                     });

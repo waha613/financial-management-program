@@ -12,7 +12,21 @@
 Ext.define('Ext.grid.RowContext', {
     constructor: function(config) {
         Ext.apply(this, config);
+
         this.widgets = {};
+
+        /**
+         * @property {Number} usage
+         * Tracks the views that are using this row context. Each view is represented by
+         * a bit position. The normal view of a locked grid (or the only view in a
+         * non-locking grid) uses bit 0 (i.e., `1`). The locked view uses bit 1 (i.e., `2`).
+         *
+         * This value will be in the range of 0-3 (0 when unused by a view, 3 when used by
+         * both normal and locking views).
+         * @since 7.1
+         * @private
+         */
+        this.usage = 0;
     },
 
     setRecord: function(record, recordIndex) {
@@ -27,19 +41,35 @@ Ext.define('Ext.grid.RowContext', {
         }
     },
 
-    free: function(view) {
+    attach: function(view) {
+        var was = this.usage;
+
+        this.usage |= view.usageBitMask;
+
+        return !was;
+    },
+
+    detach: function(view) {
         var me = this,
             widgets = me.widgets,
-            widgetId,
-            widget,
-            focusEl,
-            viewModel = me.viewModel;
+            usageBitMask = view.usageBitMask,
+            viewModel = me.viewModel,
+            focusEl, free, widget, widgetId;
 
-        me.record = null;
+        if (!(me.usage & usageBitMask)) {
+            return false;
+        }
 
-        if (viewModel) {
-            viewModel.set('record');
-            viewModel.set('recordIndex');
+        me.usage &= ~usageBitMask;
+        free = !me.usage;
+
+        if (free) {
+            me.record = null;
+
+            if (viewModel) {
+                viewModel.set('record');
+                viewModel.set('recordIndex');
+            }
         }
 
         // All the widgets this RowContext manages must be blurred
@@ -47,8 +77,10 @@ Ext.define('Ext.grid.RowContext', {
         for (widgetId in widgets) {
             widget = widgets[widgetId];
 
-            // if the view is being refresh only remove widgets owned by this view
-            if (view && view.refreshing && !view.el.contains(widget.el)) {
+            // Only remove widgets owned by this view...
+            if (!view.isAncestor(widget)) {
+                // NOTE: We cannot do something like "view.el.contains(widget.el)" in
+                // trees because collapsing nodes de-render content too early.
                 continue;
             }
 
@@ -74,8 +106,12 @@ Ext.define('Ext.grid.RowContext', {
                 focusEl.blur();
             }
 
-            widget.detachFromBody();
+            if (widget.rendered) {
+                widget.detachFromBody();
+            }
         }
+
+        return free;
     },
 
     getWidget: function(view, ownerId, widgetCfg) {

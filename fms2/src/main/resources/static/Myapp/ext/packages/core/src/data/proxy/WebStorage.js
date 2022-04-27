@@ -441,7 +441,7 @@ Ext.define('Ext.data.proxy.WebStorage', {
         }
         else {
             for (i = 0; i < length; i++) {
-                ids[i] = isString ? ids[i] : +ids[i];
+                ids[i] = isString ? ids[i] : (Ext.isNumber(+ids[i]) ? +ids[i] : ids[i]);
             }
         }
 

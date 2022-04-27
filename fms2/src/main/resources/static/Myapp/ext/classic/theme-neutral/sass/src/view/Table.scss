@@ -47,11 +47,11 @@
 .#{$prefix}grid-item-focused {
     // This is to remove the default outline in FF and IE
     outline: 0;
-    
+
     .#{$prefix}grid-cell-inner {
-        // Inner grid cell element has position: relative (a rule below),
-        // so setting z-index: 1 will elevate it just above default position
-        z-index: 1;
+        // Inner grid cell element has position: relative,
+        // so setting z-index: 2 will elevate it just above default position with z-index 1
+        z-index: 2;
     }
 
     .#{$prefix}keyboard-mode & {
@@ -141,6 +141,10 @@
 
 .#{$prefix}grid-cell-inner {
     position: relative;
+    // Inner grid cell element is set to position: relative,
+    // This causes a bug in IE where on scrolling cells disappear from view (see ExtJS-26552) 
+    // so z-index: 1 will elevate it just above default position so that they may be visible
+    z-index: 1;
     text-overflow: $grid-cell-inner-text-overflow;
     padding: $grid-cell-inner-padding;
 }

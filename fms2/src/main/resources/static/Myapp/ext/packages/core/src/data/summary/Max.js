@@ -7,6 +7,11 @@ Ext.define('Ext.data.summary.Max', {
 
     alias: 'data.summary.max',
 
+    /**
+     * Name of the summary function that appears in the {@link Ext.grid.plugin.Summaries} plugin
+     */
+    text: 'Max',
+
     calculate: function(records, property, root, begin, end) {
         var max = this.extractValue(records[begin], property, root),
             i, v;
