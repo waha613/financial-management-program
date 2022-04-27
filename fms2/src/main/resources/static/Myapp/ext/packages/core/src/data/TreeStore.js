@@ -358,7 +358,7 @@ Ext.define('Ext.data.TreeStore', {
         return null;
     },
 
-    applyGrouper: function(grouper) {
+    setGrouper: function(grouper) {
         //<debug>
         if (grouper) {
             Ext.raise('You can\'t group a TreeStore');

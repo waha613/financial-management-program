@@ -1,4 +1,4 @@
-topSuite("Ext.resizer.Resizer", ['Ext.window.Window'], function() {
+topSuite("Ext.resizer.Resizer", ['Ext.window.Window', 'Ext.form.field.TextArea'], function() {
     var resizer, target,
         testIt = Ext.isWebKit ? it : xit;
 
@@ -66,6 +66,31 @@ topSuite("Ext.resizer.Resizer", ['Ext.window.Window'], function() {
 
             // Window must be allowed to resize outside its owning Panel's bounds
             expect(window.getWidth()).toBe(300);
+            Ext.destroy(panel, window);
+        });
+
+        testIt('should have unselectable text on resize and selectable text on resize end', function() {
+            var window,
+                panel = new Ext.panel.Panel({
+                height: 200,
+                width: 200,
+                renderTo: document.body,
+                items: [window = new Ext.window.Window({
+                    height: 100,
+                    width: 100,
+                    title: 'Child Window'
+                })]
+            }),
+            clsSelectable = 'x-selectable',
+            clsUnselectable = 'x-unselectable';
+
+            window.show();
+            jasmine.fireMouseEvent(window.resizer.east, 'mousedown');
+            jasmine.fireMouseEvent(document.body, 'mousemove', '+200', 150);
+            expect(window.el.getAttribute('class')).toContain(clsUnselectable);
+            jasmine.fireMouseEvent(document.body, 'mouseup');
+            expect(window.el.getAttribute('class')).toContain(clsSelectable);
+            // Window must be allowed to resize outside its owning Panel's bounds
             Ext.destroy(panel, window);
         });
         testIt("should constrain to floatParent's targetEl if constrain config == true", function() {
@@ -138,4 +163,28 @@ topSuite("Ext.resizer.Resizer", ['Ext.window.Window'], function() {
             outerPanel.destroy();
         });
     });
+
+    describe('resizable form field', function() {
+        it('should fill width when layout indicates full width should be used', function() {
+            var textareaOffset = 4,
+                textarea, panel;
+
+            panel = new Ext.panel.Panel({
+                renderTo: Ext.getBody(),
+                width: 500,
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
+                },
+                items: [textarea = new Ext.form.field.TextArea({
+                    resizable: true,
+                    resizeHandles: 's'
+                })]
+            });
+
+            expect(textarea.getEl().component.inputEl.getWidth()).toEqual(panel.getWidth() - textareaOffset);
+            panel.destroy();
+        });
+    });
+
 });

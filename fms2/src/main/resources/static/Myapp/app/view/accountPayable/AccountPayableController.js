@@ -73,7 +73,9 @@ Ext.define('MyApp.view.accountPayable.AccountPayableController', {
                 {
                     xtype: 'combo',
                     fieldLabel: '收款方',
-                    store: Ext.create('MyApp.store.Supplier'),
+                    store: Ext.create('MyApp.store.Supplier', {
+                        autoLoad: true
+                    }),
                     displayField: 'supplierID',
                     valueField: 'supplierID',
                     queryMode: 'remote',
@@ -176,7 +178,9 @@ Ext.define('MyApp.view.accountPayable.AccountPayableController', {
                 {
                     xtype: 'combo',
                     fieldLabel: '收款方',
-                    store: Ext.create('MyApp.store.Supplier'),
+                    store: Ext.create('MyApp.store.Supplier', {
+                        autoLoad: true
+                    }),
                     displayField: 'supplierID',
                     valueField: 'supplierID',
                     queryMode: 'remote',

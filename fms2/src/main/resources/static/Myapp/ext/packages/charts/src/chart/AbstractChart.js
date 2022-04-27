@@ -699,8 +699,8 @@ Ext.define('Ext.chart.AbstractChart', {
             series = seriesList[i];
 
             // Don't update the series animation config, if it was set by
-            // a user, unless 'suspendAnimation' was called.
-            if (!series.isUserAnimation || this.animationSuspendCount) {
+            // a user, unless 'resumeAnimation' was called.
+            if (!series.isUserAnimation || this.animationSuspendCount === 0) {
                 series.setAnimation(series.getAnimation());
             }
         }

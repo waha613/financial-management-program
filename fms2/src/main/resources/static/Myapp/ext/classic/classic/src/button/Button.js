@@ -481,7 +481,7 @@ Ext.define('Ext.button.Button', {
      * @inheritdoc
      */
     childEls: [
-        'btnEl', 'btnWrap', 'btnInnerEl', 'btnIconEl', 'arrowEl'
+        'btnEl', 'btnWrap', 'btnInnerEl', 'btnIconEl', 'arrowEl', 'tooltipEl'
     ],
 
     /**
@@ -504,6 +504,7 @@ Ext.define('Ext.button.Button', {
     _noTextCls: Ext.baseCSSPrefix + 'btn-no-text',
     _hasIconCls: Ext.baseCSSPrefix + 'btn-icon',
     _pressedCls: Ext.baseCSSPrefix + 'btn-pressed',
+    _tooltipCls: Ext.baseCSSPrefix + 'btn-tooltip',
     /**
      * @cfg overCls
      * @inheritdoc
@@ -554,7 +555,8 @@ Ext.define('Ext.button.Button', {
                 '<tpl foreach="arrowElAttributes"> {$}="{.}"</tpl>' +
                 ' style="{arrowElStyle}"' +
             '>{arrowElText}</span>' +
-        '</tpl>',
+        '</tpl>' +
+        '<div id="{id}-tooltipEl" data-ref="tooltipEl" role="presentation" class="{tooltipCls}"></div>',
 
     iconTpl:
         '<span id="{id}-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="{baseIconCls} ' +
@@ -921,10 +923,10 @@ Ext.define('Ext.button.Button', {
      * To destroy the previous menu for this button, explicitly pass `false` as the second argument.
      * If this is not set, the destroy will depend on the value of {@link #cfg-destroyMenu}.
      *
-     * @param {Ext.menu.Menu/String/Object/null} menu Accepts a menu component, a menu id or a menu
-     * config.
-     * @param {Boolean} destroyMenu By default, will destroy the previous set menu and remove it
-     * from the menu manager. Pass `false` to prevent the destroy.
+     * @param {Ext.menu.Menu/String/Object} menu Accepts a menu component, a menu id or a
+     * menu config.
+     * @param {Boolean} destroyMenu By default, will destroy the previous set menu and remove
+     * it from the menu manager. Pass `false` to prevent the destroy.
      * @param {Boolean} [initial] (private)
      */
     setMenu: function(menu, destroyMenu, initial) {
@@ -997,7 +999,10 @@ Ext.define('Ext.button.Button', {
                 /* eslint-enable */
 
                 ariaAttr['aria-haspopup'] = true;
-                ariaAttr['aria-owns'] = menu.id;
+
+                if (!menu.hidden) {
+                    ariaAttr['aria-owns'] = menu.id;
+                }
             }
         }
         else {
@@ -1144,6 +1149,7 @@ Ext.define('Ext.button.Button', {
             split: me.isSplitButton,
             innerCls: me._innerCls,
             splitCls: me.getArrowVisible() ? me.getSplitCls() : '',
+            tooltipCls: me._tooltipCls,
             iconUrl: me.icon,
             iconCls: me.iconCls,
             glyph: glyph,
@@ -1415,24 +1421,31 @@ Ext.define('Ext.button.Button', {
      * @return {Ext.button.Button} this
      */
     setTooltip: function(tooltip, initial) {
-        var me = this;
+        var me = this,
+            targetEl = me.el;
 
         if (me.rendered) {
             if (!initial || !tooltip) {
                 me.clearTip();
             }
 
+            if (me.disabled) {
+                targetEl = me.tooltipEl;
+            }
+
             if (tooltip) {
                 if (Ext.quickTipsActive && Ext.isObject(tooltip)) {
                     Ext.tip.QuickTipManager.register(Ext.apply({
-                        target: me.el.id
+                        target: targetEl.id
                     }, tooltip));
 
                     me.tooltip = tooltip;
                 }
                 else {
-                    me.el.dom.setAttribute(me.getTipAttr(), tooltip);
+                    targetEl.dom.setAttribute(me.getTipAttr(), tooltip);
                 }
+
+                me.currentTooltipEl = targetEl;
             }
         }
         else {
@@ -1508,13 +1521,17 @@ Ext.define('Ext.button.Button', {
      */
     clearTip: function() {
         var me = this,
-            el = me.el;
+            el = me.currentTooltipEl;
 
-        if (Ext.quickTipsActive && Ext.isObject(me.tooltip)) {
-            Ext.tip.QuickTipManager.unregister(el);
-        }
-        else {
-            el.dom.removeAttribute(me.getTipAttr());
+        if (el) {
+            me.currentTooltipEl = null;
+
+            if (Ext.quickTipsActive && Ext.isObject(me.tooltip)) {
+                Ext.tip.QuickTipManager.unregister(el);
+            }
+            else {
+                el.dom.removeAttribute(me.getTipAttr());
+            }
         }
     },
 
@@ -1664,7 +1681,8 @@ Ext.define('Ext.button.Button', {
     showMenu: function(clickEvent) {
         var me = this,
             menu = me.menu,
-            isPointerEvent = !clickEvent || clickEvent.pointerType;
+            isPointerEvent = !clickEvent || clickEvent.pointerType,
+            ariaDom;
 
         if (menu && me.rendered) {
             if (me.tooltip && Ext.quickTipsActive && me.getTipAttr() !== 'title') {
@@ -1696,6 +1714,11 @@ Ext.define('Ext.button.Button', {
                 // with the industry standard. :)
                 menu.autoFocus = !isPointerEvent;
                 menu.showBy(me.el, me.menuAlign);
+                ariaDom = me.isSplitButton ? me.arrowEl && me.arrowEl.dom : me.ariaEl.dom;
+
+                if (ariaDom) {
+                    ariaDom.setAttribute('aria-owns', menu.id);
+                }
             }
         }
 
@@ -1965,6 +1988,10 @@ Ext.define('Ext.button.Button', {
         me.removeCls(me._disabledCls);
         me.el.setTabIndex(me.tabIndex);
 
+        if (me.tooltip) {
+            me.setTooltip(me.tooltip);
+        }
+
         // https://sencha.jira.com/browse/EXTJS-11964
         // Disabled links are clickable on iPad, and right clickable on desktop browsers.
         // The only way to completely disable navigation is removing the href
@@ -1987,6 +2014,10 @@ Ext.define('Ext.button.Button', {
         me.removeCls(me.overCls);
 
         me.el.setTabIndex(null);
+
+        if (me.tooltip) {
+            me.setTooltip(me.tooltip);
+        }
 
         // https://sencha.jira.com/browse/EXTJS-11964
         // Disabled links are clickable on iPad, and right clickable on desktop browsers.

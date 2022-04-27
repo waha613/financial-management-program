@@ -1,10 +1,10 @@
 topSuite("Ext.field.RadioGroup", ['Ext.app.ViewModel', 'Ext.form.Panel'], function() {
     var group, panel;
 
-    function makeGroup(items, cfg) {
-        panel = new Ext.form.Panel({
+    function makeGroup(items, cfg, panelCfg) {
+        panel = new Ext.form.Panel(Ext.apply({
             renderTo: Ext.getBody()
-        });
+        },panelCfg));
 
         group = panel.add(Ext.apply({
             xtype: 'radiogroup',
@@ -209,6 +209,61 @@ topSuite("Ext.field.RadioGroup", ['Ext.app.ViewModel', 'Ext.form.Panel'], functi
                     expect(one.isChecked()).toBe(false);
                     expect(three.isChecked()).toBe(false);
                 });
+            });
+        });
+
+        describe("publish group value", function() {
+            beforeEach(function() {
+                Ext.define('spec.Bar', {
+                    extend: 'Ext.app.ViewModel',
+                    alias: 'viewmodel.bar',
+                    data: {
+                        foo: 'b'
+                    }
+                });
+
+                makeGroup([{
+                    boxLabel: 'one',
+                    name: 'foo',
+                    value: 'a'
+                }, {
+                    boxLabel: 'two',
+                    name: 'foo',
+                    value: 'b',
+                    checked: true
+                }, {
+                    boxLabel: 'three',
+                    name: 'foo',
+                    value: 'c'
+                }], {
+                    publishes: 'value',
+                    bind: '{foo}',
+                    simpleValue: true
+                },{
+                   viewModel: {
+                        type: 'bar'
+                    },
+                    header: {
+                        items: {
+                            xtype: 'component',
+                            bind: '{foo}',
+                            itemId: 'foo'
+                        }
+                    }
+                });
+                panel.getViewModel().notify();
+            });
+
+            afterEach(function() {
+                panel = group = Ext.destroy(panel);
+            });
+            it("should be able to publish the value on group change", function() {
+                expect(panel.down('#foo').getHtml()).toBe('b');
+                group.setValue('a');
+                panel.getViewModel().notify();
+                expect(panel.down('#foo').getHtml()).toBe('a');
+                Ext.undefine('spec.Bar');
+                Ext.Factory.viewModel.instance.clearCache();
             });
         });
     });

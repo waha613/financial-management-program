@@ -1,54 +1,122 @@
 /**
- * Specialized {@link Ext.field.Slider} with a single thumb which only supports 
+ * Specialized {@link Ext.field.Slider} with a single thumb which only supports
  * two {@link #value values}.
  *
  * ## Examples
  *
- *     @example
- *     Ext.Viewport.add({
- *         xtype: 'togglefield',
- *         name: 'awesome',
- *         label: 'Are you awesome?',
- *         labelWidth: '40%'
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.Viewport.add({
+ *     xtype: 'togglefield',
+ *     name: 'awesome',
+ *     label: 'Are you awesome?',
+ *     labelWidth: '40%'
+ * });
+ * ```
  *
  * Having a default value of 'toggled':
  *
- *     @example
- *     Ext.Viewport.add({
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.Viewport.add({
+ *     xtype: 'togglefield',
+ *     name: 'awesome',
+ *     value: 1,
+ *     label: 'Are you awesome?',
+ *     labelWidth: '40%'
+ * });
+ * ```
+ *
+ * And using the {@link #value} {@link #toggle} method:
+ *
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.Viewport.add([
+ *     {
  *         xtype: 'togglefield',
  *         name: 'awesome',
  *         value: 1,
  *         label: 'Are you awesome?',
  *         labelWidth: '40%'
- *     });
- *
- * And using the {@link #value} {@link #toggle} method:
- *
- *     @example
- *     Ext.Viewport.add([
- *         {
- *             xtype: 'togglefield',
- *             name: 'awesome',
- *             value: 1,
- *             label: 'Are you awesome?',
- *             labelWidth: '40%'
- *         },
- *         {
- *             xtype: 'toolbar',
- *             docked: 'top',
- *             items: [
- *                 {
- *                     xtype: 'button',
- *                     text: 'Toggle',
- *                     flex: 1,
- *                     handler: function() {
- *                         Ext.ComponentQuery.query('togglefield')[0].toggle();
- *                     }
+ *     },
+ *     {
+ *         xtype: 'toolbar',
+ *         docked: 'top',
+ *         items: [
+ *             {
+ *                 xtype: 'button',
+ *                 text: 'Toggle',
+ *                 flex: 1,
+ *                 handler: function() {
+ *                     Ext.ComponentQuery.query('togglefield')[0].toggle();
  *                 }
- *             ]
- *         }
- *     ]);
+ *             }
+ *         ]
+ *     }
+ * ]);
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtFormPanel, ExtToggleField } from '@sencha/ext-react';
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtContainer layout="center">
+ *                 <ExtFormPanel shadow>
+ *                     <ExtToggleField boxLabel="On" value={true}/>
+ *                     <ExtToggleField boxLabel="Off" value={false}/>
+ *                     <ExtToggleField boxLabel="Disabled" disabled />
+ *                     <ExtToggleField boxLabel="Disabled (On)" disabled value={true} />
+ *                 </ExtFormPanel>
+ *             </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer layout="center">
+ *             <ExtFormPanel shadow="true" >
+ *                 <ExtToggleField boxLabel="On" value="true"></ExtToggleField>
+ *                 <ExtToggleField boxLabel="Off" value="false"></ExtToggleField>
+ *                 <ExtToggleField boxLabel="Disabled" disabled="true" >
+ *                    </ExtToggleField>
+ *                 <ExtToggleField boxLabel="Disabled (On)" disabled="true"
+ *                     value="true" ></ExtToggleField>
+ *             </ExtFormPanel>
+ *         </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container layout="center">
+ *    <ext-formpanel shadow="true">
+ *        <ext-togglefield boxLabel="On" value="true"></ext-togglefield>
+ *        <ext-togglefield boxLabel="Off" value="false"></ext-togglefield>
+ *        <ext-togglefield boxLabel="Disabled" disabled="true"></ext-togglefield>
+ *        <ext-togglefield boxLabel="Disabled (On)" disabled="true" value="true"></ext-togglefield>
+ *    </ext-formpanel>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-togglefield.component';
+ *
+ * export default class ToggleFieldComponent {}
+ * ```
+ *
  */
 Ext.define('Ext.field.Toggle', {
     extend: 'Ext.field.SingleSlider',

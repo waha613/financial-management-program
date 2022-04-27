@@ -12,7 +12,8 @@
  *
  * # Example
  *
- *     @example
+ * ```javascript
+ *  @example({ framework: 'extjs' })
  *     Ext.create('Ext.form.Panel', {
  *         fullscreen: true,
  *         title: 'FieldContainer Example',
@@ -38,6 +39,8 @@
  *             }]
  *         }]
  *     });
+ * ```
+ * 
  */
 Ext.define('Ext.field.Container', {
     extend: 'Ext.field.Field',
@@ -305,7 +308,8 @@ Ext.define('Ext.field.Container', {
      * a field's name. The field will then be marked invalid with that message.
      * If the value is falsey, that field will be not be marked invalid. Example:
      *
-     *     @example
+     * ```javascript
+     *  @example({ framework: 'extjs' })
      *     var form = Ext.create('Ext.form.Panel', {
      *         fullscreen: true,
      *         title: 'FieldContainer Example',
@@ -344,6 +348,7 @@ Ext.define('Ext.field.Container', {
      *
      * @param {Object} errors The errors to set child fields with.
      * @return {Ext.field.Container} this
+     * ```
      */
     setErrors: function(errors) {
         var me = this,

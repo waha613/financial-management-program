@@ -6,31 +6,141 @@
  * Note: Only `Ext.Panel` and its subclasses will be explicitly managed. All other items
  * will be treated normally.
  *
- *      @example
- *      Ext.create({
- *          xtype: 'accordion',
- *          title: 'Accordion',
- *          fullscreen: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'accordion',
+ *     title: 'Accordion',
+ *     fullscreen: true,
  *
- *          defaults: {
- *              // applied to each contained panel
- *              xtype: 'panel',
- *              bodyPadding: 10
- *          },
+ *     defaults: {
+ *         // applied to each contained panel
+ *         xtype: 'panel',
+ *         bodyPadding: 10
+ *     },
  *
- *          openable: 2,
+ *     openable: 2,
  *
- *          items: [{
- *              title: 'Panel 1',
- *              html: 'Panel content!'
- *          }, {
- *              title: 'Panel 2',
- *              html: 'Panel content!'
- *          }, {
- *              title: 'Panel 3',
- *              html: 'Panel content!'
- *          }]
- *      });
+ *     items: [{
+ *         title: 'Panel 1',
+ *         html: 'Panel content!'
+ *     }, {
+ *         title: 'Panel 2',
+ *         html: 'Panel content!'
+ *     }, {
+ *         title: 'Panel 3',
+ *         html: 'Panel content!'
+ *     }]
+ * });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtAccordion, ExtPanel } from '@sencha/ext-react';
+ *
+ *	export default class MyExample extends Component {
+ *	   render() {
+ *	       return (
+ *	            <ExtAccordion
+ *	                title="Accordion"
+ *	                fullscreen="true"
+ *	                openable="2"
+ *	            >
+ *	                <ExtPanel
+ *	                    bodyPadding="10"
+ *	                    title="Panel 1"
+ *	                    html="Panel Content!"
+ *	                >
+ *	                </ExtPanel>
+ *	                <ExtPanel
+ *	                    bodyPadding="10"
+ *	                    title="Panel 2"
+ *	                    html="Panel Content!"
+ *	                >
+ *	                </ExtPanel>
+ *	                <ExtPanel
+ *	                    bodyPadding="10"
+ *	                    title="Panel 3"
+ *	                    html="Panel Content!"
+ * 	                >
+ *	                </ExtPanel>
+ *	           </ExtAccordion>
+ *	        )
+ *	    }
+ *	}
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core';
+ * import {ExtPanel, ExtAccordion} from '@sencha/ext-react';
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtAccordion
+ *             title="Accordion"
+ *             fullscreen="true"
+ *             openable="2"
+ *         >
+ *             <ExtPanel
+ *                 bodyPadding="10"
+ *                 title="Panel 1"
+ *                 html="Panel Content!"
+ *             >
+ *             </ExtPanel>
+ *             <ExtPanel
+ *                 bodyPadding="10"
+ *                 title="Panel 2"
+ *                 html="Panel Content!"
+ *             >
+ *             </ExtPanel>
+ *             <ExtPanel
+ *                 bodyPadding="10"
+ *                 title="Panel 3"
+ *                 html="Panel Content!"
+ *             >
+ *             </ExtPanel>
+ *          </ExtAccordion>
+ *     `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-accordion
+ *     title="Accordion"
+ *     fullscreen="true"
+ *     openable="2"
+ * >
+ *     <ext-panel
+ *         bodyPadding="10"
+ *         title="Panel 1"
+ *         html="Panel Content!"
+ *     >
+ *     </ext-panel>
+ *     <ext-panel
+ *         bodyPadding="10"
+ *         title="Panel 2"
+ *         html="Panel Content!"
+ *     >
+ *     </ext-panel>
+ *     <ext-panel
+ *         bodyPadding="10"
+ *         title="Panel 3"
+ *         html="Panel Content!"
+ *     >
+ *     </ext-panel>
+ * </ext-accordion>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-accordion.component';
+ * import '@sencha/ext-web-components/dist/ext-panel.component';
+ *
+ * export default class AccordionComponent {}
+ * ```
  *
  * @since 7.0
  */

@@ -636,7 +636,7 @@ topSuite("Ext.grid.Tree", ['Ext.data.TreeStore', 'Ext.layout.Fit', 'Ext.app.View
                                         autoCheckChildren:true,
                                         enableTri: true
                                     }
-                                }],
+                                }]
                             });
                             tree.expandAll();
                         });
@@ -685,7 +685,7 @@ topSuite("Ext.grid.Tree", ['Ext.data.TreeStore', 'Ext.layout.Fit', 'Ext.app.View
                                         autoCheckChildren:false,
                                         enableTri: true
                                     }
-                                }],
+                                }]
                             });
                             tree.expandAll();
                         });
@@ -739,7 +739,7 @@ topSuite("Ext.grid.Tree", ['Ext.data.TreeStore', 'Ext.layout.Fit', 'Ext.app.View
                                         autoCheckChildren:false,
                                         enableTri: false
                                     }
-                                }],
+                                }]
                             });
                             tree.expandAll();
                         });

@@ -1520,7 +1520,9 @@ Ext.define('Ext.view.AbstractView', {
             me.fireItemMutationEvent('itemadd', newRecords, origStart, children, me);
 
             // If focus was in this view, this will restore it
-            restoreFocus();
+            if (restoreFocus) {
+                restoreFocus();
+            }
 
             me.refreshSize();
         }
@@ -1801,9 +1803,14 @@ Ext.define('Ext.view.AbstractView', {
         // If we have already achieved our first layout, refresh immediately.
         // If we bind to the Store before the first layout, then beforeLayout will
         // call doFirstRefresh
-        if (store && me.componentLayoutCounter && !me.blockRefresh) {
+        if (store && me.componentLayoutCounter) {
             // If not the initial bind, we enforce noDefer.
-            me.doFirstRefresh(store, !initial);
+            if (me.blockRefresh) {
+                me.refreshNeeded = true;
+            }
+            else {
+                me.doFirstRefresh(store, !initial);
+            }
         }
     },
 

@@ -461,7 +461,7 @@ Ext.define('Ext.field.Picker', {
     },
 
     expand: function() {
-        if (!this.expanded && !this.getDisabled()) {
+        if (!this.expanded && !this.getReadOnly() && !this.getDisabled()) {
             this.showPicker();
         }
     },

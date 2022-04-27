@@ -10,5 +10,10 @@
         width: 0;
         // inherit background-color so color of listswiper items doesn't show through
         background-color: inherit;
+
+        &.#{$prefix}flexbox {
+            display: flex;
+            width: inherit;
+        }
     }
 }

@@ -70,6 +70,13 @@ Ext.define('Ext.field.FieldGroupContainer', {
     defaultBindProperty: 'value',
 
     /**
+     * @cfg publishes
+     * @inheritdoc
+     */
+    publishes: {
+        value: 1
+    },
+    /**
      * @event change
      * Fires when the value of a field is changed.
      * @param {Ext.field.Field} this This field
@@ -227,7 +234,8 @@ Ext.define('Ext.field.FieldGroupContainer', {
      */
     onGroupChange: function() {
         var me = this,
-            newVal, oldVal;
+            newVal, oldVal,
+            publishes = me.getPublishes();
 
         if (me.isConfiguring || me.isDestructing() || me.suspendCheckChange) {
             return;
@@ -240,6 +248,12 @@ Ext.define('Ext.field.FieldGroupContainer', {
             me.lastValue = newVal;
             me.fireEvent('change', me, newVal, oldVal);
             me.validate();
+
+            // We manually publish this because component doesnot have its own value. 
+            // Value is fetch from the child group type ie RadioGroup
+            if (publishes && publishes.value) {
+                me.publishState('value', newVal);
+            }
         }
     },
 

@@ -1341,3 +1341,14 @@ $ext-fa-vars-important: dynamic(true);
 .#{$fa-css-prefix}-youtube:before { content: @include ext-declare-fa-var($fa-var-youtube); }
 .#{$fa-css-prefix}-youtube-square:before { content: @include ext-declare-fa-var($fa-var-youtube-square); }
 .#{$fa-css-prefix}-zhihu:before { content: @include ext-declare-fa-var($fa-var-zhihu); }
+
+// these classes has been mapped with right icons for Froala Editor
+// these classes does not represent any icons in the actual font awesome
+// once the class name being used in Froala Editor gets fixed the below classes can be
+// removed
+.#{$fa-css-prefix}-uploadFiles:before { content: @include ext-declare-fa-var($fa-var-cloud-upload-alt) }
+.#{$fa-css-prefix}-remove:before { content: @include ext-declare-fa-var($fa-var-trash-alt) }
+.#{$fa-css-prefix}-insertAll:before { content: @include ext-declare-fa-var( $fa-var-upload) }
+.#{$fa-css-prefix}-cancel:before { content: @include ext-declare-fa-var( $fa-var-remove)  }
+.#{$fa-css-prefix}-minimize:before { content: @include ext-declare-fa-var( $fa-var-minus)  }
+.#{$fa-css-prefix}-autoplay:before { content: @include ext-declare-fa-var( $fa-var-redo-alt) }

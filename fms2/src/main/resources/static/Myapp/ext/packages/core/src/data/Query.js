@@ -102,7 +102,8 @@ Ext.define('Ext.data.Query', {
         'Ext.mixin.Factoryable',
         'Ext.data.query.Compiler',
         'Ext.data.query.Converter',
-        'Ext.data.query.Stringifier'
+        'Ext.data.query.Stringifier',
+        'Ext.mixin.Identifiable'
     ],
 
     alias: 'query.default',
@@ -237,22 +238,27 @@ Ext.define('Ext.data.Query', {
     ast: null,
     error: null,
     generation: 0,
+    identifiablePrefix: 'ext-data-query-',
 
     constructor: function(config) {
+        var me = this;
+
         if (typeof config === 'string') {
             config = {
                 source: config
             };
         }
 
+        me.id = (config && config.id) || me.generateAutoId();
+
         // eslint-disable-next-line vars-on-top
         var parser = Ext.data.query.Parser.fly();
 
-        this.symbols = parser.symbols;
+        me.symbols = parser.symbols;
 
         parser.release();
 
-        this.callParent([ config ]);
+        me.callParent([ config ]);
     },
 
     filter: function(item) {

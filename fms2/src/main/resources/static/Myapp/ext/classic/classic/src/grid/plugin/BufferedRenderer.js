@@ -97,6 +97,10 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
     bodyTop: 0,
     scrollHeight: 0,
     loadId: 0,
+    newFocusTarget: null,
+    lastFocusedMultiRange: null,
+    colHeader: null,
+    lastFocusedElement: null,
 
     // Initialize this as a plugin
     init: function(grid) {
@@ -191,6 +195,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
 
         me.storeListeners = newStore.on({
             scope: me,
+            groupschange: me.onStoreGroupChange,
             groupchange: me.onStoreGroupChange,
             clear: me.onStoreClear,
             beforeload: me.onBeforeStoreLoad,
@@ -903,10 +908,28 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
             };
         }
 
+        if (view.dataSource.isMultigroupStore) {
+            if (recordIdx.isEntity) {
+                record = recordIdx;
+            }
+            else {
+                // eslint-disable-next-line max-len
+                record = view.store.getAt(Math.min(Math.max(recordIdx, 0), view.store.getCount() - 1));
+            }
+
+            // eslint-disable-next-line max-len
+            if (!view.dataSource.isExpandingOrCollapsing && view.dataSource.isInCollapsedGroup(record)) {
+                // we need to make sure all groups the record belongs to are expanded
+                view.dataSource.expandToRecord(record);
+            }
+
+            recordIdx = view.dataSource.indexOf(record);
+        }
         // If we have a grouping summary feature rendering the view in groups,
         // first, ensure that the record's group is expanded,
         // then work out which record in the groupStore the record is at.
-        if ((groupingFeature = view.dataSource.groupingFeature) && (groupingFeature.collapsible)) {
+        // eslint-disable-next-line max-len
+        else if ((groupingFeature = view.dataSource.groupingFeature) && (groupingFeature.collapsible)) {
             if (recordIdx.isEntity) {
                 record = recordIdx;
             }
@@ -1049,11 +1072,14 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
             bodyDom = me.view.body.dom,
             store = me.store,
             totalCount = (store.getCount()),
-            vscrollDistance,
-            scrollDirection;
+            distance, direction;
 
         // May be directly called with no args, as well as from the Scroller's scroll event
-        me.scrollTop = scrollTop == null ? (scrollTop = me.scroller.getPosition().y) : scrollTop;
+        if (scrollTop == null) {
+            scrollTop = me.scroller.getPosition().y;
+        }
+
+        me.scrollTop = scrollTop;
 
         // Because lockable assemblies now only have one Y scroller,
         // initially hidden grids (one side may begin with all the columns)
@@ -1064,16 +1090,14 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
             // beyond our view bounds. If there is no paging to be done
             // (Store's dataset is all in memory) we will be disabled.
             if (!(me.disabled || totalCount < me.viewSize)) {
-
-                vscrollDistance = scrollTop - me.position;
-                scrollDirection = vscrollDistance > 0 ? 1 : -1;
+                distance = scrollTop - me.position;
+                direction = distance > 0 ? 1 : -1;
 
                 // Moved at least 20 pixels, or changed direction, so test whether the numFromEdge
                 // is triggered
-                if (Math.abs(vscrollDistance) >= 20 ||
-                    (scrollDirection !== me.lastScrollDirection)) {
-                    me.lastScrollDirection = scrollDirection;
-                    me.handleViewScroll(me.lastScrollDirection, vscrollDistance);
+                if (Math.abs(distance) >= 20 || (direction !== me.lastScrollDirection)) {
+                    me.lastScrollDirection = direction;
+                    me.handleViewScroll(me.lastScrollDirection, distance);
                 }
             }
         }
@@ -1380,7 +1404,6 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
         // (due to either a data refresh or a view resize event) but the calculated size
         // ends up the same.
         if (!(start === rows.startIndex && end === rows.endIndex)) {
-
             // If range is available synchronously, process it now.
             if (store.rangeCached(start, end)) {
                 me.cancelLoad();
@@ -1600,7 +1623,9 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
                 if (doSyncRowHeight) {
                     me.syncRowHeights(newRows, partnerNewRows);
                     doSyncRowHeight = false;
+                }
 
+                if (variableRowHeight) {
                     // Bump the table upwards by the height added to the top
                     newTop = me.bodyTop - rows.item(oldStart, true).offsetTop;
 
@@ -1648,9 +1673,24 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
                     focusedView.renderingRows = true;
                     focusedView.onFocusLeave({});
                     focusedView.renderingRows = false;
+                    me.lastFocusedElement = focusedView;
 
-                    me.getNewFocusTarget(pos).focus();
+                    me.newFocusTarget = me.getNewFocusTarget(pos);
+                    me.newFocusTarget.focus();
+                    me.lastFocusedMultiRange = false;
+                    me.colHeader = pos.column;
                 }
+            }
+        }
+
+        if (me.lastFocusedElement && me.newFocusTarget === me.colHeader &&
+            !me.lastFocusedMultiRange && !view.actionableMode) {
+            view = me.lastFocusedElement;
+
+            if (Ext.Array.contains(me.store.getRange(rows.startIndex, rows.endIndex),
+                                   view.lastFocused.record)) {
+                view.focus();
+                me.lastFocusedMultiRange = true;
             }
         }
 

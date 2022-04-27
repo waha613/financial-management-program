@@ -12,44 +12,134 @@
  * (you can also edit the code and see your changes in the live
  * preview):
  *
- *     @example
- *     Ext.create('Ext.TabPanel', {
- *         fullscreen: true,
- *         tabBarPosition: 'bottom',
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.TabPanel', {
+ *     fullscreen: true,
+ *     tabBarPosition: 'bottom',
  *
- *         items: [
- *             {
- *                 title: 'Home',
- *                 iconCls: 'home',
- *                 html: 'Home Screen'
- *             },
- *             {
- *                 title: 'Contact',
- *                 iconCls: 'user',
- *                 html: 'Contact Screen'
- *             }
- *         ]
- *     });
+ *     items: [
+ *         {
+ *             title: 'Home',
+ *             iconCls: 'home',
+ *             html: 'Home Screen'
+ *         },
+ *         {
+ *             title: 'Contact',
+ *             iconCls: 'user',
+ *             html: 'Contact Screen'
+ *         }
+ *     ]
+ * });
+ * ```
  * One tab was created for each of the {@link Ext.Panel panels} defined in the items array. 
  * Each tab automatically uses the title and icon defined on the item configuration, 
  * and switches to that item when tapped on. We can also position
  * the tab bar at the top, which makes our Tab Panel look like this:
  *
- *     @example
- *     Ext.create('Ext.TabPanel', {
- *         fullscreen: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.TabPanel', {
+ *     fullscreen: true,
  *
- *         items: [
- *             {
- *                 title: 'Home',
- *                 html: 'Home Screen'
- *             },
- *             {
- *                 title: 'Contact',
- *                 html: 'Contact Screen'
- *             }
- *         ]
- *     });
+ *     items: [
+ *         {
+ *             title: 'Home',
+ *             html: 'Home Screen'
+ *         },
+ *         {
+ *             title: 'Contact',
+ *             html: 'Contact Screen'
+ *         }
+ *     ]
+ * });
+ * ```
+ * 
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ *  <ext-tabpanel
+ *   flex="1"
+ *   shadow="true"
+ *   height="100%"
+ *   defaults='{"cls": "card","layout": "center"}'
+ *  >
+ *      <ext-panel title="Tab 1" layout="center">
+ *          <ext-container
+ *              flex="1"
+ *              html="By default, tabs are aligned to the top of a view."
+ *          >
+ *          </ext-container>
+ *      </ext-panel>
+ *      <ext-panel flex="1" title="Tab 2" layout="center">
+ *          <ext-container
+ *            flex="1"
+ *            html=
+ *              "A TabPanel can use different animations by setting <code>layout.animation.</code>"
+ *          >
+ *          </ext-container>
+ *      </ext-panel>
+ *      <ext-panel title="Tab 3" layout="center">
+ *          <ext-container cls="action" html="User tapped Tab 3"></ext-container>
+ *      </ext-panel>
+ *  </ext-tabpanel>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-tabpanel.component';
+ *  
+ * export default class PanelComponent {}
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtContainer, ExtTabPanel } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtTabPanel>
+ *                 <ExtContainer title="Tab 1">
+ *                     This is content for Tab 1!
+ *                 </ExtContainer>
+ *                 <ExtContainer title="Tab 2">
+ *                     This is content for Tab 2!
+ *                 </ExtContainer>
+ *                 <ExtContainer title="Tab 3">
+ *                     This is content for Tab 3!
+ *                 </ExtContainer>
+ *             </ExtTabPanel>
+ *         )
+ *     }
+ * }
+ * ```
+ *
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [`
+ *             `],
+ *     template: `
+ *             <ExtTabPanel shadow="true">
+ *                 <ExtContainer [title]="'Tab 1'">
+ *                     This is content for Tab 1!
+ *                 </ExtContainer>
+ *                 <ExtContainer [title]="'Tab 2'">
+ *                     This is content for Tab 2!
+ *                 </ExtContainer>
+ *                 <ExtContainer [title]="'Tab 3'">
+ *                     This is content for Tab 3!
+ *                 </ExtContainer>
+ *             </ExtTabPanel>
+ *             `
+ * })
+ * export class AppComponent {
+ * }
+ * ```
  *
  */
 Ext.define('Ext.tab.Panel', {

@@ -1,45 +1,177 @@
 /**
  * This plugin provides row drag and drop functionality.
  *
- *     @example
- *     var store = Ext.create('Ext.data.Store', {
- *         fields: ['name', 'email', 'phone'],
- *         data: [
- *             { name: 'Lisa', email: 'lisa@simpsons.com', phone: '555-111-1224' },
- *             { name: 'Bart', email: 'bart@simpsons.com', phone: '555-222-1234' },
- *             { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
- *             { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
- *         ],
- *         proxy: {
- *             type: 'memory',
- *             reader: {
- *                  type: 'json'
- *             }
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var store = Ext.create('Ext.data.Store', {
+ *     fields: ['name', 'email', 'phone'],
+ *     data: [
+ *         { name: 'Lisa', email: 'lisa@simpsons.com', phone: '555-111-1224' },
+ *         { name: 'Bart', email: 'bart@simpsons.com', phone: '555-222-1234' },
+ *         { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+ *         { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
+ *     ],
+ *     proxy: {
+ *         type: 'memory',
+ *         reader: {
+ *              type: 'json'
  *         }
- *     });
+ *     }
+ * });
  *     
- *     Ext.create('Ext.grid.Grid', {
- *         store: store,
- *         columns: [{
- *             text: 'Name',
- *             dataIndex: 'name'
- *         }, {
- *            text: 'Email',
- *            dataIndex: 'email',
- *            width: 230
- *       }, {
- *            text: 'Phone',
- *            dataIndex: 'phone',
- *            width: 150
- *       }],
- *        plugins: {
- *             gridrowdragdrop: {
- *                dragText: 'Drag and drop to reorganize'
+ * Ext.create('Ext.grid.Grid', {
+ *     store: store,
+ *     columns: [{
+ *         text: 'Name',
+ *         dataIndex: 'name'
+ *     }, {
+ *        text: 'Email',
+ *        dataIndex: 'email',
+ *        width: 230
+ *   }, {
+ *        text: 'Phone',
+ *        dataIndex: 'phone',
+ *        width: 150
+ *   }],
+ *    plugins: {
+ *         gridrowdragdrop: {
+ *            dragText: 'Drag and drop to reorganize'
+ *         }
+ *    },
+ *     height: 300,
+ *     fullscreen: true
+ * });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-grid height="300" fullscreen="true"
+ *     Plugins='{"gridrowdragdrop": true}'
+ *     selectable='{ "checkbox": true }' 
+ *     onready="editablegrid.onGridReady"
+ * >
+ *     <ext-column header="Name" dataIndex="name"></ext-column>
+ *     <ext-column text="Email" dataIndex="email" width="230"></ext-column>
+ *     <ext-column text="Phone" dataIndex="phone" width="150"></ext-column>
+ * </ext-grid>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-grid.component';
+ * import '@sencha/ext-web-components/dist/ext-column.component';
+ *
+ * Ext.require(['Ext.grid.plugin.RowDragDrop']);
+ * 
+ * export default class RowDragDropComponent {
+ *     constructor() {
+ *         this.store = new Ext.data.Store({
+ *             fields: ['name', 'email', 'phone'],
+ *             data: [
+ *                 { name: 'Lisa', email: 'lisa@simpsons.com', phone: '555-111-1224' },
+ *                 { name: 'Bart', email: 'bart@simpsons.com', phone: '555-222-1234' },
+ *                 { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+ *                 { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
+ *             ],
+ *             proxy: {
+ *                 type: 'memory',
+ *                 reader: {
+ *                     type: 'json'
+ *                 }
  *             }
- *        },
- *         height: 300,
- *         fullscreen: true
- *     });
+ *        });
+ *     }
+ * 
+ *    onGridReady(event) {
+ *        this.editableGridCmp = event.detail.cmp;
+ *        this.editableGridCmp.setStore(this.store);
+ *    }
+ * }
+ *
+ * window.rowdragdrop = new RowDragDropComponent();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtGrid, ExtColumn } from '@sencha/ext-modern';
+ *
+ * Ext.require(['Ext.grid.plugin.RowDragDrop']);
+ * 
+ * export default class MyExample extends Component {                  
+ *     state = {
+ *         store: new Ext.data.Store({
+ *              fields: ['name', 'email', 'phone'],
+ *              data: [
+ *                 	{ name: 'Lisa', email: 'lisa@simpsons.com', phone: '555-111-1224' },
+ *                 	{ name: 'Bart', email: 'bart@simpsons.com', phone: '555-222-1234' },
+ *                 	{ name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+ *                 	{ name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
+ *               ],
+ *              proxy: {
+ *                 	type: 'memory',
+ *                 	reader: {
+ *                    			type: 'json'
+ *                 	}
+ *              }
+ *          })
+ *      }
+ *      render() {        
+ *          return (
+ *            	<ExtGrid height="300" fullscreen="true"
+ *                	plugins="gridrowdragdrop"
+ *                	selectable='{ "checkbox": true }' 
+ *                 	store={this.state.store}
+ *            	>
+ *                	<ExtColumn header="Name" dataIndex="name"></ExtColumn>
+ *                	<ExtColumn text="Email" dataIndex="email" width="230"></ExtColumn>
+ *                	<ExtColumn text="Phone" dataIndex="phone" width="150"></ExtColumn>
+ *            	</ExtGrid>
+ *         	)
+ *      }
+ *	}
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * Ext.require(['Ext.grid.plugin.RowDragDrop']);
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [`
+ *             `],
+ *     template: `
+ *             <ExtGrid height="300" fullscreen="true"
+ *                 [plugins]="{ gridrowdragdrop: true }"
+ *                 [selectable]="selectable"
+ *                 [store]="store"
+ *             >
+ *                 <ExtColumn header="Name" dataIndex="name"></ExtColumn>
+ *                 <ExtColumn text="Email" dataIndex="email" width="230"></ExtColumn>
+ *                 <ExtColumn text="Phone" dataIndex="phone" width="150"></ExtColumn>
+ *             </ExtGrid>
+ *             `
+ * })
+ * export class AppComponent {
+ *     selectable = {
+ *        checkbox: true,
+ *     };
+ *     store = new Ext.data.Store({
+ *                fields: ['name', 'email', 'phone'],
+ *                data: [
+ *                    { name: 'Lisa', email: 'lisa@simpsons.com', phone: '555-111-1224' },
+ *                    { name: 'Bart', email: 'bart@simpsons.com', phone: '555-222-1234' },
+ *                    { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+ *                    { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
+ *                ],
+ *                proxy: {
+ *                    type: 'memory',
+ *                    reader: {
+ *                        type: 'json'
+ *                    }
+ *                }
+ *            });
+ * }
+ * ``` 
  */
 Ext.define('Ext.grid.plugin.RowDragDrop', {
     extend: 'Ext.plugin.dd.DragDrop',

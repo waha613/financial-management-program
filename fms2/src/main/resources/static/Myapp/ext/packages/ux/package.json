@@ -1,10 +1,10 @@
 {
-    "name": "@extjs/ext-ux",
-    "ext-react-name": "@extjs/ext-react-ux",
-    "ext-name": "@extjs/ext-ux",
+    "name": "@sencha/ext-ux",
+    "ext-react-name": "@sencha/ext-react-ux",
+    "ext-name": "@sencha/ext-ux",
     "SenchaExtName": "@sencha/ext-ux",
     "SenchaExtReactName": "@sencha/ext-react-ux",
-    "version": "7.0.0.156",
+    "version": "7.4.0.42",
     "sencha": {
         "name": "ux",
         "namespace": "Ext",
@@ -16,8 +16,8 @@
         "creator": "Sencha",
         "summary": "User eXtensions",
         "detailedDescription": "This package contains extensions to Ext JS that should be considered as 'beta' or 'work in progress'. We hope they are useful 'as is' or serve as inspiration for more feature-rich work.",
-        "version": "7.0.0",
-        "compatVersion": "7.0.0",
+        "version": "7.4.0.42",
+        "compatVersion": "7.4.0",
         "format": "1",
         "output": {
             "base": "${framework.dir}/build/packages/${package.name}/${toolkit.name}/${build.id}",
@@ -79,9 +79,29 @@
                 "toolkit": "classic",
                 "theme": "theme-classic"
             },
+            "graphite": {
+                "toolkit": "classic",
+                "theme": "theme-graphite"
+            },
+            "classic-material": {
+                "toolkit": "classic",
+                "theme": "theme-material"
+            },
             "modern-neptune": {
                 "toolkit": "modern",
                 "theme": "theme-neptune"
+            },
+            "modern-triton": {
+                "toolkit": "modern",
+                "theme": "theme-triton"
+            },
+            "ios": {
+                "toolkit": "modern",
+                "theme": "theme-ios"
+            },
+            "material": {
+                "toolkit": "modern",
+                "theme": "theme-material"
             }
         }
     }

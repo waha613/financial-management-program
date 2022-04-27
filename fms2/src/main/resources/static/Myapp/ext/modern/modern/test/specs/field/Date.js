@@ -42,7 +42,7 @@ topSuite('Ext.field.Date', ['Ext.viewport.Viewport', 'Ext.data.validator.Date'],
         if (field.getFloated()) {
             field.show();
         }
- else {
+        else {
             field.render(Ext.getBody());
         }
     }
@@ -237,6 +237,14 @@ topSuite('Ext.field.Date', ['Ext.viewport.Viewport', 'Ext.data.validator.Date'],
 
             expect(field.getMinDate()).toEqual(today);
         });
+
+        it('should be able to be nulled out', function() {
+            makeField({
+                minDate: new Date()
+            });
+            field.setMinDate(null);
+            expect(field.getMinDate()).toBeNull();
+        });
     });
 
     describe('maxDate', function() {
@@ -254,6 +262,14 @@ topSuite('Ext.field.Date', ['Ext.viewport.Viewport', 'Ext.data.validator.Date'],
             });
 
             expect(field.getMaxDate()).toEqual(today);
+        });
+
+        it('should be able to be nulled out', function() {
+            makeField({
+                maxDate: new Date()
+            });
+            field.setMaxDate(null);
+            expect(field.getMaxDate()).toBeNull();
         });
     });
 
@@ -590,12 +606,15 @@ topSuite('Ext.field.Date', ['Ext.viewport.Viewport', 'Ext.data.validator.Date'],
     // "https://sencha.jira.com/browse/EXT-750"
     describe('altFormats', function() {
         it('should parse a string value using the altFormats config', function() {
+            var dt = new Date();
+
             makeField({
                 dateFormat: 'Y-m-d',
                 altFormats: 'm/d',
                 value: '02/26'
             });
-            expect(field.getValue()).toEqual(new Date(2019, 01, 26));
+
+            expect(field.getValue()).toEqual(new Date(dt.getFullYear(), 01, 26));
         });
 
         it('should parse value using default format when altFormats is `null`', function() {

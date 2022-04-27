@@ -64,7 +64,14 @@ Ext.define('Ext.grid.Row', {
         /**
          * @private
          */
-        stickyVisibility: null
+        stickyVisibility: null,
+
+        /**
+         * @cfg {Boolean} flexbox
+         * Set to true to use a flexbox layout instead of table. This allows for cells to
+         * be configured with flex sizing.
+         */
+        flexbox: false
     },
 
     classCls: [
@@ -75,6 +82,8 @@ Ext.define('Ext.grid.Row', {
     inheritUi: true,
 
     expandedCls: Ext.baseCSSPrefix + 'expanded',
+
+    flexboxCls: Ext.baseCSSPrefix + 'flexbox',
 
     element: {
         reference: 'element',
@@ -89,6 +98,10 @@ Ext.define('Ext.grid.Row', {
         this.columnMap = {};
 
         this.callParent([config]);
+    },
+
+    updateFlexbox: function(value) {
+        this.cellsElement.el.toggleCls(this.flexboxCls, value);
     },
 
     doDestroy: function() {
@@ -525,7 +538,7 @@ Ext.define('Ext.grid.Row', {
         },
 
         getGrid: function() {
-            return this.getParent();  // backwards compat
+            return this.grid || this.getParent();  // backwards compat
         }
     }
 });

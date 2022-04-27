@@ -711,6 +711,7 @@ Ext.define('Ext.grid.HeaderContainer', {
                 len = columns && columns.length,
                 sorters = store.getSorters(),
                 grouper = store.getGrouper(),
+                groupers = store.getGroupers(false),
                 i, header, isGroupedHeader, sorter;
 
             for (i = 0; i < len; i++) {
@@ -722,7 +723,14 @@ Ext.define('Ext.grid.HeaderContainer', {
                 sorter = header.sorter;
 
                 // Is this column being used to group this grid
-                isGroupedHeader = store.getGroupField() === header.getDataIndex();
+                if (groupers && groupers.length) {
+                    // if groupers are used then you can sort by anything because
+                    // it's taken care of.
+                    isGrouped = false;
+                }
+                else {
+                    isGroupedHeader = store.getGroupField() === header.getDataIndex();
+                }
 
                 if (sorter) {
                     // FIRST: If the grid is grouped and this is not the column being used to group
@@ -751,12 +759,13 @@ Ext.define('Ext.grid.HeaderContainer', {
         },
 
         syncReserveSpace: function() {
-            var reserve = this.getVerticalOverflow() || this.getReserveScrollbar(),
+            var me = this,
+                reserve = me.getVerticalOverflow() || me.getReserveScrollbar(),
                 scrollbarWidth = 0,
                 grid, scroller;
 
             if (reserve) {
-                grid = this.getGrid();
+                grid = me.getGrid();
 
                 if (grid) {
                     scroller = grid.getScrollable();
@@ -769,7 +778,9 @@ Ext.define('Ext.grid.HeaderContainer', {
 
             // use padding, not margin so that the background-color of the header container
             // shows in the reserved space.
-            this.el.setStyle('padding-right', scrollbarWidth);
+            me.el.setStyle('padding-right', scrollbarWidth);
+
+            me.fireEvent('synreservespace', me, scrollbarWidth);
         },
 
         visibleLeafFilter: function(c) {

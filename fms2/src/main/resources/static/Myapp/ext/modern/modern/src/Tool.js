@@ -5,31 +5,33 @@
  * will not be instantiated directly, rather it will be created by specifying the
  * {@link Ext.Panel#tools} configuration on the Panel itself.
  *
- *     @example
- *     Ext.create('Ext.Panel', {
- *         title: 'A Panel',
- *         fullscreen: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Panel', {
+ *     title: 'A Panel',
+ *     fullscreen: true,
  *
- *         tools: [{
- *             type: 'help',
- *             handler: function() {
- *                 // show help here
- *             }
- *         }, {
- *             itemId: 'refresh',
- *             type: 'refresh',
- *             hidden: true,
- *             handler: function () {
- *                 // do refresh
- *             }
- *         }, {
- *             type: 'search',
- *             handler: function (panel) {
- *                 // do search
- *                 panel.down('#refresh').show();
- *             }
- *         }]
- *     });
+ *     tools: [{
+ *         type: 'help',
+ *         handler: function() {
+ *             // show help here
+ *         }
+ *     }, {
+ *         itemId: 'refresh',
+ *         type: 'refresh',
+ *         hidden: true,
+ *         handler: function () {
+ *             // do refresh
+ *         }
+ *     }, {
+ *         type: 'search',
+ *         handler: function (panel) {
+ *             // do search
+ *             panel.down('#refresh').show();
+ *         }
+ *     }]
+ * });
+ * ```
  *
  * @since 6.0.1
  */

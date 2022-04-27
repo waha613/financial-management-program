@@ -10,90 +10,92 @@
  *
  * Example Boolean Filter Usage:
  * 
- *     @example
- *     var store = Ext.create('Ext.data.Store', {
- *         fields: ['firstname', 'lastname', 'seniority', 'department', 'hired', 'active'],
- *         data: [
- *             {
- *                  firstname:"Michael",
- *                  lastname:"Scott",
- *                  seniority:7,
- *                  department:"Management",
- *                  hired:"01/10/2004",
- *                  active: true
- *             },
- *             {
- *                  firstname:"Dwight",
- *                  lastname:"Schrute",
- *                  seniority:2,
- *                  department:"Sales",
- *                  hired:"04/01/2004",
- *                  active: true
- *             },
- *             {
- *                  firstname:"Jim",
- *                  lastname:"Halpert",
- *                  seniority:3,
- *                  department:"Sales",
- *                  hired:"02/22/2006",
- *                  active: false
- *             },
- *             {
- *                  firstname:"Kevin",
- *                  lastname:"Malone",
- *                  seniority:4,
- *                  department:"Accounting",
- *                  hired:"06/10/2007",
- *                  active: true
- *             },
- *             {
- *                  firstname:"Angela",
- *                  lastname:"Martin",
- *                  seniority:5,
- *                  department:"Accounting",
- *                  hired:"10/21/2008",
- *                  active: false
- *             }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var store = Ext.create('Ext.data.Store', {
+ *     fields: ['firstname', 'lastname', 'seniority', 'department', 'hired', 'active'],
+ *     data: [
+ *         {
+ *              firstname:"Michael",
+ *              lastname:"Scott",
+ *              seniority:7,
+ *              department:"Management",
+ *              hired:"01/10/2004",
+ *              active: true
+ *         },
+ *         {
+ *              firstname:"Dwight",
+ *              lastname:"Schrute",
+ *              seniority:2,
+ *              department:"Sales",
+ *              hired:"04/01/2004",
+ *              active: true
+ *         },
+ *         {
+ *              firstname:"Jim",
+ *              lastname:"Halpert",
+ *              seniority:3,
+ *              department:"Sales",
+ *              hired:"02/22/2006",
+ *              active: false
+ *         },
+ *         {
+ *              firstname:"Kevin",
+ *              lastname:"Malone",
+ *              seniority:4,
+ *              department:"Accounting",
+ *              hired:"06/10/2007",
+ *              active: true
+ *         },
+ *         {
+ *              firstname:"Angela",
+ *              lastname:"Martin",
+ *              seniority:5,
+ *              department:"Accounting",
+ *              hired:"10/21/2008",
+ *              active: false
+ *         }
+ *     ]
+ * });
  *   
- *     Ext.create({
- *         xtype: 'grid',
- *         title: 'Filter Grid - Boolean Type',
- *         itemConfig: {
- *             viewModel: true
- *         },
- *         plugins: {
- *              gridfilters: true
- *         },
- *         store: store,
- *         columns: [
- *             {text: 'First Name',  dataIndex:'firstname'},
- *             {text: 'Last Name',  dataIndex:'lastname'},
- *             {text: 'Department',  dataIndex:'department'},
- *             {text: 'Seniority',  dataIndex:'seniority'},
- *             {text: 'Hired Month',  dataIndex:'hired'},
- *             {
- *                  text: 'Active',
- *                  dataIndex:'active',
- *                  filter: {
- *                      type: 'boolean',
- *                      menu: {
- *                          items: {
- *                              yes: {
- *                                  text: 'Custom True'
- *                              },
- *                              no: {
- *                                  text: 'Custom False'
- *                              }
+ * Ext.create({
+ *     xtype: 'grid',
+ *     title: 'Filter Grid - Boolean Type',
+ *     itemConfig: {
+ *         viewModel: true
+ *     },
+ *     plugins: {
+ *          gridfilters: true
+ *     },
+ *     store: store,
+ *     columns: [
+ *         {text: 'First Name',  dataIndex:'firstname'},
+ *         {text: 'Last Name',  dataIndex:'lastname'},
+ *         {text: 'Department',  dataIndex:'department'},
+ *         {text: 'Seniority',  dataIndex:'seniority'},
+ *         {text: 'Hired Month',  dataIndex:'hired'},
+ *         {
+ *              text: 'Active',
+ *              dataIndex:'active',
+ *              filter: {
+ *                  type: 'boolean',
+ *                  menu: {
+ *                      items: {
+ *                          yes: {
+ *                              text: 'Custom True'
+ *                          },
+ *                          no: {
+ *                              text: 'Custom False'
  *                          }
  *                      }
  *                  }
- *             }
- *         ],
- *         width: 500,
- *         fullscreen: true
- *     });
+ *              }
+ *         }
+ *     ],
+ *     width: 500,
+ *     fullscreen: true
+ * });
+ * ```
  */
 Ext.define('Ext.grid.filters.menu.Boolean', {
     extend: 'Ext.grid.filters.menu.Base',

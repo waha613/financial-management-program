@@ -189,7 +189,12 @@ Ext.define('Ext.selection.Model', {
             update: me.onStoreUpdate,
             idchanged: me.onIdChanged,
             load: me.onStoreLoad,
-            refresh: me.onStoreRefresh,
+            refresh: {
+                fn: me.onStoreRefresh,
+                // The priority of OnStoreRefresh should be greater than OnDataRefresh.
+                // else the selection will be lost because of change in order of execution
+                priority: 2000
+            },
 
             // BufferedStore events
             pageadd: me.onPageAdd,
@@ -377,7 +382,7 @@ Ext.define('Ext.selection.Model', {
             record = e.record,
             lastFocused = e.previousRecord,
             isSelected = me.isSelected(record),
-            from = (me.selectionStart && me.isSelected(e.previousRecord))
+            from = me.selectionStart
                 ? me.selectionStart
                 : (me.selectionStart = e.previousRecord),
             fromIdx = e.previousRecordIndex,

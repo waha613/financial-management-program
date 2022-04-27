@@ -6,7 +6,8 @@
  *
  * Usually a `fieldpanel` just contains a set of fields to display such as the following:
  *
- *      @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *      var panel = Ext.create({
  *          xtype: 'fieldpanel',
  *          fullscreen: true,
@@ -25,6 +26,100 @@
  *              label: 'Password'
  *          }]
  *      });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtFieldPanel, ExtTextField, ExtEmailField, ExtPasswordField } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtFieldPanel width="600" height="300">
+ *                 <ExtTextField
+ *                     name="name"
+ *                     label="Name"
+ *                     padding="10"
+ *                 >
+ *                 </ExtTextField>
+ *                 <ExtEmailField
+ *                     name="email"
+ *                     label="Email"
+ *                     padding="10"
+ *                 >
+ *                 </ExtEmailField>
+ *                 <ExtPasswordField
+ *                     name="password"
+ *                     label="Password"
+ *                     padding="10"
+ *                 >
+ *                 </ExtPasswordField>
+ *             </ExtFieldPanel>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'fieldpanel-component',
+ *     styles: [``],
+ *     template: `
+ *         <ExtFieldPanel width="600" height="300">
+ *             <ExtTextField
+ *                 [name]="'name'"
+ *                 [label]="'Name'"
+ *                 padding="10"
+ *             >
+ *             </ExtTextField>
+ *             <ExtEmailField
+ *                  [name]="'email'"
+ *                  [label]="'Email'"
+ *                  padding="10"
+ *             >
+ *             </ExtEmailField>
+ *             <ExtPasswordField
+ *                  [name]="'password'"
+ *                  [label]="'Password'"
+ *                  padding="10"
+ *             >
+ *             </ExtPasswordField>
+ *         </ExtFieldPanel>
+ *     `
+ * })
+ * export class FieldPanelComponent  {}
+ * ```
+ * ```html
+ *  @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ *  <ext-fieldpanel fullscreen="true">
+ *      <ext-textfield
+ *           name="name"
+ *           label="Name"
+ *       >
+ *       </ext-textfield>
+ *       <ext-emailfield
+ *           name="email"
+ *           label="Email"
+ *       >
+ *       </ext-emailfield>
+ *       <ext-passwordfield
+ *           name="password"
+ *           label="Password"
+ *       >
+ *       </ext-passwordfield>
+ *   </ext-fieldpanel>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-fieldpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-textfield.component';
+ * import '@sencha/ext-web-components/dist/ext-emailfield.component';
+ * import '@sencha/ext-web-components/dist/ext-passwordfield.component';
+ * export default class PanelComponent {}
+ * ```
  *
  * Here we just created a simple container which could be used as a registration form to
  * sign up to your service. We added a plain {@link Ext.field.Text text field} for the

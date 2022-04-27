@@ -430,6 +430,7 @@ function() {
             recordCount = tree.view.store.getCount();
             rootNode = tree.getRootNode();
         });
+
         it("should not render every node", function() {
 
             expect(recordCount).toEqual(31);
@@ -438,6 +439,7 @@ function() {
             // Should be less than the total node count in the Tree structure.
             expect(tree.view.all.getCount()).toBeLessThan(recordCount);
         });
+
         it("should not not scroll upon node expand", function() {
             tree.collapseAll();
             rootNode.expand();

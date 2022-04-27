@@ -13,72 +13,194 @@
  *
  * ## Examples
  *
- *     @example
- *     var picker = Ext.create('Ext.Picker', {
- *         slots: [
- *             {
- *                 name : 'limit_speed',
- *                 title: 'Speed',
- *                 data : [
- *                     {text: '50 KB/s', value: 50},
- *                     {text: '100 KB/s', value: 100},
- *                     {text: '200 KB/s', value: 200},
- *                     {text: '300 KB/s', value: 300}
- *                 ]
- *             }
- *         ]
- *     });
- *     Ext.Viewport.add(picker);
- *     picker.show();
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var picker = Ext.create('Ext.Picker', {
+ *     slots: [
+ *         {
+ *       name : 'limit_speed',
+ *       title: 'Speed',
+ *       data : [
+ *           {text: '50 KB/s', value: 50},
+ *           {text: '100 KB/s', value: 100},
+ *           {text: '200 KB/s', value: 200},
+ *           {text: '300 KB/s', value: 300}
+ *       ]
+ *         }
+ *     ]
+ * });
+ * Ext.Viewport.add(picker);
+ * picker.show();
+ * ```
  *
  * You can also customize the top toolbar on the {@link Ext.picker.Picker} by changing the
  * {@link #doneButton} and {@link #cancelButton} configurations:
  *
- *     @example
- *     var picker = Ext.create('Ext.Picker', {
- *         doneButton: 'I\'m done!',
- *         cancelButton: false,
- *         slots: [
- *             {
- *                 name : 'limit_speed',
- *                 title: 'Speed',
- *                 data : [
- *                     {text: '50 KB/s', value: 50},
- *                     {text: '100 KB/s', value: 100},
- *                     {text: '200 KB/s', value: 200},
- *                     {text: '300 KB/s', value: 300}
- *                 ]
- *             }
- *         ]
- *     });
- *     Ext.Viewport.add(picker);
- *     picker.show();
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var picker = Ext.create('Ext.Picker', {
+ *     doneButton: 'I\'m done!',
+ *     cancelButton: false,
+ *     slots: [
+ *         {
+ *       name : 'limit_speed',
+ *       title: 'Speed',
+ *       data : [
+ *           {text: '50 KB/s', value: 50},
+ *           {text: '100 KB/s', value: 100},
+ *           {text: '200 KB/s', value: 200},
+ *           {text: '300 KB/s', value: 300}
+ *       ]
+ *         }
+ *     ]
+ * });
+ * Ext.Viewport.add(picker);
+ * picker.show();
+ * ```
  *
  * Or by passing a custom {@link #toolbar} configuration:
  *
- *     @example
- *     var picker = Ext.create('Ext.Picker', {
- *         doneButton: false,
- *         cancelButton: false,
- *         toolbar: {
- *             ui: 'light',
- *             title: 'My Picker!'
- *         },
- *         slots: [
- *             {
- *                 name : 'limit_speed',
- *                 title: 'Speed',
- *                 data : [
- *                     {text: '50 KB/s', value: 50},
- *                     {text: '100 KB/s', value: 100},
- *                     {text: '200 KB/s', value: 200},
- *                     {text: '300 KB/s', value: 300}
- *                 ]
- *             }
- *         ]
- *     });
- *     Ext.Viewport.add(picker);
- *     picker.show();
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var picker = Ext.create('Ext.Picker', {
+ *     doneButton: false,
+ *     cancelButton: false,
+ *     toolbar: {
+ *         ui: 'light',
+ *         title: 'My Picker!'
+ *     },
+ *     slots: [
+ *         {
+ *       name : 'limit_speed',
+ *       title: 'Speed',
+ *       data : [
+ *           {text: '50 KB/s', value: 50},
+ *           {text: '100 KB/s', value: 100},
+ *           {text: '200 KB/s', value: 200},
+ *           {text: '300 KB/s', value: 300}
+ *       ]
+ *         }
+ *     ]
+ * });
+ * Ext.Viewport.add(picker);
+ * picker.show();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtPicker, ExtButton } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ * showPicker = () => this.picker.show();
+ * render() {
+ *     return (
+ *         <ExtContainer>
+ *             <ExtButton ui="action" handler={this.showPicker} text="Show Picker"/>
+ *             <ExtPicker
+ *                 ref={picker => this.picker = picker}
+ *                 slots={[
+ *                     {
+ *                         name: 'limit_speed',
+ *                         title: 'Speed',
+ *                         data: [
+ *                             {text: '50 KB/s', value: 50},
+ *                             {text: '100 KB/s', value: 100},
+ *                             {text: '200 KB/s', value: 200},
+ *                             {text: '300 KB/s', value: 300}
+ *                         ]
+ *                     }
+ *                 ]}
+ *             />
+ *       </ExtContainer>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer>
+ *             <ExtButton
+ *                 ui="action"
+ *                 [handler]="this.showPicker"
+ *                 text="Show Picker"
+ *             >
+ *             </ExtButton>
+ *             <ExtPicker
+ *                 (ready)='this.onPickerReady($event)'
+ *                 [slots]="[
+ *                     {
+ *                         name: 'limit_speed',
+ *                         title: 'Speed',
+ *                         data: [
+ *                             {text: '50 KB/s', value: 50},
+ *                             {text: '100 KB/s', value: 100},
+ *                             {text: '200 KB/s', value: 200},
+ *                             {text: '300 KB/s', value: 300}
+ *                         ]
+ *                      }
+ *                 ]"
+ *             >
+ *             </ExtPicker>
+ *         </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {
+ *   pickerComp;
+ *
+ *   onPickerReady = (event) => {
+ *       this.pickerComp = event.detail.cmp;
+ *   }
+ *
+ *   showPicker = () => {
+ *       this.pickerComp.show();
+ *   }
+ * }
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * @example({tab: 1})
+ * <ext-container>
+ * <ext-button ui="action" ontap="picker.showPicker" text="Show Picker"></ext-button>
+ * <ext-picker
+ *     onready="picker.pickerReady"
+ *         slots='[{
+ *           "name": "limit_speed",
+ *           "title": "Speed",
+ *           "data": [
+ *                       {"text": "50 KB/s", "value": "50"},
+ *                       {"text": "100 KB/s", "value": "100"},
+ *                       {"text": "200 KB/s", "value": "200"},
+ *                       {"text": "300 KB/s", "value": "300"}
+ *                   ]
+ *           }]'
+ *  >
+ *    </ext-picker>
+ * </ext-container>
+ * ```
+ *
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-picker.component';
+ *
+ * export default class PickerComponent {
+ * pickerReady = (event) => {
+ *     this.pickerCmp = event.detail.cmp;
+ * }
+ *
+ * showPicker = () => {
+ *      this.pickerCmp.show();
+ * }
+ * }
+ * window.picker = new PickerComponent();
+ * ```
+ *
+ *
  */
 Ext.define('Ext.picker.Picker', {
     extend: 'Ext.Sheet',
@@ -160,23 +282,23 @@ Ext.define('Ext.picker.Picker', {
          * The value to initialize the picker with. The value must be an object with the
          * key being the name of the slot to set the value to.
          *
-         *     Ext.create('Ext.picker.Picker', {
-         *         displayed: true,
-         *         side: 'bottom',
-         *         value: {
-         *             limit_speed: 100
-         *         },
-         *         slots: [{
-         *             name: 'limit_speed',
-         *             title: 'Speed',
-         *             data: [
-         *                 {text: '50 KB/s', value: 50},
-         *                 {text: '100 KB/s', value: 100},
-         *                 {text: '200 KB/s', value: 200},
-         *                 {text: '300 KB/s', value: 300}
-         *             ]
-         *         }]
-         *     });
+         * Ext.create('Ext.picker.Picker', {
+         *     displayed: true,
+         *     side: 'bottom',
+         *     value: {
+         *         limit_speed: 100
+         *     },
+         *     slots: [{
+         *         name: 'limit_speed',
+         *         title: 'Speed',
+         *         data: [
+         *       {text: '50 KB/s', value: 50},
+         *       {text: '100 KB/s', value: 100},
+         *       {text: '200 KB/s', value: 200},
+         *       {text: '300 KB/s', value: 300}
+         *         ]
+         *     }]
+         * });
          *
          * @accessor
          */
@@ -238,36 +360,36 @@ Ext.define('Ext.picker.Picker', {
          *
          * The default xtype is a {@link Ext.TitleBar}:
          *
-         *     toolbar: {
-         *         items: [
-         *             {
-         *                 xtype: 'button',
-         *                 text: 'Left',
-         *                 align: 'left'
-         *             },
-         *             {
-         *                 xtype: 'button',
-         *                 text: 'Right',
-         *                 align: 'left'
-         *             }
-         *         ]
-         *     }
+         * toolbar: {
+         *     items: [
+         *         {
+         *       xtype: 'button',
+         *       text: 'Left',
+         *       align: 'left'
+         *         },
+         *         {
+         *       xtype: 'button',
+         *       text: 'Right',
+         *       align: 'left'
+         *         }
+         *     ]
+         * }
          *
          * Or to use a {@link Ext.Toolbar instead}:
          *
-         *     toolbar: {
-         *         xtype: 'toolbar',
-         *         items: [
-         *             {
-         *                 xtype: 'button',
-         *                 text: 'Left'
-         *             },
-         *             {
-         *                 xtype: 'button',
-         *                 text: 'Left Two'
-         *             }
-         *         ]
-         *     }
+         * toolbar: {
+         *     xtype: 'toolbar',
+         *     items: [
+         *         {
+         *       xtype: 'button',
+         *       text: 'Left'
+         *         },
+         *         {
+         *       xtype: 'button',
+         *       text: 'Left Two'
+         *         }
+         *     ]
+         * }
          *
          * @accessor
          */
@@ -311,7 +433,7 @@ Ext.define('Ext.picker.Picker', {
 
         // TODO: Should value be a config?
         // It would entail overriding the generated getter & setter
-        if ('value' in config) {
+        if (config && 'value' in config) {
             this.setValue(config.value);
         }
     },

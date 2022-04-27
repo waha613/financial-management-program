@@ -7,6 +7,11 @@ Ext.define('Ext.data.summary.Sum', {
 
     alias: 'data.summary.sum',
 
+    /**
+     * Name of the summary function that appears in the {@link Ext.grid.plugin.Summaries} plugin
+     */
+    text: 'Sum',
+
     calculate: function(records, property, root, begin, end) {
         var n = end - begin,
             i, sum, v;

@@ -104,6 +104,7 @@ topSuite("Ext.menu.CheckItem", ['Ext.app.ViewModel', 'Ext.app.ViewController'], 
             beforeEach(function() {
                 makeItem({
                     menu: {
+                        hidden: false,
                         items: [{
                             text: 'bar'
                         }]

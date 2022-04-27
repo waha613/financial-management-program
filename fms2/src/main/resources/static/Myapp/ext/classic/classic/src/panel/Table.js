@@ -1649,25 +1649,29 @@ Ext.define('Ext.panel.Table', {
     },
 
     onViewRefresh: function(view, records) {
-        this.onItemAdd(records, 0);
+        this.onItemsAdded(view, records, 0);
     },
 
     onItemAdd: function(records, index, nodes, view) {
+        this.onItemsAdded(view, records, index);
+    },
+
+    onItemsAdded: function(view, records, index) {
         var me = this,
             recCount = records.length,
             freeRowContexts = me.freeRowContexts,
             liveRowContexts = me.liveRowContexts || (me.liveRowContexts = {}),
-            rowContext, i, record;
+            i, internalId, rowContext, record;
 
         // Ensure we have RowContexts ready for all the widget owners
         // (Widget columns or RowWidget plugin) which will be needing instantiated
         // Widgets with attached ViewModels.
         for (i = 0; i < recCount; i++) {
-            record = records[i];
+            internalId = (record = records[i]).internalId;
 
             // We may have already been informed about the addition of this item
             // by the opposite locking partner
-            if (!liveRowContexts[record.internalId]) {
+            if (!(rowContext = liveRowContexts[internalId])) {
                 // Attempt to read from free RowContexts which may have been freed
                 // by a previous item remove event. Shift of the front
                 // to improve the chances of using the same RowContext for a record;
@@ -1681,8 +1685,15 @@ Ext.define('Ext.panel.Table', {
                     });
                 }
 
-                me.liveRowContexts[record.internalId] = rowContext;
-                rowContext.setRecord(record, index++);
+                if (rowContext.attach(view)) {
+                    // if this is the first view to attach, initialize the context and
+                    // put it in the live set:
+                    me.liveRowContexts[internalId] = rowContext;
+                    rowContext.setRecord(record, index + i);
+                }
+            }
+            else {
+                rowContext.attach(view);
             }
         }
     },
@@ -1698,10 +1709,9 @@ Ext.define('Ext.panel.Table', {
             id = nodes[i].getAttribute('data-recordId');
             context = liveRowContexts[id];
 
-            // We may have already been informed about the removal of this item
-            // by the opposite locking partner
-            if (context) {
-                context.free(view);
+            if (context && context.detach(view)) {
+                // if this is the last view to detach, return the context to the free
+                // list.
                 freeRowContexts.push(context);
                 delete liveRowContexts[id];
             }
@@ -2137,14 +2147,16 @@ Ext.define('Ext.panel.Table', {
 
     updateBindSelection: function(selModel, selection) {
         var me = this,
+            hasSelection = selection.length > 0,
             selected = null;
+
+        me.hasHadSelection = me.hasHadSelection || hasSelection;
 
         if (!me.ignoreNextSelection) {
             me.ignoreNextSelection = true;
 
-            if (selection.length) {
+            if (hasSelection) {
                 selected = selModel.getLastSelected();
-                me.hasHadSelection = true;
             }
 
             if (me.hasHadSelection) {
@@ -2371,8 +2383,10 @@ Ext.define('Ext.panel.Table', {
      * pass `null` if no new store.
      * @param {Object[]} [columns] An array of column configs
      * @param {Boolean} allowUnbind (private)
+     * @param {Boolean} applyState (private) Allow components (such as pivot grid) to determine
+     * if they want to update when the store is reconfigured
      */
-    reconfigure: function(store, columns, allowUnbind) {
+    reconfigure: function(store, columns, allowUnbind, applyState) {
         var me = this,
             oldStore = me.store,
             headerCt = me.headerCt,
@@ -2444,7 +2458,7 @@ Ext.define('Ext.panel.Table', {
             refreshCounter = view.refreshCounter;
         }
 
-        if (me.stateful) {
+        if (me.stateful && applyState !== false) {
             stateId = me.getStateId();
             state = stateId && Ext.state.Manager.get(stateId);
 
@@ -2601,6 +2615,10 @@ Ext.define('Ext.panel.Table', {
                 // the target node in a callback.
                 if (callback || select || doFocus) {
                     internalCallback = function() {
+                        if (view && view.destroyed) {
+                            return;
+                        }
+
                         targetContext =
                             new Ext.grid.CellContext(view).setPosition(record, column || 0);
 

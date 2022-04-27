@@ -229,6 +229,131 @@ Ext.define('Ext.list.Tree', {
         this.publishState('selection', this.getSelection());
     },
 
+    focusable: true,
+    tabIndex: 0,
+
+    /**
+     * @cfg keyMap
+     * @inheritdoc
+     */
+    keyMap: {
+        scope: 'this',
+        UP: 'onKeyUp',
+        DOWN: 'onKeyDown',
+        LEFT: 'onKeyLeft',
+        RIGHT: 'onKeyRight'
+    },
+
+    /**
+     * Called when the up arrow key is clicked
+     * Facilitates keyboard navigation by selecting next item on the list.
+     * @param {Ext.event.Event} keyEvent
+     * @param {Ext.list.Tree} treeList Current instance of treeList
+     */
+    onKeyUp: function(keyEvent, treeList) {
+        var selectedModel = treeList.getSelection(),
+            previousSibling = selectedModel ? selectedModel.previousSibling : null;
+
+        if (!selectedModel) {
+            return;
+        }
+
+        if (previousSibling) {
+            // Go to the last child of last expanded child of previous sibling.
+            // Otherwise go to the previous sibling.
+            selectedModel = previousSibling;
+
+            while (treeList.getItem(selectedModel).getExpanded() && selectedModel.lastChild) {
+                selectedModel = selectedModel.lastChild;
+            }
+        }
+        else if (!selectedModel.parentNode.isRoot()) {
+            // No change in selection if first item of the list is selected
+            selectedModel = selectedModel.parentNode;
+        }
+
+        treeList.setSelection(selectedModel);
+    },
+
+    /**
+     * Called when the down arrow key is clicked
+     * Facilitates keyboard navigation by selecting next item on the list.
+     * @param {Ext.event.Event} keyEvent
+     * @param {Ext.list.Tree} treeList Current instance of treeList
+     */
+    onKeyDown: function(keyEvent, treeList) {
+        var currentModel,
+            isLastNode = false,
+            selectedModel = treeList.getSelection(),
+            selectedItem = treeList.getItem(selectedModel);
+
+        if (!selectedItem) {
+            return;
+        }
+
+        if (selectedItem.getExpanded() && selectedModel.firstChild) {
+            // If selected item is expanded go it its first child
+            selectedModel = selectedModel.firstChild;
+        }
+        else if (selectedModel.nextSibling) {
+            // Select next sibling otherwise
+            selectedModel = selectedModel.nextSibling;
+        }
+        else {
+            currentModel = treeList.getSelection();
+
+            // Find node that contains next sibling, up to
+            // the first level in the heirarchy. If no such
+            // node found till root, it means this is the
+            // last node in the list.
+            while (!selectedModel.parentNode.nextSibling) {
+                if (selectedModel.parentNode.isRoot()) {
+                    selectedModel = currentModel;
+                    isLastNode = true;
+                    break;
+                }
+
+                selectedModel = selectedModel.parentNode;
+            }
+
+            if (!isLastNode) {
+                selectedModel = selectedModel.parentNode.nextSibling;
+            }
+        }
+
+        treeList.setSelection(selectedModel);
+    },
+
+    /**
+     * Called when the left arrow key is clicked
+     * Collapses the selected list item. 
+     * @param {Ext.event.Event} keyEvent
+     * @param {Ext.list.Tree} treeList Current instance of treeList
+     */
+    onKeyLeft: function(keyEvent, treeList) {
+        var selectedModel = treeList.getSelection(),
+            selectedItem = treeList.getItem(selectedModel);
+
+        if (selectedItem) {
+            selectedItem.collapse();
+        }
+    },
+
+    /**
+     * Called when the right arrow key is clicked
+     * Expands the selected list item.
+     * @param {Ext.event.Event} keyEvent
+     * @param {Ext.list.Tree} treeList Current instance of treeList
+     */
+    onKeyRight: function(keyEvent, treeList) {
+        var selectedModel = treeList.getSelection(),
+            selectedItem = treeList.getItem(selectedModel);
+
+        if (selectedItem) {
+            selectedItem.expand();
+        }
+    },
+
     destroy: function() {
         var me = this;
 

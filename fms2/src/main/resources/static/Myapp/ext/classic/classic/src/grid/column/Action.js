@@ -523,6 +523,7 @@ Ext.define('Ext.grid.column.Action', {
             ret += '<' + (icon ? 'img' : 'div') +
                 (typeof tabIndex === 'number' ? ' tabIndex="' + tabIndex + '"' : '') +
                 (ariaRole ? ' role="' + ariaRole + '"' : ' role="presentation"') +
+                (' aria-label="' + me.text + '"') +
                 (icon ? (' alt="' + altText + '" src="' + item.icon + '"') : '') +
                 ' class="' + me.actionIconCls + ' ' + Ext.baseCSSPrefix + 'action-col-' + String(i) + ' ' +
                 (disabled ? me.disabledCls + ' ' : ' ') +

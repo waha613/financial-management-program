@@ -95,7 +95,7 @@ Ext.define('Ext.layout.container.boxOverflow.Scroller', {
         }
         else {
             me.wheelListener = me.layout.innerCt.on(
-                'mousewheel', me.onMouseWheel, me, { destroyable: true }
+                'wheel', me.onMouseWheel, me, { destroyable: true }
             );
         }
 
@@ -235,7 +235,8 @@ Ext.define('Ext.layout.container.boxOverflow.Scroller', {
         me[repeaterName] = new Ext.util.ClickRepeater(scrollerEl, {
             interval: me.scrollRepeatInterval,
             handler: scrollHandler,
-            scope: me
+            scope: me,
+            mousedownPreventDefault: true // Stop IE from scrolling to improperly focused element
         });
 
         return scrollerEl;
@@ -249,7 +250,7 @@ Ext.define('Ext.layout.container.boxOverflow.Scroller', {
         // inside this container.
         if (!cmpScroller || (cmpScroller === this.layout.owner.getScrollable())) {
             e.stopEvent();
-            this.scrollBy(this.getWheelDelta(e) * this.wheelIncrement * -1, false);
+            this.scrollBy(this.getWheelDelta(e) * this.wheelIncrement, false);
         }
     },
 

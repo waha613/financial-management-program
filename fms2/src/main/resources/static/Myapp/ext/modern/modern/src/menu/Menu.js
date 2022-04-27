@@ -6,10 +6,11 @@
  * extends {@link Ext.Panel}.
  *
  * By default, Menus are absolutely positioned, floated Components. By configuring a
- * Menu with `{@link #cfg-floated}: false`, a Menu may be used as a child of a 
+ * Menu with `{@link #cfg-floated}: false`, a Menu may be used as a child of a
  * {@link Ext.Container Container}.
  *
- *     @example
+ * ```javascript
+ *  @example({ framework: 'extjs' })
  *     var mainPanel = Ext.create('Ext.Panel', {
  *         fullscreen: true,
  *
@@ -26,7 +27,67 @@
  *             }]
  *         }
  *     });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtButton, ExtContainer, ExtMenu, ExtMenuItem } from '@sencha/ext-react';
  *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *            <ExtContainer>
+ *                <ExtButton text="Menu">
+ *                    <ExtMenu rel="menu" >
+ *                        <ExtMenuItem text="Mobile" name="ui-type" />
+ *                        <ExtMenuItem text="Desktop" name="ui-type"/>
+ *                    </ExtMenu>
+ *                </ExtButton>
+ *            </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ * @Component({
+ *     selector: 'app-root',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer>
+ *             <ExtButton text="Menu">
+ *                 <ExtMenu rel="menu" >
+ *                     <ExtMenuItem text="Mobile" name="ui-type" ></ExtMenuItem>
+ *                     <ExtMenuItem text="Desktop" name="ui-type"></ExtMenuItem>
+ *                 </ExtMenu>
+ *             </ExtButton>
+ *         </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * @example({tab: 1})
+ * <ext-container>
+ *    <ext-button text="Menu">
+ *        <ext-menu rel="menu" >
+ *            <ext-menuitem text="Mobile" name="ui-type"></ext-menuitem>
+ *            <ext-menuitem text="Desktop" name="ui-type"></ext-menuitem>
+ *        </ext-menu>
+ *    </ext-button>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-menu.component';
+ * import '@sencha/ext-web-components/dist/ext-menuitem.component';
+ *
+ * export default class MenuComponent {}
  * @since 6.5.0
  */
 Ext.define('Ext.menu.Menu', {
@@ -89,7 +150,7 @@ Ext.define('Ext.menu.Menu', {
          *          items: [{
          *              xtype: 'button',
          *              bind: 'Call {menuGroups.option}',
-         *               
+         *
          *              viewModel: {
          *                  data: {
          *                      menuGroups: {
@@ -97,7 +158,7 @@ Ext.define('Ext.menu.Menu', {
          *                      }
          *                  }
          *              },
-         *               
+         *
          *              menu: {
          *                  bind: {
          *                      groups: '{menuGroups}'
@@ -457,7 +518,7 @@ Ext.define('Ext.menu.Menu', {
                 item;
 
             // FocusableContainer ignores events from input fields.
-            // In Menus we have a special case. The ESC key, or arrow from 
+            // In Menus we have a special case. The ESC key, or arrow from
             // <input type="checkbox"> must be handled.
             if (
                 keyCode === e.ESC ||
@@ -592,7 +653,7 @@ Ext.define('Ext.menu.Menu', {
         },
 
         /**
-         * Handle either pointer moving over the menu's element, or, on 
+         * Handle either pointer moving over the menu's element, or, on
          * touch capable devices, a touch start on the menu's element.
          */
         onMouseOver: function(e) {

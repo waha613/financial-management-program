@@ -2,36 +2,200 @@
  * The Cell Editing plugin utilizes an `Ext.Editor` to provide inline cell editing for
  * grid cells.
  *
- *     @example
- *     var store = Ext.create('Ext.data.Store', {
- *         fields: ['fname', 'lname', 'talent'],
- *         data: [
- *             { 'fname': 'Barry',  'lname': 'Allen', 'talent': 'Speedster'},
- *             { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery'},
- *             { 'fname': 'Kara',   'lname': 'Zor-El', 'talent': 'All'},
- *             { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert'},
- *             { 'fname': 'Hal',    'lname': 'Jordan', 'talent': 'Willpower'  },
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ *  var store = Ext.create('Ext.data.Store', {
+ *      fields: ['fname', 'lname', 'talent'],
+ *      data: [
+ *          { 'fname': 'Barry',  'lname': 'Allen', 'talent': 'Speedster'},
+ *          { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery'},
+ *          { 'fname': 'Kara',   'lname': 'Zor-El', 'talent': 'All'},
+ *          { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert'},
+ *          { 'fname': 'Hal',    'lname': 'Jordan', 'talent': 'Willpower'  },
+ *      ]
+ *  });
  *
- *     Ext.create('Ext.grid.Grid', {
- *         title: 'DC Personnel',
+ *  Ext.create('Ext.grid.Grid', {
+ *      title: 'DC Personnel',
  *
- *         store: store,
- *         plugins: {
- *             cellediting: true
- *         },
- *         columns: [
- *             { text: 'First Name', dataIndex: 'fname',  flex: 1, editable: true },
- *             { text: 'Last Name',  dataIndex: 'lname',  flex: 1 },
- *             { text: 'Talent',     dataIndex: 'talent', flex: 1 }
- *         ],
- *         fullscreen: true
- *     });
+ *      store: store,
+ *      plugins: {
+ *          cellediting: true
+ *      },
+ *      columns: [
+ *          { text: 'First Name', dataIndex: 'fname',  flex: 1, editable: true },
+ *          { text: 'Last Name',  dataIndex: 'lname',  flex: 1 },
+ *          { text: 'Talent',     dataIndex: 'talent', flex: 1 }
+ *      ],
+ *      fullscreen: true
+ *  });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container width="100%" height="100%">
+ *     <ext-grid
+ *         shadow="true"
+ *         height="275"
+ *         plugins='["cellediting"]'
+ *         onready="editablegrid.onGridReady"
+ *     >
+ *         <ext-column text="First Name" dataIndex="fname" flex="1" editable="true"></ext-column>
+ *         <ext-column text="Last Name" dataIndex="lname" flex="1" editable="true"></ext-column>
+ *         <ext-column text="Talent" dataIndex="talent" flex="1" editable="true"></ext-column>
+ *     </ext-grid>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-grid.component';
+ * import '@sencha/ext-web-components/dist/ext-column.component';
+ * 
+ * Ext.require('Ext.grid.plugin.Editable');
+ * 
+ * export default class EditableGridComponent {
+ *     constructor() {
+ *        this.store = new Ext.data.Store({
+ *           data: [
+ *               { 'fname': 'Barry',  'lname': 'Allen', 'talent': 'Speedster'},
+ *               { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery'},
+ *               { 'fname': 'Kara',   'lname': 'Zor-El', 'talent': 'All'},
+ *               { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert'},
+ *               { 'fname': 'Hal',    'lname': 'Jordan', 'talent': 'Willpower'  }
+ *           ]
+ *        });
+ *     }
+ * 
+ *     onGridReady(event) {
+ *         this.editableGridCmp = event.detail.cmp;
+ *         this.editableGridCmp.setStore(this.store);
+ *     }
+ * }
+ * window.editablegrid = new EditableGridComponent();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ *  import React, { Component } from 'react'
+ *  import { ExtGrid, ExtColumn, ExtSelectField } from '@sencha/ext-react';
+ * 
+ *  Ext.require('Ext.grid.plugin.CellEditing');
+ *
+ *  export default class MyExample extends Component {
+ *
+ *      store = new Ext.data.Store({
+ *          data: [
+ *              { 'fname': 'Barry',  'lname': 'Allen', 'talent': 'Speedster'},
+ *              { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery'},
+ *              { 'fname': 'Kara',   'lname': 'Zor-El', 'talent': 'All'},
+ *              { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert'},
+ *              { 'fname': 'Hal',    'lname': 'Jordan', 'talent': 'Willpower'  }
+ *          ]
+ *      });
+ *
+ *      render() {
+ *          return (
+ *              <ExtGrid
+ *                  height="275"
+ *                  store={this.store}
+ *                  plugins={['cellediting']}
+ *                >
+ *                    <ExtColumn 
+ *                        text="First Name"
+ *                        dataIndex="fname"
+ *                        flex={1}
+ *                        editable
+ *                    />
+ *                    <ExtColumn 
+ *                        text="Last Name"
+ *                        dataIndex="lname"
+ *                        flex={1}
+ *                        editable
+ *                    />
+ *                    <ExtColumn 
+ *                        text="Talent"
+ *                        dataIndex="talent"
+ *                        flex={1}
+ *                        editable
+ *                    >
+ *                        <ExtSelectField
+ *                            options={[
+ *                                { text: 'All', value: 'All' },
+ *                                { text: 'Archery', value: 'Archery' },
+ *                                { text: 'Speedster', value: 'Speedster' },
+ *                                { text: 'Weapons', value: 'Weapons' },
+ *                                { text: 'Willpower', value: 'Willpower' }
+ *                            ]}
+ *                       />
+ *                    </ExtColumn>
+ *              </ExtGrid>
+ *          )
+ *      }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ *  import { Component } from '@angular/core'
+ *  declare var Ext: any;
+ *
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *      <ExtContainer>
+ *          <ExtGrid
+ *              [height]="'275px'"
+ *              [store]="this.store"
+ *              [plugins]="['cellediting']"
+ *          >
+ *              <ExtColumn 
+ *                  text="First Name"
+ *                  dataIndex="fname"
+ *                  flex="1"
+ *                  editable="true"
+ *              ></ExtColumn>
+ *              <ExtColumn
+ *                  text="Last Name"
+ *                  dataIndex="lname"
+ *                  flex="1"
+ *                  editable="true"
+ *              ></ExtColumn>
+ *              <ExtColumn
+ *                  text="Talent"
+ *                  dataIndex="talent"
+ *                  flex="1"
+ *                  editable="true"
+ *              >
+ *                  <ExtSelectField
+ *                      [options]="[
+ *                          { text: 'All', value: 'All' },
+ *                          { text: 'Archery', value: 'Archery' },
+ *                          { text: 'Speedster', value: 'Speedster' },
+ *                          { text: 'Weapons', value: 'Weapons' },
+ *                          { text: 'Willpower', value: 'Willpower' }
+ *                      ]"
+ *                  ></ExtSelectField>
+ *              </ExtColumn>
+ *          </ExtGrid>
+ *      </ExtContainer>
+ *      `
+ *  })
+ *  export class AppComponent {
+ *      store = new Ext.data.Store({
+ *          data: [
+ *              { 'fname': 'Barry',  'lname': 'Allen', 'talent': 'Speedster'},
+ *              { 'fname': 'Oliver', 'lname': 'Queen', 'talent': 'Archery'},
+ *              { 'fname': 'Kara',   'lname': 'Zor-El', 'talent': 'All'},
+ *              { 'fname': 'Helena', 'lname': 'Bertinelli', 'talent': 'Weapons Expert'},
+ *              { 'fname': 'Hal',    'lname': 'Jordan', 'talent': 'Willpower'  }
+ *          ]
+ *      });
+ *
+ *  }
+ * ```
  *
  * @since 6.5.0
  */
-
 Ext.define('Ext.grid.plugin.CellEditing', {
     extend: 'Ext.plugin.Abstract',
     alias: ['plugin.gridcellediting', 'plugin.cellediting'],
@@ -149,7 +313,8 @@ Ext.define('Ext.grid.plugin.CellEditing', {
         // triggerEvent happens in a cell editor, and the event bubbles up to the
         // NavigationModel which will try to activate the owning cell.
         // In this case, we return the location to indicate that it's still a successful edit.
-        if (activeEditor && activeEditor.$activeLocation.cell === location.cell) {
+        if (activeEditor && activeEditor.editing &&
+            activeEditor.$activeLocation.cell === location.cell) {
             return activeEditor.$activeLocation;
         }
         else {

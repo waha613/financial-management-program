@@ -35,10 +35,102 @@ Ext.define('Ext.dataview.GroupStore', {
                                      +-----------------+
      */
 
-    applyGrouper: function(grouper, oldGrouper) {
+    getRootSource: function() {
+        var source = this.source;
+
+        while (source && source.getSource) {
+            source = source.getSource();
+        }
+
+        return source;
+    },
+
+    getTotalCount: function() {
+        return this.getRootSource().getTotalCount();
+    },
+
+    /**
+     * @method load
+     * @inheritdoc Ext.data.ProxyStore#load
+     */
+    load: function(options) {
+        var source = this.getRootSource();
+
+        if (!source) {
+            return;
+        }
+
+        return source.load.apply(source, arguments);
+    },
+
+    /**
+     * @method loadPage
+     * @inheritdoc Ext.data.ProxyStore#loadPage
+     */
+    loadPage: function(page, options) {
         var me = this,
-            source = me.getSource(),
-            ret;
+            source = this.getRootSource();
+
+        me.currentPage = page;
+
+        if (!source) {
+            return;
+        }
+
+        return source.loadPage.apply(source, arguments);
+    },
+
+    /**
+     * @method sync
+     * @inheritdoc Ext.data.ProxyStore#sync
+     */
+    sync: function(options) {
+        var source = this.getRootSource();
+
+        //<debug>
+        if (!source) {
+            Ext.raise('Cannot sync records with no source.');
+        }
+        //</debug>
+
+        return source.sync.apply(source, arguments);
+    },
+
+    /**
+     * @method erase
+     * @inheritdoc Ext.data.ProxyStore#erase
+     */
+    erase: function(options) {
+        var source = this.getRootSource();
+
+        //<debug>
+        if (!source) {
+            Ext.raise('Cannot erase records with no source.');
+        }
+        //</debug>
+
+        return source.erase.apply(source, arguments);
+    },
+
+    /**
+     * Loads the next 'page' in the current data set
+     * @param {Object} options See options for {@link #method-load}
+     */
+    nextPage: function(options) {
+        this.loadPage(this.currentPage + 1, options);
+    },
+
+    /**
+     * Loads the previous 'page' in the current data set
+     * @param {Object} options See options for {@link #method-load}
+     */
+    previousPage: function(options) {
+        this.loadPage(this.currentPage - 1, options);
+    },
+
+    setGrouper: function(grouper) {
+        var me = this,
+            source = me.getSource();
 
         if (source && grouper !== source.getGrouper()) {
             source.setGrouper(grouper);
@@ -46,11 +138,9 @@ Ext.define('Ext.dataview.GroupStore', {
             grouper = source.getGrouper();
         }
 
-        ret = me.callParent([ grouper, oldGrouper ]);
+        me.callParent([ grouper ]);
 
         me.refreshFromSource();
-
-        return ret;
     },
 
     constructDataCollection: function() {
@@ -112,7 +202,9 @@ Ext.define('Ext.dataview.GroupStore', {
                     if (!groupMap[groupKey]) {
                         if (!(placeholder = srcGroup.placeholderRec)) {
                             srcGroup.placeholderRec = placeholder = new M();
+
                             placeholder.data[groupField] = placeholder.$groupKey = groupKey;
+                            placeholder.$groupValue = srcGroup.getGroupValue();
                             placeholder.$collapsedGroupPlaceholder = true;
                             placeholder.$srcGroup = srcGroup;
                         }
@@ -138,7 +230,7 @@ Ext.define('Ext.dataview.GroupStore', {
             me.list.store = me;
         }
 
-        if (oldSource && oldSource.getAutoDestroy()) {
+        if (oldSource && !oldSource.destroyed && oldSource.getAutoDestroy()) {
             oldSource.destroy();
         }
 

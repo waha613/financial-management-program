@@ -594,6 +594,18 @@ Ext.define('Ext.util.Filter', {
                 }
 
                 return me.regex ? me.regex.test(candidate) : false;
+            },
+            empty: function(candidate) {
+                var v = this._filterValue,
+                    v2 = this.getCandidateValue(candidate, v, true);
+
+                return v2 == null || v2 === '';
+            },
+            nempty: function(candidate) {
+                var v = this._filterValue,
+                    v2 = this.getCandidateValue(candidate, v, true);
+
+                return v2 != null && v2 !== '';
             }
         });
 

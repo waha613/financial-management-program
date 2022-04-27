@@ -5,114 +5,120 @@
  *
  * By default the {@link #flex} configuration is set to 1:
  *
- *     @example
- *     Ext.create('Ext.Container', {
- *         fullscreen: true,
- *         items: [
- *             {
- *                 xtype : 'toolbar',
- *                 docked: 'top',
- *                 items: [
- *                     {
- *                         xtype: 'button',
- *                         text : 'Button One'
- *                     },
- *                     {
- *                         xtype: 'spacer'
- *                     },
- *                     {
- *                         xtype: 'button',
- *                         text : 'Button Two'
- *                     }
- *                 ]
- *             }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Container', {
+ *     fullscreen: true,
+ *     items: [
+ *         {
+ *             xtype : 'toolbar',
+ *             docked: 'top',
+ *             items: [
+ *                 {
+ *                     xtype: 'button',
+ *                     text : 'Button One'
+ *                 },
+ *                 {
+ *                     xtype: 'spacer'
+ *                 },
+ *                 {
+ *                     xtype: 'button',
+ *                     text : 'Button Two'
+ *                 }
+ *             ]
+ *         }
+ *     ]
+ * });
+ * ```
  *
  * Alternatively you can just set the {@link #width} configuration which will get the
  * {@link Ext.Spacer} a fixed width:
  *
- *     @example
- *     Ext.create('Ext.Container', {
- *         fullscreen: true,
- *         layout: {
- *             type: 'vbox',
- *             pack: 'center',
- *             align: 'stretch'
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Container', {
+ *     fullscreen: true,
+ *     layout: {
+ *         type: 'vbox',
+ *         pack: 'center',
+ *         align: 'stretch'
+ *     },
+ *     items: [
+ *         {
+ *             xtype : 'toolbar',
+ *             docked: 'top',
+ *             items: [
+ *                 {
+ *                     xtype: 'button',
+ *                     text : 'Button One'
+ *                 },
+ *                 {
+ *                     xtype: 'spacer',
+ *                     width: 50
+ *                 },
+ *                 {
+ *                     xtype: 'button',
+ *                     text : 'Button Two'
+ *                 }
+ *             ]
  *         },
- *         items: [
- *             {
- *                 xtype : 'toolbar',
- *                 docked: 'top',
- *                 items: [
- *                     {
- *                         xtype: 'button',
- *                         text : 'Button One'
- *                     },
- *                     {
- *                         xtype: 'spacer',
- *                         width: 50
- *                     },
- *                     {
- *                         xtype: 'button',
- *                         text : 'Button Two'
- *                     }
- *                 ]
- *             },
- *             {
- *                 xtype: 'container',
- *                 items: [
- *                     {
- *                         xtype: 'button',
- *                         text : 'Change Ext.Spacer width',
- *                         handler: function() {
- *                             //get the spacer using ComponentQuery
- *                             var spacer = Ext.ComponentQuery.query('spacer')[0],
- *                                 from = 10,
- *                                 to = 250;
+ *         {
+ *             xtype: 'container',
+ *             items: [
+ *                 {
+ *                     xtype: 'button',
+ *                     text : 'Change Ext.Spacer width',
+ *                     handler: function() {
+ *                         //get the spacer using ComponentQuery
+ *                         var spacer = Ext.ComponentQuery.query('spacer')[0],
+ *                             from = 10,
+ *                             to = 250;
  * 
- *                             //set the width to a random number
- *                             spacer.setWidth(Math.floor(Math.random() * (to - from + 1) + from));
- *                         }
+ *                         //set the width to a random number
+ *                         spacer.setWidth(Math.floor(Math.random() * (to - from + 1) + from));
  *                     }
- *                 ]
- *             }
- *         ]
- *     });
+ *                 }
+ *             ]
+ *         }
+ *     ]
+ * });
+ * ```
  *
  * You can also insert multiple {@link Ext.Spacer}'s:
  *
- *     @example
- *     Ext.create('Ext.Container', {
- *         fullscreen: true,
- *         items: [
- *             {
- *                 xtype : 'toolbar',
- *                 docked: 'top',
- *                 items: [
- *                     {
- *                         xtype: 'button',
- *                         text : 'Button One'
- *                     },
- *                     {
- *                         xtype: 'spacer'
- *                     },
- *                     {
- *                         xtype: 'button',
- *                         text : 'Button Two'
- *                     },
- *                     {
- *                         xtype: 'spacer',
- *                         width: 20
- *                     },
- *                     {
- *                         xtype: 'button',
- *                         text : 'Button Three'
- *                     }
- *                 ]
- *             }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Container', {
+ *     fullscreen: true,
+ *     items: [
+ *         {
+ *             xtype : 'toolbar',
+ *             docked: 'top',
+ *             items: [
+ *                 {
+ *                     xtype: 'button',
+ *                     text : 'Button One'
+ *                 },
+ *                 {
+ *                     xtype: 'spacer'
+ *                 },
+ *                 {
+ *                     xtype: 'button',
+ *                     text : 'Button Two'
+ *                 },
+ *                 {
+ *                     xtype: 'spacer',
+ *                     width: 20
+ *                 },
+ *                 {
+ *                     xtype: 'button',
+ *                     text : 'Button Three'
+ *                 }
+ *             ]
+ *         }
+ *     ]
+ * });
+ * ```
  */
 Ext.define('Ext.Spacer', {
     extend: 'Ext.Component',

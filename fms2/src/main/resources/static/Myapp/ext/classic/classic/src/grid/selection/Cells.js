@@ -176,7 +176,8 @@ Ext.define('Ext.grid.selection.Cells', {
         setRangeEnd: function(endCell) {
             var me = this,
                 view = me.view,
-                rows = view.all,
+                // rows should get all locked rows on shift key select
+                rows = view.isLockingView ? view.lockedView.all : view.all,
                 cell = new Ext.grid.CellContext(view),
                 maxColIdx = view.getVisibleColumnManager().getColumns().length - 1,
                 range, lastRange, rowStart, rowEnd, colStart, colEnd, rowIdx, colIdx;

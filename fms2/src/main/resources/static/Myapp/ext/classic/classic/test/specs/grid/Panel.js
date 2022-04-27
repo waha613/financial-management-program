@@ -3693,6 +3693,32 @@ function() {
 
         // TODO: add tests for focus/hover classes for grouped grid.
     });
+    describe("check acceptable connfigurations in features array ", function() {
+
+        it("should allow strings in features array", function() {
+            createGrid(null, {
+                features: ['grouping', 'groupingsummary']
+            });
+            expect(typeof(grid.features[0])).toBe('object');
+            expect(typeof(grid.features[1])).toBe('object');
+        });
+
+        it("should allow objects and strings in features array", function() {
+            createGrid(null, {
+                features: ['grouping', { ftype: 'groupingsummary' }]
+            });
+            expect(typeof(grid.features[0])).toBe('object');
+            expect(typeof(grid.features[1])).toBe('object');
+        });
+
+        it("should allow objects in features array", function() {
+            createGrid(null, {
+                features: [{ ftype: 'groupingsummary' }, { ftype: 'grouping' }]
+            });
+            expect(typeof(grid.features[0])).toBe('object');
+            expect(typeof(grid.features[1])).toBe('object');
+        });
+    });
 
     xdescribe('RowExpander plugin', function() {
         function createRowExpanderGrid(cfg) {

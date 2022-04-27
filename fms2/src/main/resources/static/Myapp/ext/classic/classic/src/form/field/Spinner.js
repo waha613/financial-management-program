@@ -195,7 +195,7 @@ Ext.define('Ext.form.field.Spinner', {
 
         // Init mouse wheel
         if (me.mouseWheelEnabled) {
-            me.mon(me.bodyEl, 'mousewheel', me.onMouseWheel, me);
+            me.mon(me.bodyEl, 'wheel', me.onMouseWheel, me);
         }
 
         // in v4 spinUpEl/spinDownEl were childEls, now they are children of the trigger.
@@ -292,10 +292,12 @@ Ext.define('Ext.form.field.Spinner', {
             delta = e.getWheelDelta();
 
             if (delta > 0) {
-                me.spinUp();
+                // on delta being positive, the scroll down will get activated.
+                me.spinDown();
             }
             else if (delta < 0) {
-                me.spinDown();
+                // on delta being negative, the scroll up will get activated.
+                me.spinUp();
             }
 
             e.stopEvent();

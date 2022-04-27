@@ -1126,20 +1126,19 @@ function() {
                         // See EXTJS-14874.
                         // We need the view to overflow to cause the bug in IE 8.
                         var data = generateData(100),
-                            childNodes;
+                            len, childNodes;
 
                         makeGrid(null, data, {
                             height: 100
                         });
 
-                        // Pick a row that is within the buffere rendered range
+                        // Pick a row that is within the buffered rendered range
                         childNodes = getWidget(1).el.dom.childNodes;
-
-                        expect(childNodes.length).toBe(1);
+                        len = childNodes.length;
 
                         // This will refresh the view and trigger the bug.
                         grid.store.loadData(data);
-                        expect(childNodes.length).toBe(1);
+                        expect(childNodes.length).toBe(len);
                     });
                 });
 
@@ -1157,7 +1156,7 @@ function() {
             describe("item removal", function() {
                 it("should recycle dom nodes when items are removed", function() {
                     var data = generateData(100),
-                        childNodes;
+                        len, childNodes;
 
                     makeGrid(null, data, {
                         height: 100
@@ -1166,11 +1165,11 @@ function() {
                         // Pick a row that is within the buffere rendered range
                     childNodes = getWidget(1).el.dom.childNodes;
 
-                    expect(childNodes.length).toBe(1);
+                    len = childNodes.length;
 
                     store.removeAt(1);
 
-                    expect(childNodes.length).toBe(1);
+                    expect(childNodes.length).toBe(len);
                 });
             });
 

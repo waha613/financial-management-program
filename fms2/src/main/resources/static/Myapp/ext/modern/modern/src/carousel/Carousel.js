@@ -1,50 +1,115 @@
 /**
- * Carousels, like tabs, are a great way to allow the user to swipe 
+ * Carousels, like tabs, are a great way to allow the user to swipe
  * through multiple full-screen pages.
- * A Carousel shows only one of its pages at a time but allows you 
+ * A Carousel shows only one of its pages at a time but allows you
  * to swipe through with your finger.
  *
- * Carousels can be oriented either horizontally or vertically and are 
+ * Carousels can be oriented either horizontally or vertically and are
  * easy to configure - they just work like any other.
  * Container. Here's how to set up a simple horizontal Carousel:
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Carousel', {
+ *     fullscreen: true,
  *
- *     @example
- *     Ext.create('Ext.Carousel', {
- *         fullscreen: true,
+ *     items: [{
+ *         html : 'Item 1',
+ *         style: 'background-color: #5E99CC'
+ *     }, {
+ *          html : 'Item 2',
+ *          style: 'background-color: #759E60'
+ *     }, {
+ *           html : 'Item 3'
+ *     }]
+ * });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtCarousel, ExtContainer } from '@sencha/ext-react';
  *
- *         items: [
- *             {
- *                 html : 'Item 1',
- *                 style: 'background-color: #5E99CC'
- *             },
- *             {
- *                 html : 'Item 2',
- *                 style: 'background-color: #759E60'
- *             },
- *             {
- *                 html : 'Item 3'
- *             }
- *         ]
- *     });
+ * export default class MyExample extends Component {
+ *    render() {
+ *        return (
+ *            <ExtContainer layout="fit">
+ *                <ExtCarousel>
+ *                    <ExtContainer>
+ *                        <div>Slide 1!</div>
+ *                    </ExtContainer>
+ *                    <ExtContainer>
+ *                        <div>Slide 2!</div>
+ *                    </ExtContainer>
+ *                    <ExtContainer>
+ *                        <div>Slide 3!</div>
+ *                    </ExtContainer>
+ *                </ExtCarousel>
+ *            </ExtContainer>
+ *        )
+ *    }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
  *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer [layout]="'fit'">
+ *             <ExtCarousel [width]="'800'" [height]="'600'">
+ *                 <ExtContainer [html]="'Slide 1!'"></ExtContainer>
+ *                 <ExtContainer [html]="'Slide 2!'"></ExtContainer>
+ *                 <ExtContainer [html]="'Slide 3!'"></ExtContainer>
+ *            </ExtCarousel>
+ *         </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {}
+ * ```
+ *
+ * ```HTML
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container layout="fit">
+ *    <ext-carousel>
+ *        <ext-container html="<div>Slide 1!</div>">
+ *        </ext-container>
+ *        <ext-container html="<div>Slide 2!</div>">
+ *        </ext-container>
+ *        <ext-container html="<div>Slide 3!</div>">
+ *        </ext-container>
+ *    </ext-carousel>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-carousel.component';
+ * import '@sencha/ext-web-components/dist/ext-spinnerfield.component';
+ *
+ * export default class CarouselComponent {}
+ * ```
  * We can also make Carousels orient themselves vertically:
  *
- *     @example
- *     Ext.create('Ext.Carousel', {
- *         fullscreen: true,
- *         direction: 'vertical',
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Carousel', {
+ *     fullscreen: true,
+ *     direction: 'vertical',
  *
- *         items: [
- *             {
- *                 html : 'Item 1',
- *                 style: 'background-color: #759E60'
- *             },
- *             {
- *                 html : 'Item 2',
- *                 style: 'background-color: #5E99CC'
- *             }
- *         ]
- *     });
+ *     items: [
+ *         {
+ *             html : 'Item 1',
+ *             style: 'background-color: #759E60'
+ *         },
+ *         {
+ *             html : 'Item 2',
+ *             style: 'background-color: #5E99CC'
+ *         }
+ *     ]
+ * });
+ * ```
  *
  * ### Common Configurations
  * * {@link #ui} defines the style of the carousel

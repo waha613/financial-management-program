@@ -285,6 +285,14 @@
                     min-height: $ui-textarea-body-height - vertical($ui-padding);
                 }
             }
+
+            // Must cascade in ie8 rule since we'll have the same specificity
+            .#{$prefix}form-text-heighted & {
+                // When the textareafield is given a height or flex, we need to back-off
+                // the min-height here or else those height values on the outer el won't
+                // have the desired effect:
+                min-height: auto;
+            }
         }
 
         &.#{$prefix}form-text-file {

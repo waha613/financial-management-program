@@ -115,11 +115,16 @@ Ext.define('Ext.data.LocalStore', {
             summaryRecord = me.summaryRecord,
             data = me.getData(),
             generation = data.generation,
-            T;
+            M, T, idProperty;
 
         if (!summaryRecord) {
-            T = me.getModel().getSummaryModel();
+            M = me.getModel();
+            T = M.getSummaryModel();
             me.summaryRecord = summaryRecord = new T();
+            idProperty = M.idField.name;
+            summaryRecord.data[idProperty] = summaryRecord.id = M.identifier.generate();
+            summaryRecord.commit();
+            summaryRecord.isNonData = true;
         }
 
         if (!summaryRecord.isRemote && summaryRecord.summaryGeneration !== generation) {
@@ -150,6 +155,13 @@ Ext.define('Ext.data.LocalStore', {
     // is false
     onCollectionFilter: function() {
         this.onFilterEndUpdate();
+    },
+
+    // When the collection informs us that it has grouped, this LocalStore must react.
+    // AbstractStore#onGrouperEndUpdate does the correct thing (fires a refresh) if remote sorting
+    // is false
+    onCollectionGroup: function() {
+        this.onGroupersEndUpdate();
     },
 
     onGrouperChange: function(grouper) {

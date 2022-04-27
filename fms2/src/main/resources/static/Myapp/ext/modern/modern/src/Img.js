@@ -2,34 +2,97 @@
  * This is a simple way to add an image of any size to your application and have it participate in
  * the layout system like any other component. This component typically takes between 1 and 3
  * configurations - a {@link #src}, and optionally a {@link #height} and a {@link #width}:
- *
- *     @example
- *     var img = Ext.create('Ext.Img', {
- *         src: 'http://www.sencha.com/assets/images/sencha-avatar-64x64.png',
- *         height: 64,
- *         width: 64
- *     });
- *     Ext.Viewport.add(img);
+ * 
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var img = Ext.create('Ext.Img', {
+ *     src: 'http://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *     height: 64,
+ *     width: 64
+ * });
+ * Ext.Viewport.add(img);
+ * ```
  *
  * It's also easy to add an image into a panel or other container using its xtype:
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Panel', {
+ *     fullscreen: true,
+ *     layout: 'hbox',
+ *     items: [
+ *         {
+ *             xtype: 'image',
+ *             src: 'http://www.sencha.com/assets/images/sencha-avatar-64x64.png',
+ *             flex: 1
+ *         },
+ *         {
+ *             xtype: 'panel',
+ *             flex: 2,
+ *             html: 'Sencha Inc.<br/>1700 Seaport Boulevard Suite 120, Redwood City, CA'
+ *         }
+ *     ]
+ * });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-panel shadow="true" layout="fit">
+ *     <ext-image
+ *         width="64"
+ *         height="64"
+ *         src="http://www.sencha.com/assets/images/sencha-avatar-64x64.png"
+ *     >
+ *     </ext-image>
+ * </ext-panel>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-panel.component';
+ * import '@sencha/ext-web-components/dist/ext-image.component';
+ * 
+ * export default class ImageFieldComponent {}
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtPanel, ExtImage } from '@sencha/ext-react';
  *
- *     @example
- *     Ext.create('Ext.Panel', {
- *         fullscreen: true,
- *         layout: 'hbox',
- *         items: [
- *             {
- *                 xtype: 'image',
- *                 src: 'http://www.sencha.com/assets/images/sencha-avatar-64x64.png',
- *                 flex: 1
- *             },
- *             {
- *                 xtype: 'panel',
- *                 flex: 2,
- *                 html: 'Sencha Inc.<br/>1700 Seaport Boulevard Suite 120, Redwood City, CA'
- *             }
- *         ]
- *     });
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtPanel shadow layout="fit">
+ *                 <ExtImage
+ *                     height="64"
+ *                     width="64"
+ *                     src="http://www.sencha.com/assets/images/sencha-avatar-64x64.png"
+ *                 />
+ *             </ExtPanel>
+ *         );
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ *  import { Component } from '@angular/core'
+ *  declare var Ext: any;
+ *
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *              <ExtPanel shadow="true" layout="fit">
+ *                  <ExtImage
+ *                      height="64"
+ *                      width="64"
+ *                      src="http://www.sencha.com/assets/images/sencha-avatar-64x64.png"
+ *                  ></ExtImage>
+ *              </ExtPanel>
+ *              `
+ *  })
+ *  export class AppComponent {
+ *
+ *  }
+ * ```
  *
  * Here we created a panel which contains an image (a profile picture in this case) and a text area
  * to allow the user to enter profile information about themselves. In this case we used an

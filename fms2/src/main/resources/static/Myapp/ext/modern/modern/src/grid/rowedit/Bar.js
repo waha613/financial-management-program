@@ -391,7 +391,9 @@ Ext.define('Ext.grid.rowedit.Bar', {
                 cell.$driver = driver;
             }
         }
-        else if (me.lastSyncRecord !== record) {
+        else {
+
+            //  updating all cell data for the row editor
             driver = cell.$driver;
 
             if (driver.read) {

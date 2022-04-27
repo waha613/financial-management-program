@@ -48,8 +48,9 @@ Ext.define('Ext.grid.locking.View', {
         // This avoids the store being bound to two views (with duplicated layouts
         // on each store mutation) and also avoids the store being bound
         // to the selection model twice.
-        config.locked.viewConfig.bindStore = ext.emptyFn;
-        config.normal.viewConfig.bindStore = me.subViewBindStore;
+        config.locked.viewConfig.bindStore = config.normal.viewConfig.bindStore =
+            me.subViewBindStore;
+
         config.normal.viewConfig.isNormalView = config.locked.viewConfig.isLockedView = true;
 
         // Share the same NavigationModel
@@ -131,19 +132,21 @@ Ext.define('Ext.grid.locking.View', {
     },
 
     // This is injected into the two child views as the bindStore implementation.
-    // Subviews in a lockable asseembly do not bind to stores.
+    // Subviews in a lockable assembly do not bind to stores.
     subViewBindStore: function(store, initial) {
         var me = this,
             grid = me.ownerGrid,
             selModel;
 
-        if (me.destroying || me.destroyed || grid.destroying || grid.destroyed) {
-            return;
-        }
+        if (!(me.destroying || me.destroyed || grid.destroying || grid.destroyed)) {
+            if (me.isNormalView) {
+                selModel = me.getSelectionModel();
+                selModel.bindStore(store, initial);
+                selModel.bindComponent(me);
+            }
 
-        selModel = me.getSelectionModel();
-        selModel.bindStore(store, initial);
-        selModel.bindComponent(me);
+            me.refreshNeeded = true;
+        }
     },
 
     beforeNormalGridRender: function() {

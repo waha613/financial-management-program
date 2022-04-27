@@ -105,6 +105,9 @@ Ext.define('Ext.chart.interactions.ItemHighlight', {
                 }
             }
 
+            // sync the last item on mouseleave
+            me.highlight(item);
+
             if (isMousePointer) {
                 // If we detected a mouse hit, show/refresh the tooltip
                 if (items.length) {

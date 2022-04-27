@@ -78,6 +78,12 @@ Ext.define('Ext.grid.column.Date', {
 
         cell: {
             xtype: 'datecell'
+        },
+
+        summaries: {
+            min: true,
+            max: true,
+            count: false
         }
     }
 });

@@ -6,41 +6,106 @@
  * the `{@link Ext.menu.Menu#cfg!groups groups}` config to assist in managing the state
  * of its radio items.
  *
- *      @example
- *      Ext.Viewport.add({
- *          xtype: 'container',
- *          items: [{
- *              xtype: 'button',
- *              bind: 'Call {menuGroups.option}',
- *               
- *              viewModel: {
- *                  data: {
- *                      menuGroups: {
- *                          option: 'home'
- *                      }
- *                  }
- *              },
- *               
- *              menu: {
- *                  bind: {
- *                      groups: '{menuGroups}'
- *                  },
- *                  items: [{
- *                      text: 'Home',
- *                      group: 'option',  // causes Menu to create this class of item
- *                      value: 'home'
- *                  }, {
- *                      text: 'Work',
- *                      group: 'option',
- *                      value: 'work'
- *                  }, {
- *                      text: 'Mobile',
- *                      group: 'option',
- *                      value: 'mobile'
- *                  }]
- *              }
- *          }]
- *      });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.Viewport.add({
+ *     xtype: 'container',
+ *     items: [{
+ *         xtype: 'button',
+ *         bind: 'Call {menuGroups.option}',
+ *
+ *         viewModel: {
+ *             data: {
+ *                 menuGroups: {
+ *                     option: 'home'
+ *                 }
+ *             }
+ *         },
+ *
+ *         menu: {
+ *             bind: {
+ *                 groups: '{menuGroups}'
+ *             },
+ *             items: [{
+ *                 text: 'Home',
+ *                 group: 'option',  // causes Menu to create this class of item
+ *                 value: 'home'
+ *             }, {
+ *                 text: 'Work',
+ *                 group: 'option',
+ *                 value: 'work'
+ *             }, {
+ *                 text: 'Mobile',
+ *                 group: 'option',
+ *                 value: 'mobile'
+ *             }]
+ *         }
+ *     }]
+ * });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtButton, ExtContainer, ExtMenu, ExtMenuRadioItem } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *            <ExtContainer>
+ *                <ExtButton text="Menu">
+ *                    <ExtMenu rel="menu" >
+ *                        <ExtMenuRadioItem text="Mobile" name="ui-type" />
+ *                        <ExtMenuRadioItem text="Desktop" name="ui-type"/>
+ *                    </ExtMenu>
+ *                </ExtButton>
+ *            </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ * @Component({
+ *    selector: 'app-root',
+ *    styles: [``],
+ *    template: `
+ *       <ExtContainer>
+ *           <ExtButton text="Menu">
+ *               <ExtMenu rel="menu" >
+ *                   <ExtMenuRadioItem text="Mobile" name="ui-type"
+ *                      group="group1">
+ *                   </ExtMenuRadioItem>
+ *                   <ExtMenuRadioItem text="Desktop" name="ui-type"
+ *                      group="group1">
+ *                   </ExtMenuRadioItem>
+ *               </ExtMenu>
+ *           </ExtButton>
+ *       </ExtContainer>
+ *    `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container>
+ *    <ext-button text="Menu">
+ *        <ext-menu rel="menu" >
+ *            <ext-menuradioitem text="Mobile" group="options" name="ui-type" ></ext-menuradioitem>
+ *            <ext-menuradioitem text="Desktop" group="options" name="ui-type"><ext-menuradioitem>
+ *        </ext-menu>
+ *    </ext-button>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-menu.component';
+ * import '@sencha/ext-web-components/dist/ext-menuradioitem.component';
+ *
+ * export default class RadioItemComponent {}
  *
  * @since 6.5.0
  */

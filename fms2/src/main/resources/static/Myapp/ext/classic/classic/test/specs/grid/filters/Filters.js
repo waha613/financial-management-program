@@ -3428,6 +3428,90 @@ function() {
                         });
                     });
 
+                    it("should show current column cell list items regardless of last view filter list of locked column", function() {
+                        var lockedGrid, lockedHeader, normalGrid, normalHeader, column,
+                            plugin, columnFilter, headerCtlocked, headerCt, filtersCheckItem,
+                            synchronousLoad = false,
+                            store = new Ext.data.Store(Ext.apply({
+                                fields: ['name', 'email', 'phone'],
+                                data: [
+                                    { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' },
+                                    { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' },
+                                    { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' },
+                                    { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
+                                ]
+                            }));
+
+                        grid = new Ext.grid.Panel(Ext.apply({
+                            title: 'Simpsons',
+                            store: store,
+                            autoLoad: true,
+                            columns: [{
+                                dataIndex: 'name',
+                                locked: true,
+                                width: 100,
+                                filter: 'string'
+                            }, {
+                                text: 'Email',
+                                dataIndex: 'email',
+                                flex: 1,
+                                filter: 'list'
+                            }, {
+                                dataIndex: 'phone',
+                                width: 100,
+                                filter: 'string'
+                            }],
+                            plugins: [{
+                                ptype: 'gridfilters'
+                            }],
+                            height: 200,
+                            width: 400,
+                            renderTo: Ext.getBody()
+                        }));
+
+                        plugin = grid.filters;
+                        columnFilter = grid.headerCt.columnManager.getHeaderByDataIndex('name').filter;
+                        synchronousLoad = true;
+                        store.flushLoad();
+                        headerCtlocked = grid.lockedGrid.headerCt;
+                        lockedGrid = grid.lockedGrid;
+                        lockedHeader = lockedGrid.headerCt;
+                        normalGrid = grid.normalGrid;
+                        normalHeader = normalGrid.headerCt;
+                        headerCt = grid.normalGrid.headerCt;
+
+                        // test the list items
+                        runs(function() {
+                            column = normalGrid.columnManager.getColumns()[0];
+                            Ext.testHelper.showHeaderMenu(column);
+                            headerCt.showMenuBy(null, column.triggerEl.dom, column);
+                            filtersCheckItem = headerCt.menu.items.last();
+                            filtersCheckItem.activated = true;
+                            filtersCheckItem.expandMenu(null, 0);
+                            expect(filtersCheckItem.menu.getLayout().getLayoutItems()[0].isMenuCheckItem).toBe(true);
+                        });
+
+                        runs(function() {
+                            column = lockedGrid.columnManager.getColumns()[0];
+                            Ext.testHelper.showHeaderMenu(column);
+                            headerCtlocked.showMenuBy(null, column.triggerEl.dom, column);
+                            filtersCheckItem = headerCtlocked.menu.items.last();
+                            filtersCheckItem.activated = true;
+                            filtersCheckItem.expandMenu(null, 0);
+                            expect(filtersCheckItem.menu.getLayout().getLayoutItems()[0].isTextInput).toBe(true);
+                        });
+
+                        runs(function() {
+                            column = normalGrid.columnManager.getColumns()[1];
+                            Ext.testHelper.showHeaderMenu(column);
+                            headerCt.showMenuBy(null, column.triggerEl.dom, column);
+                            filtersCheckItem = headerCt.menu.items.last();
+                            filtersCheckItem.activated = true;
+                            filtersCheckItem.expandMenu(null, 0);
+                            expect(filtersCheckItem.menu.getLayout().getLayoutItems()[0].isTextInput).toBe(true);
+                         });
+                    });
+
                     it("should work with nested columns", function() {
                         var columns = [{
                             text: 'Name',

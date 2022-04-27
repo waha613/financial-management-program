@@ -12,7 +12,8 @@
  *
  * ## Examples
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     Ext.create('Ext.Container', {
  *         fullscreen: true,
  *         layout: {
@@ -69,7 +70,90 @@
  *             }
  *         ]
  *     });
+ * ```
  *
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-panel shadow bodyPadding=0>
+ *     <ext-toolbar docked="top">
+ *         <ext-button text="Default" badgeText="2">
+ *         </ext-button>
+ *         <ext-spacer>
+ *             <ext-segmentedbutton>
+ *                 <ext-button text="Option 1" pressed></ext-button>
+ *                 <ext-button text="Option 2"></ext-button>
+ *             </ext-segmentedbutton>
+ *         </ext-spacer>
+ *         <ext-button ui="action" text="Action">
+ *         </ext-button>
+ *     </ext-toolbar>
+ *     Some Text!
+ * </ext-panel>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ *
+ * import '@sencha/ext-web-components/dist/ext-toolbar.component';
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-spacer.component';
+ * import '@sencha/ext-web-components/dist/ext-segmentedbutton.component';
+ * import '@sencha/ext-web-components/dist/ext-panel.component';
+ *  
+ * export default class ToolbarComponent {}
+ * ```
+ * 
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtToolbar, ExtPanel, ExtButton, ExtSegmentedButton, ExtSpacer, ExtSearchField }
+ *    from '@sencha/ext-react';
+ *
+ *  export default class MyExample extends Component {
+ *      render() {
+ *          return (
+ *              <ExtPanel shadow bodyPadding={0}>
+ *                  <ExtToolbar docked="top">
+ *                      <ExtButton text="Default" badgeText="2"/>
+ *                      <ExtSpacer/>
+ *                      <ExtSegmentedButton>
+ *                          <ExtButton text="Option 1" pressed/>
+ *                          <ExtButton text="Option 2"/>
+ *                      </ExtSegmentedButton>
+ *                      <ExtSpacer/>
+ *                      <ExtButton ui="action" text="Action"/>
+ *                  </ExtToolbar>
+ *                 Some Text!
+ *              </ExtPanel>
+ *          )
+ *      }
+ *  }
+ * ```
+ * 
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ *  import { Component } from '@angular/core'
+ *  declare var Ext: any;
+ *
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *          <ExtToolBar docked="top">
+ *              <ExtButton text="Default" badgeText="2"></ExtButton>
+ *              <ExtSpacer></ExtSpacer>
+ *              <ExtSegmentedButton>
+ *                  <ExtButton text="Option 1" pressed="true"></ExtButton>
+ *                  <ExtButton text="Option 2"></ExtButton>
+ *              </ExtSegmentedButton>
+ *              <ExtSpacer> </ExtSpacer>
+ *              <ExtButton ui="action" text="Action"></ExtButton>
+ *          </ExtToolBar>
+ *              `
+ *  })
+ *  export class AppComponent {
+ *  }
+ * ```
  * ## Notes
  *
  * You must use a HTML5 doctype for {@link #docked} `bottom` to work. To do this, simply add the

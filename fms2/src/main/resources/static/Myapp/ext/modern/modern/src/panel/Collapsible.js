@@ -21,6 +21,13 @@ Ext.define('Ext.panel.Collapsible', {
          * You can also set `top`/`right`/`bottom`/`left` to directly specify the collapse
          * direction.
          *
+         * **IMPORTANT**: To use this config, the application must require the following
+         * class:
+         *
+         *      requires: [
+         *          'Ext.panel.Collapser'
+         *      ]
+         *
          * @since 6.5.0
          */
         collapsible: null,

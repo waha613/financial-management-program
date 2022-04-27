@@ -1,36 +1,38 @@
 /**
- * NavigationView is basically a {@link Ext.Container} with a {@link Ext.layout.Card card} layout, 
- * so only one view can be visible at a time. However, NavigationView also adds extra functionality 
- * on top of this to allow you to `push` and `pop` views at any time. When you do this, your 
+ * NavigationView is basically a {@link Ext.Container} with a {@link Ext.layout.Card card} layout,
+ * so only one view can be visible at a time. However, NavigationView also adds extra functionality
+ * on top of this to allow you to `push` and `pop` views at any time. When you do this, your
  * NavigationView will automatically animate between your current active view, and the new view you
  * want to `push`, or the previous view you want to `pop`.
  *
  * Using the NavigationView is very simple. Here is a basic example of it in action:
  *
- *     @example
- *     var view = Ext.create('Ext.NavigationView', {
- *         fullscreen: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var view = Ext.create('Ext.NavigationView', {
+ *    fullscreen: true,
  *
- *         items: [{
- *             title: 'First',
- *             items: [{
- *                 xtype: 'button',
- *                 text: 'Push a new view!',
- *                 handler: function() {
- *                     // use the push() method to push another view. It works much like
- *                     // add() or setActiveItem(). it accepts a view instance, or you can give it
- *                     // a view config.
- *                     view.push({
- *                         title: 'Second',
- *                         html: 'Second view!'
- *                     });
- *                 }
- *             }]
- *         }]
- *     });
+ *    items: [{
+ *        title: 'First',
+ *        items: [{
+ *            xtype: 'button',
+ *            text: 'Push a new view!',
+ *            handler: function() {
+ *                // use the push() method to push another view. It works much like
+ *                // add() or setActiveItem(). it accepts a view instance, or you can give it
+ *                // a view config.
+ *                view.push({
+ *                    title: 'Second',
+ *                    html: 'Second view!'
+ *                });
+ *            }
+ *        }]
+ *    }]
+ * });
+ * ```
  *
  * Now, here comes the fun part: you can push any view/item into the NavigationView, at any time,
- * and it will automatically handle the animations between the two views, including adding a 
+ * and it will automatically handle the animations between the two views, including adding a
  * back button (if necessary) and showing the new title.
  *
  *     view.push({
@@ -38,17 +40,17 @@
  *         html: 'Some new content'
  *     });
  *
- * As you can see, it is as simple as calling the {@link #method-push} method, with a new view 
+ * As you can see, it is as simple as calling the {@link #method-push} method, with a new view
  * (instance or object). Done.
  *
- * You can also `pop` a view at any time. This will remove the top-most view from the 
- * NavigationView,  and animate back to the previous view. You can do this using the 
+ * You can also `pop` a view at any time. This will remove the top-most view from the
+ * NavigationView,  and animate back to the previous view. You can do this using the
  * {@link #method-pop} method (which requires no arguments).
  *
  *     view.pop();
  *
- * Applications that need compatibility with ##Older Android## devices will want to see 
- * the {@link #layout} config for details on disabling navigation view animations as these devices 
+ * Applications that need compatibility with ##Older Android## devices will want to see
+ * the {@link #layout} config for details on disabling navigation view animations as these devices
  * have poor animation support and performance.
  */
 Ext.define('Ext.navigation.View', {
@@ -62,7 +64,7 @@ Ext.define('Ext.navigation.View', {
          * @cfg {Boolean/Object} navigationBar
          * The NavigationBar used in this navigation view. It defaults to be docked to the top.
          *
-         * You can just pass in a normal object if you want to customize the NavigationBar. 
+         * You can just pass in a normal object if you want to customize the NavigationBar.
          * For example:
          *
          *     navigationBar: {
@@ -70,7 +72,7 @@ Ext.define('Ext.navigation.View', {
          *         docked: 'bottom'
          *     }
          *
-         * You **cannot** specify a *title* property in this configuration. The title of the 
+         * You **cannot** specify a *title* property in this configuration. The title of the
          * navigationBar is taken from the configuration of this views children:
          *
          *     view.push({
@@ -96,14 +98,14 @@ Ext.define('Ext.navigation.View', {
 
         /**
          * @cfg {Boolean} useTitleForBackButtonText
-         * Set to `false` if you always want to display the {@link #defaultBackButtonText} as 
+         * Set to `false` if you always want to display the {@link #defaultBackButtonText} as
          * the text on the back button. `true` if you want to use the previous views title.
          * @accessor
          */
         useTitleForBackButtonText: false,
 
         /**
-         * @cfg {Array/Object} items The child items to add to this NavigationView. This is usually 
+         * @cfg {Array/Object} items The child items to add to this NavigationView. This is usually
          * an array of Component configurations or instances, for example:
          *
          *     Ext.create('Ext.Container', {
@@ -116,10 +118,10 @@ Ext.define('Ext.navigation.View', {
          *         ]
          *     });
          *
-         * If you want a title to be displayed in the {@link #navigationBar}, you must specify a 
+         * If you want a title to be displayed in the {@link #navigationBar}, you must specify a
          * `title` configuration in your view, like above.
          *
-         * __Note:__ Only one view will be visible at a time. If you want to change to another 
+         * __Note:__ Only one view will be visible at a time. If you want to change to another
          * view, use the {@link #method-push} or {@link #setActiveItem} methods.
          * @accessor
          */
@@ -127,7 +129,7 @@ Ext.define('Ext.navigation.View', {
         /**
          * @cfg {Object}
          * Layout used in this navigation view, type must be set to 'card'.
-         * **Android NOTE:** Older Android devices have poor animation performance. It is 
+         * **Android NOTE:** Older Android devices have poor animation performance. It is
          * recommended to set the animation to null, for example:
          *
          *      layout: {
@@ -223,10 +225,10 @@ Ext.define('Ext.navigation.View', {
     },
 
     /**
-     * Removes the current active view from the stack and sets the previous view using the default 
-     * animation of this view. You can also pass a {@link Ext.ComponentQuery} selector to target 
-     * what  inner item to pop to. @param {Number/String/Object} count If a Number, the number of 
-     * views you want to pop. If a String, the pops to a matching component query. If an Object, 
+     * Removes the current active view from the stack and sets the previous view using the default
+     * animation of this view. You can also pass a {@link Ext.ComponentQuery} selector to target
+     * what  inner item to pop to. @param {Number/String/Object} count If a Number, the number of
+     * views you want to pop. If a String, the pops to a matching component query. If an Object,
      * the pops to a matching view instance.
      * @return {Ext.Component} The new active item
      */
@@ -238,7 +240,7 @@ Ext.define('Ext.navigation.View', {
 
     /**
      * @private
-     * Calculates whether it needs to remove any items from the stack when you are popping more 
+     * Calculates whether it needs to remove any items from the stack when you are popping more
      * than 1 item. If it does, it removes those views from the stack and returns `true`.
      * @return {Boolean} `true` if it has removed views.
      */
@@ -395,7 +397,7 @@ Ext.define('Ext.navigation.View', {
     },
 
     /**
-     * This is used for Blackberry SplitNavigation to monitor the state of child items in 
+     * This is used for Blackberry SplitNavigation to monitor the state of child items in
      * the bottom toolbar. If no visible children exist the toolbar will be hidden.
      * @private
      */
@@ -452,7 +454,7 @@ Ext.define('Ext.navigation.View', {
         config.view = me;
         config.useTitleForBackButtonText = me.getUseTitleForBackButtonText();
 
-        // Blackberry specific nav setup where title is on the top title bar and the bottom toolbar 
+        // Blackberry specific nav setup where title is on the top title bar and the bottom toolbar
         // is used for buttons and BACK
         if (config.splitNavigation) {
             me.$titleContainer = me.add({
@@ -490,7 +492,7 @@ Ext.define('Ext.navigation.View', {
                 me.$backButtonContainer.add(config.items);
             }
 
-            // If the user provided items and splitNav items, default items go into the bottom bar, 
+            // If the user provided items and splitNav items, default items go into the bottom bar,
             // split nav items go into the top
             if (containerConfig.items) {
                 me.$titleContainer.add(containerConfig.items);

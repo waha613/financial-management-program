@@ -392,6 +392,7 @@ Ext.define('Ext.Dialog', {
         handle: '.' + Ext.baseCSSPrefix + 'draggable',
         listeners: {
             beforedragstart: 'onBeforeDragDialog',
+            dragend: 'onDragEnd',
             scope: 'this'
         }
     },
@@ -827,12 +828,37 @@ Ext.define('Ext.Dialog', {
         }
     },
 
+    onDragEnd: function(event) {
+        var me = this;
+
+        if (me.getModal()) {
+            me.getFocusEl().focus();
+        }
+    },
+
+    getFocusEl: function() {
+        var focusEl = this.callParent();
+
+        if (!focusEl && !this.getButtons() && this.getClosable()) {
+            return this.closeTool;
+        }
+
+        return focusEl;
+    },
+
     onCloseTool: function(dialog, tool, event) {
         this.close(event);
     },
 
     onEscape: function(event) {
-        this.close(event);
+        var me = this,
+            sibling = me.getModalSibling && me.getModalSibling();
+
+        me.close(event);
+
+        if (sibling) {
+            sibling.focus();
+        }
     },
 
     onMaximize: function() {

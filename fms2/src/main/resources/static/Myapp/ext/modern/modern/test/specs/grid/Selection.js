@@ -1,6 +1,3 @@
-/* global expect, Ext, jasmine, xdescribe, MockAjaxManager */
-/* eslint-disable vars-on-top, one-var, max-len */
-
 topSuite('Ext.grid.Selection', [
     false, // because Ext.grid.Selection isn't a thing
     'Ext.grid.Grid', 'Ext.app.ViewModel',

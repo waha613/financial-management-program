@@ -1,8 +1,8 @@
-# @extjs/ext-font-pictos
+# @sencha/ext-font-pictos
 --------------------------------------------------------
 This package contains the Sencha Cmd package `font-pictos@6.5.0`  
  
-Copyright (c) 2006-2017, Sencha Inc.  
+Copyright (c) 2006-2020, Sencha Inc.  
 All rights reserved.  
 licensing@sencha.com  
   

@@ -1577,11 +1577,15 @@ Ext.define('Ext.grid.feature.Grouping', {
             i, len, group, metaGroup, record, hasRemote, remoteData;
 
         /**
-         * @cfg {String} [remoteRoot=undefined]
+         * @cfg {String} remoteRoot
          * The name of the property which contains the Array of summary objects.
          * It allows to use server-side calculated summaries.
+         *
+         * Alternatively, the {@link Ext.data.reader.Reader#cfg!summaryRootProperty} can
+         * be used to specify the container for summary data from the server. This allows
+         * the {@link Ext.data.Model Model} to determine this when configuring its proxy.
          */
-        if (me.remoteRoot) {
+        if (me.remoteRoot || store.getProxy().getReader().getSummaryRootProperty()) {
             remoteData = me.mixins.summary.generateSummaryData.call(me, groupField);
             hasRemote = !!remoteData;
         }

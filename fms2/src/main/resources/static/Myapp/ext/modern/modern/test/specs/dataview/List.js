@@ -1,6 +1,3 @@
-// These conventions are for compression and not worrisome for tests:
-/* eslint-disable vars-on-top, one-var */
-
 topSuite("Ext.dataview.List", [
     'Ext.dataview.ListItem'
 ], function() {
@@ -927,6 +924,47 @@ topSuite("Ext.dataview.List", [
             });
         });
 
+        describe("selectionchange", function() {
+
+            it("should fire dataview listeners selectionchange", function() {
+                var changedRecords;
+
+                makeList({
+                    listeners: {
+                        selectionchange: function (view, records, selected, selection) {
+                               changedRecords = records;
+                        }
+                    }
+                });
+
+                jasmine.fireMouseEvent(list.getItemAt(2).el.dom, 'click');
+
+                runs(function() {
+                    expect(changedRecords).toBeDefined();
+                });
+            });
+
+            it("should fire listeners only once", function() {
+               var changecounter = 0;
+
+                makeList({
+                    listeners: {
+                        selectionchange: function (view, records, selected, selection) {
+                           changecounter++;
+                        }
+                    }
+                });
+
+                jasmine.fireMouseEvent(list.getItemAt(2).el.dom, 'click');
+                jasmine.fireMouseEvent(list.getItemAt(1).el.dom, 'click');
+
+                runs(function() {
+                    expect(changecounter).toBe(2);
+                });
+            });
+
+        });
+
         describe('multi mode', function() {
             beforeEach(function() {
                 makeList({
@@ -1044,6 +1082,86 @@ topSuite("Ext.dataview.List", [
                 list.select(records);
 
                 expect(spy).toHaveBeenCalledWith(list, records);
+            });
+        });
+
+        describe("store's event call", function() {
+        var store,
+            rootStoreSpy = jasmine.createSpy();
+
+            beforeEach(function() {
+                makeList({
+                    store: {
+                        data: [
+                            { name: 'item1' },
+                            { name: 'item2' },
+                            { name: 'item3' },
+                            { name: 'item4' },
+                            { name: 'item5' },
+                            { name: 'item6' },
+                            { name: 'item7' },
+                            { name: 'item8' },
+                            { name: 'item9' },
+                            { name: 'item10' }
+                        ],
+                        rootSource: rootStoreSpy
+                    }
+                });
+
+                store = list.getStore();
+                store.setGrouper('name');
+                list = Ext.destroy(list);
+
+                makeList({
+                    store: store
+                });
+            });
+
+            it('should trigger event for load', function() {
+                var loadSpy = jasmine.createSpy();
+
+                expect(list.getGrouped()).toBeTruthy();
+                store.on('load', loadSpy);
+                store.load();
+                expect(loadSpy).toHaveBeenCalled();
+            });
+
+            it('should trigger event for erase', function() {
+                var eraseSpy = jasmine.createSpy();
+
+                store.on('erase', eraseSpy);
+                store.getAt(0).drop();
+                store.erase();
+                expect(store.getTotalCount()).toBeGreaterThan(store.data.length);
+            });
+
+            it('should trigger event for sync', function() {
+                var syncSpy = jasmine.createSpy();
+
+                store.getAt(1).data.name = "sync";
+                store.on('sync', syncSpy);
+                store.sync();
+                expect(store.getAt(1).data.name).toBe("sync");
+            });
+
+            it('should trigger event for nextPage', function() {
+                var nextPageSpy = jasmine.createSpy(),
+                    loadPageSpy = jasmine.createSpy();
+
+                store.on('load', loadPageSpy);
+                store.on('nextPage', nextPageSpy);
+                store.nextPage();
+                expect(loadPageSpy).toHaveBeenCalled();
+            });
+
+            it('should trigger event for Previous Page', function() {
+                var nextPageSpy = jasmine.createSpy(),
+                    loadPageSpy = jasmine.createSpy()
+
+                store.on('load', loadPageSpy);    
+                store.on('nextPage', nextPageSpy);
+                store.previousPage();
+                expect(loadPageSpy).toHaveBeenCalled();
             });
         });
     });

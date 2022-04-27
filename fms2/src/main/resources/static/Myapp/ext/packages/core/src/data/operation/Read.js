@@ -26,6 +26,20 @@ Ext.define('Ext.data.operation.Read', {
         sorters: undefined,
 
         /**
+         * @cfg {Ext.util.Grouper[]} groupers
+         * Optional grouping configuration. Only applies to 'read' actions where
+         * grouping is desired.
+         */
+        groupers: undefined,
+
+        /**
+         * @cfg {Ext.data.Field[]} summaries
+         * Optional summary configuration. Only applies to 'read' actions where
+         * remote summary is desired.
+         */
+        summaries: undefined,
+
+        /**
          * @cfg {Ext.util.Grouper} grouper
          * Optional grouping configuration. Only applies to 'read' actions where grouping is
          * desired.

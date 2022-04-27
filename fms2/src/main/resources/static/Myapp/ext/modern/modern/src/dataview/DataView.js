@@ -11,20 +11,22 @@
  * At its simplest, a DataView is just a Store full of data and a simple template that
  * renders each item:
  *
- *      @example
- *      var team = Ext.create({
- *          xtype: 'dataview',
- *          fullscreen: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var team = Ext.create({
+ *     xtype: 'dataview',
+ *     fullscreen: true,
  *
- *          store: [
- *              { name: 'Peter',  age: 26 },
- *              { name: 'Ray',   age: 21 },
- *              { name: 'Egon', age: 24 },
- *              { name: 'Winston', age: 24 }
- *          ],
+ *     store: [
+ *         { name: 'Peter',  age: 26 },
+ *         { name: 'Ray',   age: 21 },
+ *         { name: 'Egon', age: 24 },
+ *         { name: 'Winston', age: 24 }
+ *     ],
  *
- *          itemTpl: '<div>{name} is {age} years old</div>'
- *      });
+ *     itemTpl: '<div>{name} is {age} years old</div>'
+ * });
+ * ```
  *
  * Here we just defined everything inline so it's all local with nothing being loaded from
  * a server. For each of the data items, the DataView will render HTML using the `itemTpl`
@@ -36,30 +38,32 @@
  *
  * The same happens if we modify one of the existing records in the Store:
  *
- *      @example
- *      var team = Ext.create({
- *          xtype: 'dataview',
- *          fullscreen: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var team = Ext.create({
+ *     xtype: 'dataview',
+ *     fullscreen: true,
  *
- *          store: {
- *             fields: ['name', 'age'],
- *             data: [
- *                 {name: 'Peter',  age: 26},
- *                 {name: 'Ray',   age: 21},
- *                 {name: 'Egon', age: 24},
- *                 {name: 'Winston', age: 24}
- *             ]
- *          },
+ *     store: {
+ *        fields: ['name', 'age'],
+ *        data: [
+ *            {name: 'Peter',  age: 26},
+ *            {name: 'Ray',   age: 21},
+ *            {name: 'Egon', age: 24},
+ *            {name: 'Winston', age: 24}
+ *        ]
+ *     },
  *
- *          itemTpl: '<div>{name} is {age} years old</div>'
- *      });
+ *     itemTpl: '<div>{name} is {age} years old</div>'
+ * });
  *
- *      team.getStore().add({
- *          name: 'Gozer',
- *          age: 21
- *      });
+ * team.getStore().add({
+ *     name: 'Gozer',
+ *     age: 21
+ * });
  *
- *      team.getStore().getAt(0).set('age', 42);
+ * team.getStore().getAt(0).set('age', 42);
+ * ```
  *
  * This last step will get the first record in the Store (Peter), change the age to 42 and
  * automatically update what's on the screen.
@@ -69,26 +73,208 @@
  * To load data from a server, we need to give the `store` some information about the
  * server. This is done with the `proxy` config:
  *
- *      @example
- *      Ext.create({
- *          xtype: 'dataview',
- *          fullscreen: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'dataview',
+ *     fullscreen: true,
  *
- *          store: {
- *              autoLoad: true,
- *              proxy: {
- *                  type: 'jsonp',
- *                  url: 'https://itunes.apple.com/search?term=Pink+Floyd&entity=album',
+ *     store: {
+ *         autoLoad: true,
+ *         proxy: {
+ *             type: 'jsonp',
+ *             url: 'https://itunes.apple.com/search?term=Pink+Floyd&entity=album',
  *
- *                  reader: {
- *                      type: 'json',
- *                      rootProperty: 'results'
- *                  }
- *              }
- *          },
+ *             reader: {
+ *                 type: 'json',
+ *                 rootProperty: 'results'
+ *             }
+ *         }
+ *     },
  *
- *          itemTpl: '<h2>{collectionName}</h2><p><img src="{artworkUrl100}" /></p>'
- *      });
+ *     itemTpl: '<h2>{collectionName}</h2><p><img src="{artworkUrl100}" /></p>'
+ * });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container width="100%" height="100%">
+ *     <ext-dataview
+ *         itemTpl="{name} is {age} years old"
+ *         onready="dataview.onDataViewready"
+ *     >
+ *     </ext-dataview>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-dataview.component';
+ * 
+ * export default class DataViewComponent {
+ *   onDataViewready(event) {
+ *     this.dataViewCmp = event.detail.cmp;
+ *     this.dataViewCmp.setStore(new Ext.data.Store({
+ *        data: [
+ *             {name: 'Peter', age: 26},
+ *             {name: 'Ray', age: 21},
+ *             {name: 'Egon', age: 29},
+ *             {name: 'Winston', age: 24},
+ *        ]
+ *      }));
+ *   }
+ * }
+ *
+ * window.dataview = new DataViewComponent();
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container width="100%" height="100%">
+ *     <ext-dataview
+ *         itemTpl="<h2>{collectionName}</h2><p><img src={artworkUrl100}></img></p>"
+ *         onready="dataviewMain.onDataViewready"
+ *     >
+ *     </ext-dataview>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-dataview.component';
+ * 
+ * export default class DataViewMainComponent {
+ *   onDataViewready(event) {
+ *     this.dataViewCmp = event.detail.cmp;
+ *     this.dataViewCmp.setStore(new Ext.data.Store({
+ *         autoLoad: true,
+ *         proxy: {
+ *             type: 'jsonp',
+ *             url: 'https://itunes.apple.com/search?term=Pink+Floyd&entity=album',
+ *             reader: {
+ *                 type: 'json',
+ *                 rootProperty: 'results'
+ *            }
+ *         }
+ *    }));
+ *  }
+ * }
+ *
+ * window.dataviewMain = new DataViewMainComponent();
+ * ```
+ * 
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtDataView } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *
+ *     store = new Ext.data.Store({
+ *         data: [
+ *              {name: 'Peter', age: 26},
+ *              {name: 'Ray', age: 21},
+ *              {name: 'Egon', age: 29},
+ *              {name: 'Winston', age: 24},
+ *         ]
+ *     });
+ *
+ *     render() {
+ *         return (
+ *             <ExtDataView
+ *                 itemTpl="{name} is {age} years old"
+ *                 store={this.store}
+ *             />
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtDataView } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *
+ *     store = new Ext.data.Store({
+ *          autoLoad: true,
+ *          proxy: {
+ *              type: 'jsonp',
+ *              url: 'https://itunes.apple.com/search?term=Pink+Floyd&entity=album',
+ *              reader: {
+ *                  type: 'json',
+ *                  rootProperty: 'results'
+ *             }
+ *          }
+ *     });
+ *
+ *     render() {
+ *         return (
+ *             <ExtDataView
+ *                 itemTpl="<h2>{collectionName}</h2><p><img src='{artworkUrl100}' /></p>"
+ *                 store={this.store}
+ *             />
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [`
+ *             `],
+ *     template: `
+ *              <ExtDataView
+ *                 [itemTpl]="this.itemTpl"
+ *                 [store]="this.store"
+ *             ></ExtDataView>
+ *             `
+ * })
+ * export class AppComponent {
+ *     store = new Ext.data.Store({
+ *         data: [
+ *              {name: 'Peter', age: 26},
+ *              {name: 'Ray', age: 21},
+ *              {name: 'Egon', age: 29},
+ *              {name: 'Winston', age: 24},
+ *         ]
+ *     });
+ *
+ *     itemTpl = `{name} is {age} years old`;
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [`
+ *             `],
+ *     template: `
+ *              <ExtDataView
+ *                 [itemTpl]="this.itemTpl"
+ *                 [store]="this.store"
+ *             ></ExtDataView>
+ *             `
+ * })
+ * export class AppComponent {
+ *     store = new Ext.data.Store({
+ *         autoLoad: true,
+ *         proxy: {
+ *             type: 'jsonp',
+ *             url: 'https://itunes.apple.com/search?term=Pink+Floyd&entity=album',
+ *             reader: {
+ *                 type: 'json',
+ *                 rootProperty: 'results'
+ *             }
+ *         }
+ *     });
+ *
+ *    itemTpl = "<h2>{collectionName}</h2><p><img src='{artworkUrl100}' /></p>"
+ * }
+ * ```
  *
  * The Store now loads using a {@link Ext.data.proxy.Proxy Proxy}, which fetches the data
  * for us. In this case we used a JSON-P proxy so that we can load from Twitter's JSON-P

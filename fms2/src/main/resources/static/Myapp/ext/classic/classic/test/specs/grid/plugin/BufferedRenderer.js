@@ -1,8 +1,14 @@
-topSuite("Ext.grid.plugin.BufferedRenderer",
-    ['Ext.grid.Panel', 'Ext.tree.Panel', 'Ext.grid.feature.Grouping',
-     'Ext.grid.column.Widget', 'Ext.ProgressBarWidget', 'Ext.tab.Panel',
-     'Ext.window.Window', 'Ext.data.BufferedStore', 'Ext.sparkline.Bar'],
-function() {
+topSuite("Ext.grid.plugin.BufferedRenderer", [
+    'Ext.grid.Panel',
+    'Ext.tree.Panel',
+    'Ext.grid.feature.Grouping',
+    'Ext.grid.column.Widget',
+    'Ext.ProgressBarWidget',
+    'Ext.tab.Panel',
+    'Ext.window.Window',
+    'Ext.data.BufferedStore',
+    'Ext.sparkline.Bar'
+], function() {
     var itNotIE8 = Ext.isIE8 ? xit : it,
         store, grid, tree, view, scroller, plugin,
         synchronousLoad = true,
@@ -3360,4 +3366,99 @@ function() {
         });
     });
 
+	// EXTJS-27845
+    describe('focus check', function() {
+        var store;
+
+        afterEach(function() {
+            store.destroy();
+        });
+
+        beforeEach(function() {
+            var data = [],
+            i, str,
+            len =  500;
+
+            for (i = 0; i < len; i++) {
+                str = 'emp_' + i;
+
+                data.push({
+                    name: str,
+                    email: str + '@sencha.com',
+                    phone: '1-888-' + i,
+                    age: i
+                });
+            }
+
+            store = Ext.create('Ext.data.Store', {
+                fields: ['name', 'email', 'phone'],
+                data: data
+            });
+        });
+
+        it('should refocus on previously focused when it gets re-added to the view  ', function() {
+            makeGrid({
+                columns: [{
+                    header: 'Name',
+                    dataIndex: 'name'
+                }, {
+                    header: 'Email',
+                    dataIndex: 'email',
+                    flex: 1
+                }, {
+                    header: 'Phone',
+                    dataIndex: 'phone'
+                }],
+                title: 'Grid Test',
+                height: 500,
+                layout: 'fit'
+            }, {
+                store: store
+            });
+
+            runs(function() {
+                grid.getNavigationModel().setPosition(1, 0);
+                var normal = grid.bufferedRenderer;
+
+                var previousRenderedFocusedCell = view.getRecord(Ext.Element.getActiveElement()).data;
+
+                normal.scrollTo(1092);
+                normal.scrollTo(0);
+                expect(view.getRecord(Ext.Element.getActiveElement()).data).toBe(previousRenderedFocusedCell);
+            });
+        });
+
+        it('should refocus on previously focused when it gets re-added to the view for locked grid', function() {
+            makeGrid({
+                columns: [{
+                    header: 'Name',
+                    dataIndex: 'name'
+                }, {
+                    header: 'Email',
+                    dataIndex: 'email',
+                    flex: 1
+                }, {
+                    header: 'Phone',
+                    dataIndex: 'phone',
+                    locked: true
+                }],
+                title: 'Grid Test',
+                height: 500,
+                layout: 'fit'
+            }, {
+                store: store
+            });
+
+            runs(function() {
+                grid.getNavigationModel().setPosition(2, 1);
+                var locked = grid.lockedGrid.bufferedRenderer;
+
+                var previousRenderedFocusedCell = view.getRecord(Ext.Element.getActiveElement()).data;
+
+                locked.scrollTo(1092);
+                locked.scrollTo(0);
+                expect(view.getRecord(Ext.Element.getActiveElement()).data).toBe(previousRenderedFocusedCell);
+            });
+        });
+    });
 });

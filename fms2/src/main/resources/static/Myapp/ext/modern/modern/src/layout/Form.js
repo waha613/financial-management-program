@@ -7,29 +7,85 @@
  * The following example uses label-auto-widthing to size all labels to the width of the
  * largest label.
  *
- *     @example
- *     Ext.create('Ext.form.Panel', {
- *         fullscreen: true,
- *         layout: 'form',
- *         items: [
- *             {
- *                 xtype: 'textfield',
- *                 label: 'First Name'
- *             },
- *             {
- *                 xtype: 'textfield',
- *                 label: 'Last Name'
- *             },
- *             {
- *                 xtype: 'textfield',
- *                 label: 'Bank Account Number'
- *             },
- *             {
- *                 xtype: 'checkboxfield',
- *                 label: 'Approved'
- *             }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.form.Panel', {
+ *     fullscreen: true,
+ *     layout: 'form',
+ *     items: [
+ *         {
+ *             xtype: 'textfield',
+ *             label: 'First Name'
+ *         },
+ *         {
+ *             xtype: 'textfield',
+ *             label: 'Last Name'
+ *         },
+ *         {
+ *             xtype: 'textfield',
+ *             label: 'Bank Account Number'
+ *         },
+ *         {
+ *             xtype: 'checkboxfield',
+ *             label: 'Approved'
+ *         }
+ *     ]
+ * });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtButton, ExtFormPanel, ExtTextField } from '@sencha/ext-react';
+ *
+ * export default class myExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtFormPanel title="Form Panel">
+ *                 <ExtTextField label="First Name"/>
+ *                 <ExtTextField label="Last Name"/>
+ *                 <ExtTextField label="Account Number"/>
+ *                 <ExtButton text="Submit" />
+ *             </ExtFormPanel>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtFormPanel title="Form Panel">
+ *             <ExtTextField [label]='"First Name"'></ExtTextField>
+ *             <ExtTextField [label]='"Last Name"'></ExtTextField>
+ *             <ExtTextField [label]='"Account Number"'></ExtTextField>
+ *             <ExtButton [text]="Submit"></ExtButton>
+ *         </ExtFormPanel>
+ *      `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-formpanel title="Form Panel">
+ *    <ext-textfield label="First Name"></ext-textfield>
+ *    <ext-textfield label="Last Name"></ext-textfield>
+ *    <ext-textfield label="Account Number"></ext-textfield>
+ *    <ext-button text="Submit"></ext-button>
+ * </ext-formpanel>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-textfield.component';
+ *
+ * export default class FormComponent {}
+ * ```
  *
  * **Note** This layout can only accept form fields as children and these fields
  * cannot use `top` {@link Ext.field.Text#labelAlign}.

@@ -6,37 +6,130 @@
  *
  * In general an array of column configurations will be passed to the grid:
  *
- *     @example
- *     Ext.create({
- *         xtype: 'grid',
- *         title: 'Tree Grid Demo',
- *         itemConfig: {
- *             viewModel: true
- *         },
- *         store: {
- *              data: [
- *                  {firstname:"Michael", lastname:"Scott", seniority:7, department:"Management", hired:"01/10/2004"},
- *                  {firstname:"Dwight", lastname:"Schrute", seniority:2, department:"Sales", hired:"04/01/2004"},
- *                  {firstname:"Jim", lastname:"Halpert", seniority:3, department:"Sales", hired:"02/22/2006"},
- *                  {firstname:"Kevin", lastname:"Malone", seniority:4, department:"Accounting", hired:"06/10/2007"},
- *                  {firstname:"Angela", lastname:"Martin", seniority:5, department:"Accounting", hired:"10/21/2008"}
- *              ]
- *         },
- *         columns: [
- *             {text: 'First Name',  dataIndex:'firstname'},
- *             {text: 'Last Name',  dataIndex:'lastname'},
- *             {text: 'Hired Month',  dataIndex:'hired'},
- *             {
- *                 text: 'Department',
- *                 width: 200,
- *                 cell: {
- *                    bind: '{record.department} ({record.seniority})'
- *                 }
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'grid',
+ *     title: 'Tree Grid Demo',
+ *     itemConfig: {
+ *         viewModel: true
+ *     },
+ *     store: {
+ *          data: [
+ *              {firstname:"Michael", lastname:"Scott", seniority:7, department:"Management", hired:"01/10/2004"},
+ *              {firstname:"Dwight", lastname:"Schrute", seniority:2, department:"Sales", hired:"04/01/2004"},
+ *              {firstname:"Jim", lastname:"Halpert", seniority:3, department:"Sales", hired:"02/22/2006"},
+ *              {firstname:"Kevin", lastname:"Malone", seniority:4, department:"Accounting", hired:"06/10/2007"},
+ *              {firstname:"Angela", lastname:"Martin", seniority:5, department:"Accounting", hired:"10/21/2008"}
+ *          ]
+ *     },
+ *     columns: [
+ *         {text: 'First Name',  dataIndex:'firstname'},
+ *         {text: 'Last Name',  dataIndex:'lastname'},
+ *         {text: 'Hired Month',  dataIndex:'hired'},
+ *         {
+ *             text: 'Department',
+ *             width: 200,
+ *             cell: {
+ *                bind: '{record.department} ({record.seniority})'
  *             }
- *         ],
- *         width: 500,
- *         fullscreen: true
- *     });
+ *         }
+ *     ],
+ *     width: 500,
+ *     fullscreen: true
+ * });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container width="100%" height="100%">
+ *     <ext-grid shadow="true" height="100%" onready="columnGrid.onGridReady">
+ *         <ext-column text="Name" dataIndex="name" flex="1"></ext-column>
+ *         <ext-column text="Email" dataIndex="email" flex="1"></ext-column>
+ *         <ext-column text="Phone" dataIndex="phone" flex="1"></ext-column>
+ *     </ext-grid>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-grid.component';
+ * import '@sencha/ext-web-components/dist/ext-column.component';
+ * 
+ * export default class ColumnGridComponent {
+ *     constructor() {
+ *        this.store = new Ext.data.Store({
+ *           data: [
+ *               { "name": "Lisa", "email": "lisa@simpsons.com", "phone": "555-111-1224" },
+ *               { "name": "Bart", "email": "bart@simpsons.com", "phone": "555-222-1234" },
+ *               { "name": "Homer", "email": "home@simpsons.com", "phone": "555-222-1244" },
+ *               { "name": "Marge", "email": "marge@simpsons.com", "phone": "555-222-1254" }
+ *           ]
+ *        });
+ *     }
+ * 
+ *     onGridReady(event) {
+ *         this.basicGridCmp = event.detail.cmp;
+ *         this.basicGridCmp.setStore(this.store);
+ *     }
+ * }
+ * 
+ * window.columnGrid = new ColumnGridComponent();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtGrid, ExtColumn, ExtPanel } from '@sencha/ext-modern';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         this.store = new Ext.data.Store({
+ *             data: [
+ *                 { "name": "Lisa", "email": "lisa@simpsons.com", "phone": "555-111-1224" },
+ *                 { "name": "Bart", "email": "bart@simpsons.com", "phone": "555-222-1234" },
+ *                 { "name": "Homer", "email": "home@simpsons.com", "phone": "555-222-1244" },
+ *                 { "name": "Marge", "email": "marge@simpsons.com", "phone": "555-222-1254" }
+ *             ]
+ *         });
+ *         return (
+ *            <ExtPanel width="100%" height="100%">
+ *                 <ExtGrid shadow="true" height="100%" store={this.store}>
+ *                     <ExtColumn text="Name" dataIndex="name" flex="1"></ExtColumn>
+ *                     <ExtColumn text="Email" dataIndex="email" flex="1"></ExtColumn>
+ *                     <ExtColumn text="Phone" dataIndex="phone" flex="1"></ExtColumn>
+ *                 </ExtGrid>
+ *             </ExtPanel>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'column-component',
+ *     styles: [``],
+ *     template: `
+ *       <ExtPanel [width]="400" [height]="400">
+ *            <ExtGrid shadow="true" [height]="400" [store]="store">
+ *                <ExtColumn [text]="'Name'" dataIndex="name" flex="1"></ExtColumn>
+ *                <ExtColumn [text]="'Email'" dataIndex="email" flex="1"></ExtColumn>
+ *                <ExtColumn [text]="'Phone'" dataIndex="phone" flex="1"></ExtColumn>
+ *            </ExtGrid>
+ *        </ExtPanel>`
+ *   })
+ * export class ColumnComponent  {
+ *    store = new Ext.data.Store({
+ *    data: [
+ *        { "name": "Lisa", "email": "lisa@simpsons.com", "phone": "555-111-1224" },
+ *        { "name": "Bart", "email": "bart@simpsons.com", "phone": "555-222-1234" },
+ *        { "name": "Homer", "email": "home@simpsons.com", "phone": "555-222-1244" },
+ *        { "name": "Marge", "email": "marge@simpsons.com", "phone": "555-222-1254" }
+ *    ]
+ *    });
+ * }
+ * ```
  *
  * # Convenience Subclasses
  *
@@ -606,6 +699,58 @@ Ext.define('Ext.grid.column.Column', {
         summaryType: null,
 
         /**
+         * @cfg {Object/String[]} summaries
+         * This config is used by {@link Ext.grid.plugin.Summaries} plugin.
+         *
+         * Define here what functions are available for your users to choose from
+         * when they want to change the summary type on this column. By default only
+         * `count` is supported but you can add more summary functions.
+         *
+         *      {
+         *          xtype: 'column',
+         *          summaries: {
+         *              sum: true,
+         *              average: true,
+         *              count: false
+         *          }
+         *      }
+         *
+         *  Or like this if you want to bring new functions in:
+         *
+         *      {
+         *          xtype: 'column',
+         *          summaries: {
+         *              calculateSomething: true
+         *          }
+         *      }
+         *
+         *  In such case `calculateSomething` needs to be defined as a summary function.
+         *  For this you need to define a summary class like this:
+         *
+         *      Ext.define('Ext.data.summary.CalculateSomething', {
+         *          extend: 'Ext.data.summary.Base',
+         *          alias: 'data.summary.calculateSomething',
+         *
+         *          text: 'Calculate something',
+         *
+         *          calculate: function (records, property, root, begin, end) {
+         *              // do your own calculation here
+         *          }
+         *      });
+         *
+         *
+         */
+        summaries: {
+            $value: {
+                count: true
+            },
+            lazy: true,
+            merge: function(newValue, oldValue) {
+                return this.mergeSets(newValue, oldValue);
+            }
+        },
+
+        /**
          * @cfg {Boolean/Function/String} exportSummaryRenderer
          *
          * This config is similar to {@link #exportRenderer} but is applied to summary
@@ -669,6 +814,13 @@ Ext.define('Ext.grid.column.Column', {
         computedWidth: null,
 
         /**
+         * A {@link Ext.grid.plugin.filterbar.filters.Base} configuration.
+         *
+         * This filter type is used by the {@link Ext.grid.plugin.filterbar.FilterBar} plugin.
+         */
+        filterType: null,
+
+        /**
          * @cfg {Function/String/Object/Ext.util.Grouper} grouper
          * A grouper config object to apply when the standard grouping user interface is
          * is invoked. This option is, for example, available in the column's header
@@ -706,6 +858,23 @@ Ext.define('Ext.grid.column.Column', {
          * @since 6.5.0
          */
         groupHeaderTpl: null,
+
+        /**
+         * @cfg {String} groupFormatter
+         * This config accepts a format specification as would be used in a `Ext.Template`
+         * formatted token. For example `'round(2)'` to round numbers to 2 decimal places
+         * or `'date("Y-m-d")'` to format a Date.
+         *
+         * It is used by the {@link Ext.grid.plugin.GroupingPanel} plugin when adding groupers
+         * to the store. When you drag a column from the grid to the grouping panel then
+         * the `groupFormatter` will be used to create a new store grouper
+         * {@link Ext.util.Grouper#formatter}.
+         *
+         * **Note:** if summaries are calculated on the server side then the server
+         * side grouping should match the client side formatter otherwise the
+         * summaries may be wrong.
+         */
+        groupFormatter: false,
 
         /**
          * @cfg {Function/String/Object/Ext.util.Sorter} sorter
@@ -847,6 +1016,19 @@ Ext.define('Ext.grid.column.Column', {
         center: Ext.baseCSSPrefix + 'align-center',
         right: Ext.baseCSSPrefix + 'align-right'
     },
+
+    /**
+     * @param {Ext.data.summary.Base} summaryType
+     *
+     * This function is called by {@link Ext.grid.plugin.Summaries} plugin
+     * when the summary on this column is changed.
+     *
+     * It is quite useful when you need to change the column summary renderer/formatter
+     * depending on the chosen summary.
+     */
+    onSummaryChange: null,
+
+    grouperIdPrefix: Ext.baseCSSPrefix + 'gridgrouper',
 
     /**
      * @event columnmenucreated
@@ -1409,6 +1591,14 @@ Ext.define('Ext.grid.column.Column', {
             }
         }
 
+        //<debug>
+        if (store && store.isVirtualStore && grouper) {
+            Ext.Logger.warn('Virtual store does not suppport grouping');
+
+            return;
+        }
+        //</debug>
+
         if (grouper) {
             store.setGrouper(grouper);
         }
@@ -1864,17 +2054,27 @@ Ext.define('Ext.grid.column.Column', {
     pickSorter: function() {
         var me = this,
             store = me.getGrid().getStore(),
-            result;
+            result, groupers;
 
         // Must always use the grouper if our dataIndex is the store's groupField.
         // We have to test dynamically in the getter because of possible store changes
-        if (store.isGrouped() && store.getGroupField() === me.getDataIndex()) {
-            result = me.getGrouper() || store.getGrouper();
+        if (store.isGrouped()) {
+            groupers = store.getGroupers(false);
 
-            // The sort state is always the direction of the grouper
-            me.sortState = result.getDirection();
+            if (groupers) {
+                result = groupers.get(me.getDataIndex());
+            }
+            else if (store.getGroupField() === me.getDataIndex()) {
+                result = me.getGrouper() || store.getGrouper();
+            }
+
+            if (result) {
+                // The sort state is always the direction of the grouper
+                me.sortState = result.getDirection();
+            }
         }
-        else {
+
+        if (!result) {
             result = me.getSorter();
         }
 
@@ -2135,6 +2335,35 @@ Ext.define('Ext.grid.column.Column', {
 
         me.setWidth(maxWidth);
         textMatrics.destroy();
+    },
+
+    /**
+     * Returns an array of summary functions supported on this column.
+     * @return {String[]}
+     */
+    getListOfSummaries: function() {
+        var ret = [],
+            v = this.getSummaries() || {},
+            keys = Ext.Object.getAllKeys(v),
+            len = keys.length,
+            i, key;
+
+        // we need to extract 'true' summaries from the object
+        for (i = 0; i < len; i++) {
+            key = keys[i];
+
+            if (v[key]) {
+                ret.push(key);
+            }
+        }
+
+        return ret;
+    },
+
+    applySummaries: function(newValue, oldValue) {
+        var config = this.self.getConfigurator().configs.summaries;
+
+        return config.mergeSets(newValue);
     },
 
     privates: {

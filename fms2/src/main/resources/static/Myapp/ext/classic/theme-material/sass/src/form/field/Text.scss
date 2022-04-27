@@ -101,10 +101,8 @@ $input-font-family: $form-field-font-family;
 }
 
 .#{$prefix}form-readonly,
-.#{$prefix}hbox-form-item,
 .#{$prefix}form-fieldcontainer,
 .#{$prefix}colorpicker-field,
-//.#{$prefix}form-dirty,
 .#{$prefix}form-item[id*=slider],
 .#{$prefix}field-focus {
   .#{$prefix}form-item-label {
@@ -185,4 +183,13 @@ $input-font-family: $form-field-font-family;
 // wouldn't display full width with removing table-cell
 .#{$prefix}form-item-body {
     display: block;
+}
+
+.#{$prefix}ie11 {
+    .#{$prefix}form-item-label-default {
+        &.#{$prefix}form-item-label-top {
+            display: inline;
+            top: -5px;
+        }
+    }
 }

@@ -8,12 +8,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.util.ResourceUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,14 +109,15 @@ public class ExcelToDB {
 
 
     public static void generateInvoice(List<InboundDetails> inboundDetailsList, HttpServletResponse response) throws IOException {
-        File file = new File("E:\\工作簿2.xlsx");
+        File file = ResourceUtils.getFile("classpath:入库单模板.xlsx");
         FileInputStream fis = new FileInputStream(file);
 
         //得到工作簿
         Workbook workbook = new XSSFWorkbook(fis);
+        System.out.println("workbook:" +workbook);
         //得到一个工作表
         Sheet sheet = workbook.getSheetAt(0);
-        InboundDetails inboundDetails = new InboundDetails();
+        InboundDetails inboundDetails;
 
         for (int i = 0; i < inboundDetailsList.size(); i++) {
             inboundDetails = inboundDetailsList.get(i);
@@ -134,11 +136,23 @@ public class ExcelToDB {
         }
 
 
-        File outFile = new File("E:\\工作簿3.xlsx");
-        FileOutputStream fos = new FileOutputStream(outFile);
-        workbook.write(fos);
-        workbook.close();
-        fos.close();
-        fis.close();
+//        File outFile = new File("E:\\工作簿3.xlsx");
+//        FileOutputStream fos = new FileOutputStream(outFile);
+
+        // 将Excel文件写入到响应流
+        response.reset();
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
+        try {
+            response.addHeader("Content-Disposition", "attachment;filename=inboundInvoice.xlsx");
+            OutputStream out = response.getOutputStream();
+            workbook.write(out);
+
+            out.flush();
+            out.close();
+            workbook.close();
+            fis.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

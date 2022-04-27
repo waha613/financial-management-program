@@ -575,6 +575,16 @@ function() {
                 tagField.setValue([1, 2]);
                 expect(tagField.inputEl).not.toHaveCls(tagField.emptyCls);
             });
+
+            it("should display empty text when all the tags are removed", function() {
+                makeField({ emptyText: 'placeholder text' });
+                tagField.setValue([1, 2]);
+                expect(tagField.emptyClsElements[2].dom.style.display).toBe('none');
+                clickTag(1, true);
+                clickTag(2, true);
+                expect(tagField.emptyClsElements[2].dom.style.display).toBe('');
+                expect(tagField.emptyClsElements[2].dom.innerText).toBe(tagField.emptyText);
+            });
         });
     });
 
@@ -1202,8 +1212,44 @@ function() {
                     tagField.addValue(i + 2);
                 }
 
+                doTyping('abcdefghijklmnopqrstuvwxyz');
                 expect(tagField.getHeight()).toBeGreaterThan(height);
 
+            });
+        });
+    });
+
+    describe("focus", function() {
+        describe("with focusLastAddedItem: false", function() {
+            it("should default to top with focusLastAddedItem: false", function() {
+                makeField({
+                    focusLastAddedItem: false,
+                    value: 1,
+                    width: 300,
+                    height: 62
+                });
+                var height = tagField.getHeight();
+
+                tagField.updateValue(2);
+
+                expect(tagField.itemList.dom.scrollHeight).toBeLessThan(height);
+            });
+        });
+        describe("with focusLastAddedItem: true", function() {
+            it("should default to bottom with focusLastAddedItem: true", function() {
+                makeField({
+                    value: [1, 2, 3, 4, 5],
+                    height: 20,
+                    width: 50,
+                    growMax: 60,
+                    filterPickList: true,
+                    focusLastAddedItem: true
+                });
+                var height = tagField.getHeight();
+
+                tagField.updateValue(6);
+
+                expect(tagField.itemList.dom.scrollHeight).toBeGreaterThan(height);
             });
         });
     });
@@ -1304,6 +1350,27 @@ function() {
 
             // Picker MUST preserve scroll position
             expect(picker.getScrollY()).not.toBe(0);
+        });
+    });
+
+    describe('show have growmax and autosize for layout', function() {
+        beforeEach(function() {
+            makeField({
+                createNewOnEnter: true,
+                value: ['toob', 'loob'],
+                growMax: 138
+            });
+        });
+
+        runs(function() {
+            spyOn(tagField, 'onKeyUp').andCallFake();
+            spyOn(tagField, 'autoSize').andReturn({});
+            tagField.inputEl.dom.value = 'foob';
+            jasmine.fireKeyEvent(tagField.inputEl.dom, 'keyup', 66);
+        });
+
+        runs(function() {
+            expect(tagField.autoSize).toHaveBeenCalled();
         });
     });
 
@@ -1410,6 +1477,131 @@ function() {
                 expect(tagField.getPicker().getNavigationModel().getRecord()).toBe(item2);
             });
         });
+
+        it("should select the right tag after first selection", function() {
+            makeField({
+                width: 100,
+                store: [
+                    [1, 'Alabama'],
+                    [2, 'Alabamama'],
+                    [3, 'Arizona']
+                ]
+            });
+
+            tagField.expand();
+            var selectSpy = jasmine.createSpy();
+
+            tagField.on('select', selectSpy);
+
+            // Select Arizona
+            clickListItem(2);
+            expect(selectSpy.callCount).toBe(1);
+            expect(selectSpy.mostRecentCall.args).toEqual([tagField, [tagField.getStore().getAt(2)]]);
+            doTyping('Alabama');
+
+            tagField.expand();
+            waitsFor(function() {
+                return tagField.getStore().getCount() === 2;
+            });
+
+            runs(function() {
+                expect(tagField.getPicker().getNavigationModel().getRecord()).toBe(tagField.getStore().getAt(0));
+            });
+        });
+
+        it("should select the right tag after first selection when the longer one is before the shorter", function() {
+            makeField({
+                width: 100,
+                store: [
+                    [1, 'Alabamama'],
+                    [2, 'Alabama'],
+                    [3, 'Arizona']
+                ]
+            });
+
+            tagField.expand();
+            var selectSpy = jasmine.createSpy();
+
+            tagField.on('select', selectSpy);
+
+            // Select Arizona
+            clickListItem(2);
+            expect(selectSpy.callCount).toBe(1);
+            expect(selectSpy.mostRecentCall.args).toEqual([tagField, [tagField.getStore().getAt(2)]]);
+            doTyping('Alabama');
+
+            tagField.expand();
+            waitsFor(function() {
+                return tagField.getStore().getCount() === 2;
+            });
+
+            runs(function() {
+                expect(tagField.getPicker().getNavigationModel().getRecord()).toBe(tagField.getStore().getAt(1));
+            });
+        });
+
+        it("should select the right tag for case sensitive one", function() {
+            makeField({
+                width: 100,
+                store: [
+                    [1, 'Alabamama'],
+                    [2, 'Alabama'],
+                    [3, 'Arizona']
+                ]
+            });
+
+            tagField.expand();
+            var selectSpy = jasmine.createSpy();
+
+            tagField.on('select', selectSpy);
+
+            // Select Arizona
+            clickListItem(2);
+            expect(selectSpy.callCount).toBe(1);
+            expect(selectSpy.mostRecentCall.args).toEqual([tagField, [tagField.getStore().getAt(2)]]);
+            doTyping('alabama');
+
+            tagField.expand();
+            waitsFor(function() {
+                return tagField.getStore().getCount() === 2;
+            });
+
+            runs(function() {
+                expect(tagField.getPicker().getNavigationModel().getRecord()).toBe(tagField.getStore().getAt(1));
+            });
+        });
+
+        it("should select the right tag after first selection when the type is number", function() {
+            makeField({
+                width: 100,
+                store: [
+                    [1, 1],
+                    [2, 2],
+                    [3, 22],
+                    [4, 3]
+                ]
+            });
+
+            tagField.expand();
+            var selectSpy = jasmine.createSpy();
+
+            tagField.on('select', selectSpy);
+
+            // Select 1
+            clickListItem(3);
+            expect(selectSpy.callCount).toBe(1);
+            expect(selectSpy.mostRecentCall.args).toEqual([tagField, [tagField.getStore().getAt(3)]]);
+            doTyping(2);
+
+            tagField.expand();
+            waitsFor(function() {
+                return tagField.getStore().getCount() === 2;
+            });
+
+            runs(function() {
+                expect(tagField.getPicker().getNavigationModel().getRecord()).toBe(tagField.getStore().getAt(0));
+            });
+        });
     });
 
     describe('Erasing back to zero length input', function() {
@@ -1496,6 +1688,7 @@ function() {
 
             expect(beforeTop).toBe(tagField.triggerWrap.getBox().bottom);
             clickListItem(store.getAt(0));
+            clickListItem(store.getAt(1));
             var afterTop = picker.getBox().top;
 
             expect(afterTop).toBe(tagField.triggerWrap.getBox().bottom);
@@ -1669,6 +1862,106 @@ function() {
             clickListItem(0);
             expect(selectSpy.callCount).toBe(4);
             expect(selectSpy.mostRecentCall.args).toEqual([tagField, []]);
+        });
+    });
+
+    describe('inputEl sizing', function() {
+        // The input element is resized to fit the text with typing so that
+        // it does not cause unnecessary 'wrapping' as in the inputElement moving
+        // to a new line, when it's text would easily fit on the last line of
+        // the currently selected tag(s)
+        // see EXTJS-26817 and EXTJS-26044
+        // grow should be false for these cases
+        var largeText = 'mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm',
+            smallText = 'm',
+            minInputWidth = 3,
+            maxInputWidth = 130;
+
+        it('should size with no text when no horizontal grow', function() {
+            makeField({
+                width: 130,
+                value: 20,
+                grow: false
+            });
+
+            expect(tagField.inputEl.getWidth()).toBe(3);
+            expect(tagField.inputEl.getOffsetsTo(tagField.itemList)[1] < 2).toBe(true); // no wrap
+        });
+
+        it('should size with small text when no horizontal grow', function() {
+            makeField({
+                width: 130,
+                value: 20,
+                grow: false
+            });
+
+            doTyping(smallText);
+
+            var width = tagField.inputEl.getWidth();
+
+            expect(width > minInputWidth && width < maxInputWidth).toBe(true);
+            // no wrap:
+            expect(tagField.inputEl.getOffsetsTo(tagField.itemList)[1] < 2).toBe(true);
+        });
+
+        it('should size with large text when no horizontal grow', function() {
+            makeField({
+                width: 130,
+                value: 20,
+                grow: false
+            });
+
+            doTyping(largeText);
+
+            expect(tagField.inputEl.getWidth()).toBe(maxInputWidth);
+            // wrap to next line:
+            expect(tagField.inputEl.getOffsetsTo(tagField.itemList)[1] > 0).toBe(true);
+        });
+
+        describe('multiSelect: false', function() {
+            it('should size with no text when no horizontal grow', function() {
+                makeField({
+                    width: 130,
+                    multiSelect: false,
+                    value: 20,
+                    grow: false
+                });
+
+                expect(tagField.inputEl.getWidth()).toBe(3);
+                // no wrap:
+                expect(tagField.inputEl.getOffsetsTo(tagField.itemList)[1] < 2).toBe(true);
+            });
+
+            it('should size with large text when no horizontal grow', function() {
+                makeField({
+                    width: 130,
+                    multiSelect: false,
+                    value: 20,
+                    grow: false
+                });
+
+                doTyping(largeText);
+
+                expect(tagField.inputEl.getWidth()).toBe(maxInputWidth);
+                // no wrap:
+                expect(tagField.inputEl.getOffsetsTo(tagField.itemList)[1] < 2).toBe(true);
+            });
+        });
+
+        describe('editable: false', function() {
+            it('should size with no text when false editable and false grow', function() {
+                makeField({
+                    width: 130,
+                    editable: false,
+                    selectOnFocus: false,
+                    value: 20,
+                    grow: false
+                });
+
+                expect(tagField.inputEl.getWidth()).toBe(3);
+                // no wrap:
+                expect(tagField.inputEl.getOffsetsTo(tagField.itemList)[1] < 2).toBe(true);
+            });
         });
     });
 

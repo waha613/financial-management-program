@@ -3199,5 +3199,19 @@ function() {
 
             expect(mask.isHidden()).toBe(true);
         });
+
+        it('should produce a hidden mask when hidden is explicitly set', function() {
+            ct = new Ext.Container({
+                renderTo: Ext.getBody(),
+                height: 300,
+                masked: {
+                    hidden: true
+                }
+            });
+
+            var mask = ct.getMasked();
+
+            expect(mask.isHidden()).toBe(true);
+        });
     });
 });

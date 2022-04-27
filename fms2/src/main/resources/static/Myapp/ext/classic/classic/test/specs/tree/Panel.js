@@ -176,6 +176,92 @@ topSuite("Ext.tree.Panel", [
             Ext.dom.GarbageCollector.collect();
             expect(widget.el.destroyed).toBe(false);
         });
+
+        it("should not garbage collect a widget after being collapsed if locked", function() {
+            makeTree([{
+                id: 'a',
+                text: 'A',
+                expanded: true,
+                children: [{
+                    id: 'b',
+                    text: 'B'
+                }]
+            }], {
+                rootVisible: false,
+                columns: [{
+                    xtype: 'treecolumn',
+                    dataIndex: 'text',
+                    locked: true
+                }, {
+                    xtype: 'widgetcolumn',
+                    dataIndex: 'text',
+                    locked: true,
+                    widget: {
+                        xtype: 'component'
+                    }
+                }, {
+                    xtype: 'widgetcolumn',
+                    dataIndex: 'text',
+                    widget: {
+                        xtype: 'component'
+                    }
+                }]
+            });
+
+            var columns = tree.getColumnManager().getColumns(),
+                widget1 = columns[1].getWidget(rootNode.firstChild.firstChild),
+                widget2 = columns[2].getWidget(rootNode.firstChild.firstChild);
+
+            rootNode.firstChild.collapse();
+
+            Ext.dom.GarbageCollector.collect();
+
+            expect(widget1.el.destroyed).toBe(false);
+            expect(widget2.el.destroyed).toBe(false);
+        });
+
+        it('should be able to expand/collapse when widget column is hidden', function() {
+
+            makeTree([{
+                id: 'a',
+                text: 'A',
+                expanded: true,
+                children: [{
+                    id: 'b',
+                    text: 'B'
+                }]
+            }, {
+                id: 'c',
+                text: 'C',
+                expanded: false,
+                children: [{
+                    id: 'd',
+                    text: 'D'
+                }]
+            }], {
+                rootVisible: false,
+                columns: [{
+                    xtype: 'treecolumn',
+                    dataIndex: 'text'
+                }, {
+                    xtype: 'widgetcolumn',
+                    dataIndex: 'text',
+                    hidden: true,
+                    widget: {
+                        xtype: 'component'
+                    }
+                }, {
+                    text: 'Foo'
+                }]
+            });
+
+            expect(function() {
+                rootNode.childNodes[0].collapse();
+                rootNode.childNodes[0].expand();
+            }).not.toThrow();
+
+            expect(view.all.count).toBe(3);
+        });
     });
 
     describe("scrolling", function() {

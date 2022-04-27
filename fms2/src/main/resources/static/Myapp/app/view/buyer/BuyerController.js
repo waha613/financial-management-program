@@ -22,7 +22,7 @@ Ext.define('MyApp.view.buyer.BuyerController', {
             width: 350,
 
             // The form will submit an AJAX request to this URL when submitted
-            url: 'buyer/addBuyer',
+            url: '../../buyer/addBuyer',
 
             // Fields will be arranged vertically, stretched to full width
             layout: 'anchor',

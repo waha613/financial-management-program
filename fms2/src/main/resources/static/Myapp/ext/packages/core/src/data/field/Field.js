@@ -253,7 +253,8 @@ Ext.define('Ext.data.field.Field', {
 
     requires: [
         'Ext.data.SortTypes',
-        'Ext.data.validator.Validator'
+        'Ext.data.validator.Validator',
+        'Ext.data.summary.Base'
     ],
 
     alternateClassName: 'Ext.data.Field',

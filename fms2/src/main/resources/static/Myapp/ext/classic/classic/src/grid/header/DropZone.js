@@ -97,6 +97,12 @@ Ext.define('Ext.grid.header.DropZone', {
         nextHd = dragHeader.nextSibling('gridcolumn:not([hidden])');
         prevHd = dragHeader.previousSibling('gridcolumn:not([hidden])');
 
+        // can't move a column before the grouping column
+        if ((targetHeader.isGroupsColumn && pos === 'before') ||
+            (nextHd && nextHd.isGroupsColumn && pos === 'after')) {
+            return false;
+        }
+
         me.lastTargetHeader = targetHeader;
         me.lastDropPos = pos;
 

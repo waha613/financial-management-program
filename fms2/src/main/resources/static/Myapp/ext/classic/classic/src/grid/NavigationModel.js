@@ -33,6 +33,15 @@ Ext.define('Ext.grid.NavigationModel', {
 
     focusCls: Ext.baseCSSPrefix + 'grid-item-focused',
 
+    constructor: function() {
+        var me = this;
+
+        me.onKeyPageDown = Ext.Function.createThrottled(me.onKeyPageDown, 120, me);
+        me.onKeyPageUp = Ext.Function.createThrottled(me.onKeyPageUp, 120, me);
+
+        me.callParent();
+    },
+
     getViewListeners: function() {
         var me = this;
 
@@ -683,7 +692,7 @@ Ext.define('Ext.grid.NavigationModel', {
             me.item = me.cell = null;
         }
         else {
-            me.focusPosition(me.position, preventNavigation);
+            me.focusPosition(me.position);
         }
 
         // Legacy API is that the SelectionModel fires focuschange events
@@ -1024,7 +1033,7 @@ Ext.define('Ext.grid.NavigationModel', {
     // Go one page down from the lastFocused record in the grid.
     onKeyPageDown: function(keyEvent) {
         var me = this,
-            view = keyEvent.view,
+            view = Ext.Component.fromElement(keyEvent.target, undefined, 'tableview'),
             rowsVisible = me.getRowsVisible(),
             newIdx,
             newRecord;
@@ -1039,7 +1048,9 @@ Ext.define('Ext.grid.NavigationModel', {
 
                 me.lastKeyEvent = keyEvent;
 
-                view.bufferedRenderer.scrollTo(newIdx, false, me.afterBufferedScrollTo, me);
+                view.bufferedRenderer.scrollTo(
+                    view.dataSource.getAt(newIdx), false, me.afterBufferedScrollTo, me
+                );
             }
             else {
                 newRecord = view.walkRecs(keyEvent.record, rowsVisible);
@@ -1051,7 +1062,7 @@ Ext.define('Ext.grid.NavigationModel', {
     // Go one page up from the lastFocused record in the grid.
     onKeyPageUp: function(keyEvent) {
         var me = this,
-            view = keyEvent.view,
+            view = Ext.Component.fromElement(keyEvent.target, undefined, 'tableview'),
             rowsVisible = me.getRowsVisible(),
             newIdx,
             newRecord;
@@ -1063,7 +1074,9 @@ Ext.define('Ext.grid.NavigationModel', {
             if (view.bufferedRenderer) {
                 newIdx = Math.max(keyEvent.recordIndex - rowsVisible, 0);
                 me.lastKeyEvent = keyEvent;
-                view.bufferedRenderer.scrollTo(newIdx, false, me.afterBufferedScrollTo, me);
+                view.bufferedRenderer.scrollTo(
+                    view.dataSource.getAt(newIdx), false, me.afterBufferedScrollTo, me
+                );
             }
             else {
                 newRecord = view.walkRecs(keyEvent.record, -rowsVisible);
@@ -1085,7 +1098,8 @@ Ext.define('Ext.grid.NavigationModel', {
                 // We have to ask the BufferedRenderer to navigate to the target.
                 // And that may involve asynchronous I/O, so must post-process in a callback.
                 me.lastKeyEvent = keyEvent;
-                view.bufferedRenderer.scrollTo(0, false, me.afterBufferedScrollTo, me);
+                view.bufferedRenderer.scrollTo(
+                    view.dataSource.first(), false, me.afterBufferedScrollTo, me);
             }
             else {
                 // Walk forwards to the first record
@@ -1119,7 +1133,7 @@ Ext.define('Ext.grid.NavigationModel', {
                 // And that may involve asynchronous I/O, so must postprocess in a callback.
                 me.lastKeyEvent = keyEvent;
                 view.bufferedRenderer.scrollTo(
-                    view.store.getCount() - 1, false, me.afterBufferedScrollTo, me
+                    view.dataSource.last(), false, me.afterBufferedScrollTo, me
                 );
             }
             else {
@@ -1148,13 +1162,20 @@ Ext.define('Ext.grid.NavigationModel', {
     // of the same height and the first view is accurate.
     getRowsVisible: function() {
         var rowsVisible = false,
-            view = this.view,
+            view = this.view.ownerGrid.getView(),
             firstRow = view.all.first(),
             rowHeight, gridViewHeight;
 
         if (firstRow) {
             rowHeight = firstRow.getHeight();
-            gridViewHeight = view.el.getHeight();
+
+            if (view.bufferedRenderer) {
+                gridViewHeight = view.bufferedRenderer.viewClientHeight;
+            }
+            else {
+                gridViewHeight = view.el.getHeight();
+            }
+
             rowsVisible = Math.floor(gridViewHeight / rowHeight);
         }
 

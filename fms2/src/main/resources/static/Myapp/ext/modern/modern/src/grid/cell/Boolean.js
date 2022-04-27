@@ -79,9 +79,14 @@ Ext.define('Ext.grid.cell.Boolean', {
     },
 
     formatValue: function(value) {
-        var me = this;
+        var me = this,
+            rec = me._record,
+            isSummary = rec && rec.isSummaryModel;
 
-        if (value === undefined) {
+        if (isSummary) {
+            value = value || '';
+        }
+        else if (value === undefined) {
             value = me.getUndefinedText();
         }
         else if (!value || value === 'false') {

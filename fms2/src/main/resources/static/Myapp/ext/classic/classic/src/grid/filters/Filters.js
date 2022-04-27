@@ -148,6 +148,13 @@ Ext.define('Ext.grid.filters.Filters', {
      */
     stateId: undefined,
 
+    /**
+     * @property {Object} headerMenuListeners
+     * Name of the object to be used to store listeners.
+     * @private
+     */
+    headerMenuListeners: {},
+
     init: function(grid) {
         var me = this,
             store, headerCt;
@@ -274,14 +281,15 @@ Ext.define('Ext.grid.filters.Filters', {
      * Handle creation of the grid's header menu.
      */
     onMenuCreate: function(headerCt, menu) {
-        var me = this;
+        var me = this,
+            headerCtId = headerCt.getId();
 
-        if (me.headerMenuListeners) {
-            Ext.destroy(me.headerMenuListeners);
-            me.headerMenuListeners = null;
+        if (me.headerMenuListeners[headerCtId]) {
+            Ext.destroy(me.headerMenuListeners[headerCtId]);
+            delete me.headerMenuListeners[headerCtId];
         }
 
-        me.headerMenuListeners = menu.on({
+        me.headerMenuListeners[headerCtId] = menu.on({
             beforeshow: me.onMenuBeforeShow,
             destroyable: true,
             scope: me
@@ -359,9 +367,17 @@ Ext.define('Ext.grid.filters.Filters', {
     destroy: function() {
         var me = this,
             filterMenuItem = me.filterMenuItem,
-            item;
+            item, headers, i;
 
-        Ext.destroy(me.headerCtListeners, me.gridListeners, me.headerMenuListeners);
+        Ext.destroy(me.headerCtListeners, me.gridListeners);
+
+        if (me.headerMenuListeners) {
+            headers = Ext.Object.getKeys(me.headerMenuListeners);
+
+            for (i = 0; i < headers.length; i++) {
+                Ext.destroy(me.headerMenuListeners[headers[i]]);
+            }
+        }
 
         me.bindStore(null);
         me.sep = Ext.destroy(me.sep);

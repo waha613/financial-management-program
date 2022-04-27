@@ -102,13 +102,18 @@ jazzman.Matchers.prototype.toHaveAttribute = function(attr, expectedValue) {
             // so that the dev wouldn't have to remember to write expectations
             // for strings all the time. Makes life a bit easier.
             actualValue = typeof expectedValue === 'number' ? +actualValue : actualValue;
-            
-            // When we are expecting the element to have attribute with a value,
-            // it matches when:
-            //  - Attribute is present AND
-            //  - Attribute value matches
-            //
-            ret = hasAttr && actualValue === expectedValue;
+
+            // This allows for RegExp comparison, makes it easier to compare for mutiple values
+            if (actualValue.match && expectedValue.constructor == RegExp) {
+              ret = hasAttr && !!actualValue.match(expectedValue)
+            } else { 
+              // When we are expecting the element to have attribute with a value,
+              // it matches when:
+              //  - Attribute is present AND
+              //  - Attribute value matches
+              //
+              ret = hasAttr && actualValue === expectedValue;
+            }
             
             msg = ret
                 ? 'DOM element has attribute "' + attr + '" with value of "' + expectedValue + '"'

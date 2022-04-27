@@ -3,28 +3,145 @@
  * functionality such as input validation, standard events, state management and look and
  * feel. Typically we create text fields inside a form, like this:
  *
- *     @example
- *     Ext.create('Ext.form.Panel', {
- *         fullscreen: true,
- *         items: [
- *             {
- *                 xtype: 'fieldset',
- *                 title: 'Enter your name',
- *                 items: [
- *                     {
- *                         xtype: 'textfield',
- *                         label: 'First Name',
- *                         name: 'firstName'
- *                     },
- *                     {
- *                         xtype: 'textfield',
- *                         label: 'Last Name',
- *                         name: 'lastName'
- *                     }
- *                 ]
- *             }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.form.Panel', {
+ *     fullscreen: true,
+ *     items: [
+ *         {
+ *  xtype: 'fieldset',
+ *  title: 'Enter your name',
+ *  items: [{
+ *          xtype: 'textfield',
+ *          label: 'First Name',
+ *          name: 'firstName'
+ *      }, {
+ *          xtype: 'textfield',
+ *          label: 'Last Name',
+ *          name: 'lastName'
+ *      }]
+ *  }]
+ * });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *      <ExtContainer layout="center">
+ *         <ExtFormPanel [shadow]="true">
+ *             <ExtFieldSet title="Separate Label and Placeholder"
+ *                   [margin]="'0 0 20 0'">
+ *                 <ExtTextField placeHolder="Enter Name..." label="Name"
+ *                     [required]="true">
+ *                 </ExtTextField>
+ *             </ExtFieldSet>
+ *             <ExtFieldSet title="Label as Placeholder" [margin]="'0 0 20 0'">
+ *                 <ExtTextField labelAlign="placeholder"
+ *                       label="Name" [required]="true">
+ *                 </ExtTextField>
+ *             </ExtFieldSet>
+ *             <ExtFieldSet title="With Error Message">
+ *                 <ExtTextField
+ *                     labelAlign="placeholder"
+ *                     label="Label"
+ *                     errorMessage="The value you entered is invalid."
+ *                     value="invalid value"
+ *                     errorTarget="under"
+ *                 ></ExtTextField>
+ *             </ExtFieldSet>
+ *         </ExtFormPanel>
+ *      </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtFormPanel, ExtContainer, ExtTextField, ExtFieldSet } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *              <ExtContainer layout="center">
+ *                  <ExtFormPanel shadow>
+ *                      <ExtFieldSet title="Separate Label and Placeholder"
+ *                           margin="0 0 20 0">
+ *                          <ExtTextField placeHolder="Enter Name..." label="Name" required/>
+ *                      </ExtFieldSet>
+ *                      <ExtFieldSet title="Label as Placeholder" margin="0 0 20 0" >
+ *                          <ExtTextField labelAlign="placeholder" label="Name" required/>
+ *                      </ExtFieldSet>
+ *                      <ExtFieldSet title="With Error Message">
+ *                          <ExtTextField
+ *                              labelAlign="placeholder"
+ *                              label="Label"
+ *                              errorMessage="The value you entered is invalid."
+ *                              value="invalid value"
+ *                              errorTarget="under"
+ *                          />
+ *                      </ExtFieldSet>
+ *                  </ExtFormPanel>
+ *              </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container layout="center">
+ *    <ext-formpanel shadow="true">
+ *        <ext-fieldset
+ *             title="Separate Label and Placeholder"
+ *             margin="0 0 20 0"
+ *         >
+ *             <ext-textfield
+ *                 placeHolder="Enter Name..."
+ *                 label="Name"
+ *                 required="true"
+ *             >
+ *             </ext-textfield>
+ *        </ext-fieldset>
+ *        <ext-fieldset
+ *             title="Label as Placeholder"
+ *             margin="0 0 20 0"
+ *         >
+ *             <ext-textfield
+ *                 labelAlign="placeholder"
+ *                 label="Name"
+ *                 required="true"
+ *             >
+ *             </ext-textfield>
+ *        </ext-fieldset>
+ *        <ext-fieldset
+ *             title="With Error Message"
+ *         >
+ *             <ext-textfield
+ *                 labelAlign="placeholder"
+ *                 label="Label"
+ *                 value="invalid value"
+ *                 errorTarget="under"
+ *                 errorMessage="The value you entered is invalid."
+ *             >
+ *             </ext-textfield>
+ *        </ext-fieldset>
+ *    </ext-formpanel>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-textfield.component';
+ * import '@sencha/ext-web-components/dist/ext-fieldset.component';
+ *
+ * export default class TextFieldComponent {}
+ * ```
  *
  * This creates two text fields inside a form. Text Fields can also be created outside of a
  * Form, like this:
@@ -222,9 +339,9 @@ Ext.define('Ext.field.Text', {
          *         xtype  : 'patternfield',
          *
          *         config : {
-         *             component : {
-         *                 pattern : '[0-9]*'
-         *             }
+         *  component : {
+         *      pattern : '[0-9]*'
+         *  }
          *         }
          *     });
          *
@@ -242,18 +359,18 @@ Ext.define('Ext.field.Text', {
          *     Ext.create('Ext.field.Text', {
          *         label: 'My Custom Field',
          *         triggers: {
-         *             foo: {
-         *                 cls: 'my-foo-trigger',
-         *                 handler: function() {
-         *                     console.log('foo trigger clicked');
-         *                 }
-         *             },
-         *             bar: {
-         *                 cls: 'my-bar-trigger',
-         *                 handler: function() {
-         *                     console.log('bar trigger clicked');
-         *                 }
-         *             }
+         *  foo: {
+         *      cls: 'my-foo-trigger',
+         *      handler: function() {
+         *          console.log('foo trigger clicked');
+         *      }
+         *  },
+         *  bar: {
+         *      cls: 'my-bar-trigger',
+         *      handler: function() {
+         *          console.log('bar trigger clicked');
+         *      }
+         *  }
          *         }
          *     });
          *
@@ -263,20 +380,20 @@ Ext.define('Ext.field.Text', {
          *     Ext.create('Ext.form.DatePicker', {
          *         label: 'Pick a Date',
          *         triggers: {
-         *             foo: {
-         *                 cls: 'my-foo-trigger',
-         *                 weight: -2, // negative to place before default triggers
-         *                 handler: function() {
-         *                     console.log('foo trigger clicked');
-         *                 }
-         *             },
-         *             bar: {
-         *                 cls: 'my-bar-trigger',
-         *                 weight: -1,
-         *                 handler: function() {
-         *                     console.log('bar trigger clicked');
-         *                 }
-         *             }
+         *  foo: {
+         *      cls: 'my-foo-trigger',
+         *      weight: -2, // negative to place before default triggers
+         *      handler: function() {
+         *          console.log('foo trigger clicked');
+         *      }
+         *  },
+         *  bar: {
+         *      cls: 'my-bar-trigger',
+         *      weight: -1,
+         *      handler: function() {
+         *          console.log('bar trigger clicked');
+         *      }
+         *  }
          *         }
          *     });
          */
@@ -429,6 +546,13 @@ Ext.define('Ext.field.Text', {
             },
             scope: me
         });
+
+        // If the browser is Chrome and label is in placeholder position,
+        // we need to check if the field has been autofilled by the browser
+        // to be able to move the label out of the text field.
+        if ((Ext.isChrome || Ext.isChromeMobile) && me.getLabelAlign() === 'placeholder') {
+            me.inputElement.on('animationstart', me.onPlaceholderAutoFill, me);
+        }
 
         me.syncEmptyState();
     },
@@ -1133,8 +1257,27 @@ Ext.define('Ext.field.Text', {
 
     onRender: function() {
         this.callParent();
-
         this.syncLabelPlaceholder();
+    },
+
+    /**
+     * This function is currently for chrome only, fired when the textfield is autofilled by Chrome.
+     * The autofilled text elements get the pseudo class ":-webkit-autofill" by Chrome. A blank
+     * animation "onAutoFillStart" is added in "theme-base\sass\var\field\Text.scss" for such
+     * input elements. This will trigger an animation and allow us to detect when the input field
+     * has been autofilled the browser. When this event is fired, we explicitely trigger the
+     * animation to move placeholder text out of the input box, since it doesn't happen implicitly
+     * on page reload in Chrome.
+     * @param {Ext.event.Event} event The current event object
+     */
+    onPlaceholderAutoFill: function(event) {
+        var me = this;
+
+        if (event.browserEvent.animationName === 'onAutoFillStart') {
+            me._animPlaceholderLabel = true;
+            me.setLabelInPlaceholder(false);
+            me.inputElement.removeListener('animationstart', me.onPlaceholderAutoFill, me);
+        }
     },
 
     getRefItems: function(deep) {

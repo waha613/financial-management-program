@@ -3,8 +3,8 @@
  * optional step value for each spin up/down increment/decrement.
  *
  * Example usage:
- *
- *     @example
+ * ```javascript
+ *  @example({ framework: 'extjs' })
  *     var spinner = Ext.create('Ext.field.Spinner', {
  *         label: 'Spinner Field',
  *         minValue: 0,
@@ -13,6 +13,77 @@
  *         cycle: true
  *     });
  *     Ext.Viewport.add({ xtype: 'container', items: [spinner] });
+ * ```
+ * ```javascript
+ *  @example({framework: 'ext-react', packages:['ext-react']})
+ *  import React, { Component } from 'react';
+ *  import { ExtContainer, ExtSpinnerField, ExtFormPanel } from '@sencha/ext-react';
+ *  export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtContainer layout="center">
+ *                 <ExtFormPanel shadow>
+ *                     <ExtSpinnerField
+ *                         label="Spinner"
+ *                         width="150"
+ *                         minValue={0}
+ *                         maxValue={10}
+ *                         stepValue={1}
+ *                     />
+ *                 </ExtFormPanel>
+ *             </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer layout="center">
+ *             <ExtFormPanel shadow="true" >
+ *                 <ExtSpinnerField
+ *                     label="Spinner"
+ *                     width="150"
+ *                     minValue="0"
+ *                     maxValue="10"
+ *                     stepValue="1"
+ *                 >
+ *                 </ExtSpinnerField>
+ *             </ExtFormPanel>
+ *         </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container layout="center">
+ *    <ext-formpanel shadow="true">
+ *        <ext-spinnerfield
+ *            label="Spinner"
+ *            width="150"
+ *            minValue="1"
+ *            maxValue="10"
+ *            stepValue="1"
+ *        >
+ *        </ext-spinnerfield>
+ *    </ext-formpanel>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-spinnerfield.component';
+ *
+ * export default class SpinnerFieldComponent {}
+ * ```
  *
  */
 Ext.define('Ext.field.Spinner', {
@@ -244,7 +315,7 @@ Ext.define('Ext.field.Spinner', {
             value = originalValue + stepValue;
         }
 
-        // if cycle is true, then we need to check fi the value hasn't 
+        // if cycle is true, then we need to check fi the value hasn't
         // changed and we cycle the value
         if (me.getCycle()) {
             if (originalValue === minValue && value < minValue) {

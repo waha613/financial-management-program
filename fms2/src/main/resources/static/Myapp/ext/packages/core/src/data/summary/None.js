@@ -16,6 +16,11 @@ Ext.define('Ext.data.summary.None', {
         value: null
     },
 
+    /**
+     * Name of the summary function that appears in the {@link Ext.grid.plugin.Summaries} plugin
+     */
+    text: 'None',
+
     calculate: function() {
         return this.getValue();
     }

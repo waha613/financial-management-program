@@ -1,4 +1,10 @@
-topSuite('Ext.field.Field_layout', [false, 'Ext.field.Field'], function() {
+topSuite('Ext.field.Field_layout', [
+    false,
+    'Ext.Container',
+    'Ext.layout.HBox',
+    'Ext.layout.VBox',
+    'Ext.field.Field'
+], function() {
     var Field = Ext.define(null, {
             extend: Ext.field.Field,
             getBodyTemplate: function() {
@@ -21,7 +27,7 @@ topSuite('Ext.field.Field_layout', [false, 'Ext.field.Field'], function() {
         if (containerConfig === null && !field.getFloated()) {
             field.render(Ext.getBody());
         }
- else {
+        else {
             container = new Ext.Container(Ext.apply({
                 renderTo: Ext.getBody(),
                 width: 600,
@@ -2862,4 +2868,3 @@ topSuite('Ext.field.Field_layout', [false, 'Ext.field.Field'], function() {
 
     // TODO: test labelWidth 'auto'
 });
-

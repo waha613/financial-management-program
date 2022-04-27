@@ -9,6 +9,13 @@ Ext.define('Ext.panel.Resizable', {
          * @cfg {Object} [resizable]
          * A configuration for a {@link Ext.panel.Resizer Resizer}.
          *
+         * **IMPORTANT**: To use this config, the application must require the following
+         * class:
+         *
+         *      requires: [
+         *          'Ext.panel.Resizer'
+         *      ]
+         *
          * @since 6.5.0
          */
         resizable: null

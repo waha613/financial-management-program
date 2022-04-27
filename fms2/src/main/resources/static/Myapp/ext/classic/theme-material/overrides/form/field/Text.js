@@ -3,17 +3,21 @@ Ext.define('Ext.theme.material.form.field.Text', {
 
     labelSeparator: '',
 
-    listeners: {
-        change: function(field, value) {
-            if (field.el) {
-                field.el.toggleCls('not-empty', value || field.emptyText);
-            }
-        },
+    initComponent: function() {
+        this.callParent();
 
-        render: function(ths, width, height, eOpts) {
-            if ((ths.getValue() || ths.emptyText) && ths.el) {
-                ths.el.addCls('not-empty');
+        this.on({
+            change: function(field, value) {
+                if (field.el) {
+                    field.el.toggleCls('not-empty', !Ext.isEmpty(value) || field.emptyText);
+                }
+            },
+
+            render: function(ths, width, height, eOpts) {
+                if ((!Ext.isEmpty(ths.getValue()) || ths.emptyText) && ths.el) {
+                    ths.el.addCls('not-empty');
+                }
             }
-        }
+        });
     }
 });

@@ -78,6 +78,14 @@
         }
     }
 
+    .#{$prefix}chrome &, .#{$prefix}chromemobile & {
+        .#{$prefix}input-el {
+            &:-webkit-autofill {
+                animation-name: onAutoFillStart;
+            }
+        }
+    }
+
     &.#{$prefix}label-align-placeholder .#{$prefix}label-el {
         position: relative;
         z-index: 2;
@@ -116,7 +124,7 @@
     }
 }
 
-
-
-
-
+@keyframes onAutoFillStart {
+    from {/**/}
+    to {/**/}
+}

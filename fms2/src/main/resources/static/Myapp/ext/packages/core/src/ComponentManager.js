@@ -377,8 +377,8 @@ Ext.define('Ext.ComponentManager', {
             if (floatedSelector) {
                 targetFloated = Ext.Component.from(e.getTarget(floatedSelector, Ext.getBody()));
 
-                // If the mousedown is in a floated, move it to top.
-                if (targetFloated) {
+                // If the mousedown is in a floated and not actively animating, move it to top.
+                if (targetFloated && !targetFloated.activeAnimation) {
                     targetFloated.toFront(true);
                 }
             }

@@ -1,7 +1,12 @@
-topSuite("grid-general",
-    [false, 'Ext.grid.Panel', 'Ext.grid.column.*', 'Ext.grid.plugin.*', 'Ext.data.ArrayStore',
-            'Ext.app.ViewController', 'Ext.mixin.Watchable'],
-function() {
+topSuite("grid-general", [
+    false,
+    'Ext.grid.Panel',
+    'Ext.grid.column.*',
+    'Ext.grid.plugin.*',
+    'Ext.data.ArrayStore',
+    'Ext.app.ViewController',
+    'Ext.mixin.Watchable'
+], function() {
     var grid, store,
         synchronousLoad = true,
         proxyStoreLoad = Ext.data.ProxyStore.prototype.load,
@@ -39,33 +44,37 @@ function() {
     });
 
     var scrollbarWidth = Ext.getScrollbarSize().width,
-        transformStyleName = 'webkitTransform' in document.documentElement.style ? 'webkitTransform' : 'transform',
+        transformStyleName = 'webkitTransform',
         scrollbarsTakeSpace = !!scrollbarWidth,
         // Some tests should only be run if the UI shows space-taking scrollbars.
-        // Specifically, those tests which test that the presence or not of a scrollbar in one dimension
-        // affects the presence of a scrollbar in the other dimension.
+        // Specifically, those tests which test that the presence or not of a scrollbar
+        // in one dimension affects the presence of a scrollbar in the other dimension.
         visibleScrollbarsIt = scrollbarsTakeSpace ? it : xit;
 
-        function getViewTop(el) {
-            var dom = Ext.getDom(el),
-                transform;
+    if (!(transformStyleName in document.documentElement.style)) {
+        transformStyleName = 'transform';
+    }
 
-            if (Ext.supports.CssTransforms && !Ext.isIE9m) {
-                transform = dom.style[transformStyleName];
+    function getViewTop(el) {
+        var dom = Ext.getDom(el),
+            transform;
 
-                return transform ? parseInt(transform.split(',')[1], 10) : 0;
-            }
-            else {
-                return parseInt(dom.style.top || '0', 10);
-            }
+        if (Ext.supports.CssTransforms && !Ext.isIE9m) {
+            transform = dom.style[transformStyleName];
+
+            return transform ? parseInt(transform.split(',')[1], 10) : 0;
         }
+        else {
+            return parseInt(dom.style.top || '0', 10);
+        }
+    }
 
     function createSuite(buffered) {
         describe(buffered ? "with buffered rendering" : "without buffered rendering", function() {
             var GridModel, view, colRef;
 
             beforeAll(function() {
-               GridModel = Ext.define(null, {
+                GridModel = Ext.define(null, {
                     extend: 'Ext.data.Model',
                     fields: [
                         'field1',
@@ -316,6 +325,25 @@ function() {
                             }
                         }
                     });
+                });
+
+                it('should change the selection to null after deselect where initial selection is set before render', function() {
+                    makeGrid(null, 10, {
+                        renderTo: null,
+                        bind: {
+                            selection: '{sel}'
+                        },
+                        viewModel: {}
+                    });
+                    grid.setSelection(store.first());
+                    grid.render(Ext.getBody());
+                    var vm = grid.getViewModel();
+
+                    vm.notify();
+                    expect(vm.get('sel')).toBe(store.first());
+                    grid.getSelectionModel().deselectAll();
+                    vm.notify();
+                    expect(vm.get('sel')).toBeNull();
                 });
 
                 // EXTJS-20159
@@ -2793,16 +2821,16 @@ function() {
 
                     it("should reconfigure the scroller if needed", function() {
                         var columnsA = [{
-                            width: 100,
-                            dataIndex: 'field1'
-                        }],
-                        columnsB = [{
-                            width: 300,
-                            dataIndex: 'field1'
-                        }, {
-                            width: 300,
-                            dataIndex: 'field2'
-                        }];
+                                width: 100,
+                                dataIndex: 'field1'
+                            }],
+                            columnsB = [{
+                                width: 300,
+                                dataIndex: 'field1'
+                            }, {
+                                width: 300,
+                                dataIndex: 'field2'
+                            }];
 
                         makeGrid(columnsA, 5, {
                             width: 400,
@@ -3816,7 +3844,7 @@ function() {
                                             afterrender: spy
                                         }
                                     }]);
-                                    expect(renderCount).toBe(2);
+                                    expect(renderCount).toBe(beforeRender ? 2 : 1);
                                     expect(view.refreshCounter).toBe(refreshCounter + 1);
                                 });
                             });
@@ -4320,7 +4348,7 @@ function() {
 
                             // Then we top up the view with the missing rows.
                             // Second getRange will have been called with options, so slice to just test start and end indices
-                            expect(Ext.Array.slice(getRangeSpy.calls[1].args, 0, 2)).toEqual([0, view.bufferedRenderer.viewSize - 1]);
+                            expect(Ext.Array.slice(getRangeSpy.calls[1].args, 0, 2)).toEqual([view.bufferedRenderer.viewSize, Ext.grid.plugin.BufferedRenderer.prototype.viewSize - 1]);
                         });
                     });
 
@@ -8308,6 +8336,176 @@ function() {
 
                 // Must have successfully layed out the table with the new first cell width
                 expect(Ext.fly(grid.lockedGrid.getView().getCell(0, 0)).getWidth()).toBe(150);
+            });
+        });
+
+        describe('Column headers with items', function() {
+            it('should sort by click on header w/item when scrolled', function() {
+                grid = Ext.create({
+                    xtype: 'grid',
+                    title: 'Scroll full right and click Phone',
+                    height: 300,
+                    width: 400,
+                    renderTo: Ext.getBody(),
+
+                    columns: [{
+                        text: 'Name',
+                        dataIndex: 'name',
+                        width: 200
+                    }, {
+                        text: 'Email',
+                        dataIndex: 'email',
+                        width: 200
+                    }, {
+                        text: 'Phone',
+                        dataIndex: 'phone',
+                        items: [{
+                            xtype: 'textfield'
+                        }],
+                        width: 200
+                    }],
+
+                    store: {
+                        fields: ['name', 'email', 'phone'],
+                        data: [
+                            { name: 'Lisa', email: 'lisa@simpsons.com', phone: '555-7777' },
+                            { name: 'Bart', email: 'bart@simpsons.com', phone: '555-1234' },
+                            { name: 'Homer', email: 'homer@simpsons.com', phone: '555-4444' },
+                            { name: 'Marge', email: 'marge@simpsons.com', phone: '555-3333' }
+                        ]
+                    }
+                });
+
+                grid.view.scrollBy(400, null);
+
+                var columns = grid.getVisibleColumns(),
+                    col = columns[2],
+                    scroller = grid.view.getScrollable(),
+                    endPos = scroller.getPosition();
+
+                waits(1);
+
+                runs(function() {
+                    jasmine.fireMouseEvent(col.textEl, 'click');
+                });
+
+                waitsFor(function() {
+                    return grid.store.sorters.length === 1;
+                });
+
+                runs(function() {
+                    var pos = scroller.getPosition();
+
+                    expect(pos).toEqual(endPos);
+                });
+            });
+        });
+    });
+
+    describe('buffered renderer', function() {
+        function lines(n, s) {
+            var a = [];
+
+            for (var i = 0; i < n; ++i) {
+                a.push(s);
+            }
+
+            return a.join('<br>');
+        }
+
+        function rows(n, sample) {
+            var r = [];
+
+            for (var i = 0; i < n; ++i) {
+                r.push(Ext.apply({
+                    id: i + 1
+                }, sample));
+            }
+
+            return r;
+        }
+
+        describe('variableRowHeight', function() {
+            it('should handle large variability during scroll', function() {
+                var data = rows(100, { name: 'Bill', text: 'Ted' }),
+                    topRow;
+
+                // Some really tall rows push our scroll pos well beyond the average
+                // row height:
+                data[3].text = lines(40, 'Bogus');
+                data[4].text = lines(40, 'Bogus');
+                data[5].text = lines(40, 'Bogus');
+                data[6].text = lines(40, 'Bogus');
+                data[7].text = lines(40, 'Bogus');
+
+                grid = Ext.create({
+                    xtype: 'grid',
+                    renderTo: Ext.getBody(),
+                    width: 600,
+                    height: 500,
+                    store: {
+                        fields: ['name', 'text'],
+                        data: data
+                    },
+                    columns: [{
+                        text: 'Id',
+                        dataIndex: 'id'
+                    }, {
+                        text: 'Name',
+                        dataIndex: 'name'
+                    }, {
+                        text: 'Text',
+                        dataIndex: 'text',
+                        variableRowHeight: true,
+                        flex: 1
+                    }]
+                });
+
+                waitsFor(function() {
+                    return grid.view.bufferedRenderer.scrollTop === 0;
+                });
+                runs(function() {
+                    // scroll down enough to detach the rendered content from the top
+                    // of the store...
+                    grid.view.scrollBy(0, 3300);
+                });
+                waitsFor(function() {
+                    return grid.view.bufferedRenderer.scrollTop === 3300;
+                });
+                runs(function() {
+                    topRow = grid.view.all.startIndex;
+
+                    // make sure the bufferedRenderer has de-rendered enough rows:
+                    expect(topRow).toBeGreaterThan(10);
+
+                    // now scroll back up enough to force the rendered range to put new
+                    // rows on the top:
+                    grid.view.scrollBy(0, -200);
+                });
+                waitsFor(function() {
+                    return grid.view.bufferedRenderer.scrollTop === 3100;
+                });
+                runs(function() {
+                    var bufTop = getViewTop(grid.view.body),
+                        bufBot = bufTop + grid.view.body.measure('h'),
+                        visTop = grid.view.bufferedRenderer.scrollTop,
+                        visBot = visTop + grid.view.el.measure('h');
+
+                    // make sure the bufferedRenderer has put some rows above:
+                    expect(grid.view.all.startIndex).toBeLessThan(topRow);
+                    // but not too many (scrolling to 0 is special):
+                    expect(grid.view.all.startIndex).toBeGreaterThan(0);
+
+                    if (visTop < bufTop || visTop > bufBot) {
+                        expect('visTop=' + visTop).toBe(' in buffered range [' + bufTop +
+                            ',' + bufBot + ']');
+                    }
+
+                    if (visBot < bufTop || visBot > bufBot) {
+                        expect('visBot=' + visBot).toBe(' in buffered range [' + bufTop +
+                            ',' + bufBot + ']');
+                    }
+                });
             });
         });
     });

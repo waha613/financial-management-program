@@ -1172,6 +1172,7 @@ Ext.define('Ext.layout.Context', {
         me.purgeInvalidates();
         me.flushInvalidates();
 
+        Ext.layoutUpdates = (Ext.layoutUpdates || 0) + 1;
         me.state = 1;
         me.totalCount = me.layoutQueue.getCount();
 

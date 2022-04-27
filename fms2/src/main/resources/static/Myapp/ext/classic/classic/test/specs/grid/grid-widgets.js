@@ -1,24 +1,34 @@
-topSuite("grid-widgets",
-    [false, 'Ext.grid.Panel', 'Ext.grid.column.Widget', 'Ext.ProgressBarWidget',
-     'Ext.slider.Widget', 'Ext.sparkline.*', 'Ext.Button'],
-function() {
-    var testIt = Ext.isWebKit ? it : xit,
-        itNotIE8 = !Ext.isIE8 ? it : xit,
+topSuite('grid-widgets', [
+    false,
+    'Ext.grid.Panel',
+    'Ext.grid.column.Widget',
+    'Ext.ProgressBarWidget',
+    'Ext.slider.Widget',
+    'Ext.sparkline.*',
+    'Ext.Button'
+], function() {
+    var itNotIE8 = !Ext.isIE8 ? it : xit,
         grid, view, store,
         GridModel = Ext.define(null, {
             extend: 'Ext.data.Model',
             fields: [
-               { name: 'name' },
-               { name: 'progress', type: 'float' },
-               'sequence1',
-               'sequence2',
-               'sequence3',
-               'sequence4',
-               'sequence5',
-               'sequence6',
-               'sequence7'
+                { name: 'name' },
+                { name: 'progress', type: 'float' },
+                'sequence1',
+                'sequence2',
+                'sequence3',
+                'sequence4',
+                'sequence5',
+                'sequence6',
+                'sequence7'
             ]
         });
+
+    afterEach(function() {
+        Ext.destroy(grid, store);
+        grid = store = null;
+        Ext.data.Model.schema.clear();
+    });
 
     function getRowContextCount() {
         return Ext.Object.getSize(grid.liveRowContexts);
@@ -51,21 +61,15 @@ function() {
             };
 
         for (i = 0; i < (recordCount || 20); i++) {
-            result.push(['Record ' + (i + 1), Ext.Number.randomInt(0, 100) / 100, generateSequence(), generateSequence(), generateSequence(), generateSequence(20, 1, 10), generateSequence(4, 10, 20), generateSequence(), generateSequence(20, -1, 1)]);
+            result.push([
+                'Record ' + (i + 1), Ext.Number.randomInt(0, 100) / 100,
+                generateSequence(), generateSequence(), generateSequence(),
+                generateSequence(20, 1, 10), generateSequence(4, 10, 20),
+                generateSequence(), generateSequence(20, -1, 1)
+            ]);
         }
 
         return result;
-    }
-
-    function spyOnEvent(object, eventName, fn) {
-        var obj = {
-                fn: fn || Ext.emptyFn
-            },
-            spy = spyOn(obj, "fn");
-
-        object.addListener(eventName, obj.fn);
-
-        return (object[eventName] = spy);
     }
 
     function makeGrid(recordCount, cfg, columns, useLocking) {
@@ -191,12 +195,6 @@ function() {
         view = useLocking ? grid.normalGrid.getView() : grid.getView();
     }
 
-    afterEach(function() {
-        Ext.destroy(grid, store);
-        grid = store = null;
-        Ext.data.Model.schema.clear();
-    });
-
     describe("Refreshing", function() {
         it("should not create more widgets", function() {
             makeGrid();
@@ -224,7 +222,7 @@ function() {
         });
     });
 
-    describe("buffered rendering", function() {
+    describe('buffered rendering', function() {
         itNotIE8('should not create new widgets when scrolling', function() {
             var widgetCount,
                 normalView,
@@ -254,12 +252,14 @@ function() {
                 if (readyToScroll) {
                     readyToScroll = 0;
                     timer = Ext.defer(function() {
-                        normalView.bufferedRenderer.scrollTo(lastRow + 3, false, function(success, record, item) {
-                            scroller.ensureVisible(item);
-                            readyToScroll = true;
-                            lastRow = normalView.bufferedRenderer.getLastVisibleRowIndex();
-                            scrollIt(scroller);
-                        });
+                        normalView.bufferedRenderer.scrollTo(
+                            lastRow + 3, false,
+                            function(success, record, item) {
+                                scroller.ensureVisible(item);
+                                readyToScroll = true;
+                                lastRow = normalView.bufferedRenderer.getLastVisibleRowIndex();
+                                scrollIt(scroller);
+                            });
                     }, 50);
                 }
             }, 'scroll to complete', 20000);
@@ -272,8 +272,8 @@ function() {
         });
     });
 
-    describe("CQ on widgets", function() {
-        it("should return just the rendered widgets", function() {
+    describe('CQ on widgets', function() {
+        it('should return just the rendered widgets', function() {
             makeGrid(10, null, null, true);
 
             // Return one progressbarwidget for each row
@@ -312,6 +312,149 @@ function() {
             jasmine.fireMouseEvent(btn.dom, 'mousedown', null, null, true);
 
             expect(pos).toEqual(view.getScrollY());
+        });
+    });
+
+    describe('recycling', function() {
+        function makeLockedGrid(widgetColCfg, data) {
+            if (!data) {
+                data = [
+                    { name: 'Bob', flag1: true, flag2: false }
+                ];
+            }
+            else if (typeof data === 'number') {
+                var n = data,
+                    i;
+
+                data = [];
+
+                for (i = 0; i < n; ++i) {
+                    data.push({
+                        name: 'Bob ' + i,
+                        flag1: !(i % 2),
+                        flag2: !!(i % 2)
+                    });
+                }
+            }
+
+            grid = Ext.create({
+                xtype: 'grid',
+                renderTo: Ext.getBody(),
+                width: 500,
+                height: 400,
+                store: data,
+                columns: [{
+                    text: 'Name',
+                    locked: true,
+                    dataIndex: 'name'
+                }, Ext.merge({
+                    text: 'Flag',
+                    width: 150,
+                    xtype: 'widgetcolumn',
+                    dataIndex: 'flag',
+                    widget: {
+                        xtype: 'button',
+                        text: 'locked'
+                    }
+                }, widgetColCfg), {
+                    text: 'Flag',
+                    flex: 1,
+                    xtype: 'widgetcolumn',
+                    dataIndex: 'flag2',
+                    locked: false,
+                    widget: {
+                        xtype: 'button',
+                        text: 'unlocked'
+                    }
+                }]
+            });
+        }
+
+        afterEach(function() {
+            grid = Ext.destroy(grid);
+
+            // Widget columns create Element wrappers around transient elements in their
+            // cell bodies... this is not a bug, so clean it up (anything left over will
+            // trigger jazzman garbage errors as it should).
+            Ext.dom.GarbageCollector.collect();
+        });
+
+        it('should properly detach and recycle widgets when locking', function() {
+            makeLockedGrid({
+                locked: true
+            });
+
+            grid.store.filterBy(function(record) {
+                var name = record.get('name');
+
+                return name !== 'Bob';
+            });
+
+            Ext.dom.GarbageCollector.collect();
+
+            grid.store.clearFilter();
+        });
+
+        it('should properly lock a widget column', function() {
+            makeLockedGrid();
+
+            var columns = grid.getVisibleColumns();
+
+            grid.lock(columns[1]);
+        });
+
+        it('should properly unlock a widget column', function() {
+            makeLockedGrid({
+                locked: true
+            });
+
+            var columns = grid.getVisibleColumns();
+
+            grid.unlock(columns[1]);
+        });
+
+        it('should properly lock a widget column while scrolled', function() {
+            makeLockedGrid({
+                locked: false
+            }, 100);
+
+            var columns = grid.getVisibleColumns(),
+                rows = grid.normalGrid.view.all,
+                pos;
+
+            expect(rows.startIndex).toBe(0);
+            grid.view.scrollBy(null, 1200);
+
+            waits(function() {
+                return rows.startIndex > 0;
+            });
+            runs(function() {
+                pos = rows.startIndex;
+                grid.lock(columns[1]);
+                expect(rows.startIndex).toBe(pos);
+            });
+        });
+
+        it('should properly unlock a widget column while scrolled', function() {
+            makeLockedGrid({
+                locked: true
+            }, 100);
+
+            var columns = grid.getVisibleColumns(),
+                rows = grid.normalGrid.view.all,
+                pos;
+
+            expect(rows.startIndex).toBe(0);
+            grid.view.scrollBy(null, 1200);
+
+            waits(function() {
+                return rows.startIndex > 0;
+            });
+            runs(function() {
+                pos = rows.startIndex;
+                grid.unlock(columns[1]);
+                expect(rows.startIndex).toBe(pos);
+            });
         });
     });
 });

@@ -438,7 +438,7 @@ Ext.define('Ext.data.reader.Reader', {
          *         },
          *     });
          *
-         */ 
+         */
         transform: null,
 
         /**
@@ -558,6 +558,10 @@ Ext.define('Ext.data.reader.Reader', {
     },
 
     updateSuccessProperty: function() {
+        this.forceBuildExtractors();
+    },
+
+    updateSummaryRootProperty: function() {
         this.forceBuildExtractors();
     },
 
@@ -823,7 +827,6 @@ Ext.define('Ext.data.reader.Reader', {
                 //     namespace: 'MyApp'
                 // }
                 if (typeProperty && (nodeType = me.getChildType(schema, node, typeProperty))) {
-
                     reader = nodeType.getProxy().getReader();
 
                     record = reader.extractRecord(
@@ -1002,16 +1005,23 @@ Ext.define('Ext.data.reader.Reader', {
      * @private
      */
     readAssociated: function(record, data, readOptions) {
-        var roles = record.associations,
+        var me = this,
+            roles = record.associations,
             key, role;
 
         for (key in roles) {
             if (roles.hasOwnProperty(key)) {
                 role = roles[key];
 
+                if (!record.phantom && readOptions && !readOptions.recordCreator) {
+                    Ext.apply(readOptions, {
+                        recordCreator: me.defaultRecordCreatorFromServer
+                    });
+                }
+
                 // The class for the other role may not have loaded yet
                 if (role.cls) {
-                    role.read(record, data, this, readOptions);
+                    role.read(record, data, me, readOptions);
                 }
             }
         }
@@ -1209,11 +1219,11 @@ Ext.define('Ext.data.reader.Reader', {
             me.setConfig(reader.getConfig());
             --me.duringInit;
             me.hasExtractors = true;
-        },
+        }
 
-        getGroupRoot: Ext.privateFn,
-
-        getSummaryRoot: Ext.privateFn
+        // Abstract methods:
+        // getGroupRoot
+        // getSummaryRoot
     }
 }, function(Cls) {
     var proto = Cls.prototype;

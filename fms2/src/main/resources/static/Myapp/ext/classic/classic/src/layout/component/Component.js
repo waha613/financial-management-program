@@ -247,7 +247,7 @@ Ext.define('Ext.layout.component.Component', {
             zeroWidth, zeroHeight,
             needed = 0,
             got = 0,
-            ready, size, temp, key, cache;
+            ready, size, temp, key, cache, dirty;
 
         // Note: this method is called *a lot*, so we have to be careful not to waste any
         // time or make useless calls or, especially, read the DOM when we can avoid it.
@@ -356,7 +356,11 @@ Ext.define('Ext.layout.component.Component', {
 
                 if (ready) {
                     if (!isNaN(ret.width = me.measureOwnerWidth(ownerContext))) {
-                        ownerContext.setWidth(ret.width, false);
+                        // if minWidth/maxWidth was specified, we need to mark this as dirty
+                        // so the new ret.width is applied to this context.
+                        dirty = !!((target.minWidth || target.maxWidth) &&
+                            typeof target.width !== 'number');
+                        ownerContext.setWidth(ret.width, dirty);
                         ret.gotWidth = true;
                         ++got;
                     }
@@ -476,7 +480,11 @@ Ext.define('Ext.layout.component.Component', {
 
                 if (ready) {
                     if (!isNaN(ret.height = me.measureOwnerHeight(ownerContext))) {
-                        ownerContext.setHeight(ret.height, false);
+                        // if minHeight/maxHeight was specified, we need to mark this as dirty
+                        // so the new ret.height is applied to this context.
+                        dirty = !!((target.minHeight || target.maxHeight) &&
+                            typeof target.height !== 'number');
+                        ownerContext.setHeight(ret.height, dirty);
                         ret.gotHeight = true;
                         ++got;
                     }

@@ -847,6 +847,13 @@ Ext.define('Ext.tree.Panel', {
             root = me.getRootNode(),
             view = me.getView();
 
+        if (view.scrollable) {
+            // These 2 lines set the trackingScrollTop to 0 because once the 
+            // collapse all is done we don't need to track the older scroll position
+            view.scrollable.doScrollTo(0, 0);
+            view.scrollable.updateDomScrollPosition();
+        }
+
         if (root) {
             Ext.suspendLayouts();
             scope = scope || me;

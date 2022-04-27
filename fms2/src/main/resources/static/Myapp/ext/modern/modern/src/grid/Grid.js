@@ -1432,6 +1432,19 @@ Ext.define('Ext.grid.Grid', {
             }
         },
 
+        applyStore: function(store, oldStore) {
+            var me = this,
+                ret = me.callParent([ store, oldStore ]);
+
+            //<debug>
+            if (ret && ret.isVirtualStore && me.getGrouped()) {
+                Ext.Logger.warn('Virtual store does not suppport grouping');
+            }
+            //</debug>
+
+            return ret;
+        },
+
         applyRowNumbers: function(rowNumbers) {
             var me = this;
 
@@ -1522,11 +1535,13 @@ Ext.define('Ext.grid.Grid', {
                 // To hide the headers, just pull the following element upwards to cover it
                 if (hideHeaders) {
                     headerContainer.el.setStyle({
+                        visibility: 'hidden',
                         marginBottom: '-' + headerContainer.el.measure('h') + 'px'
                     });
                 }
                 else {
                     headerContainer.el.setStyle({
+                        visibility: '',
                         marginBottom: ''
                     });
                 }

@@ -123,9 +123,12 @@ Ext.define('Ext.Decorator', {
      * @private
      */
     applyComponent: function(config) {
-        var result = Ext.factory(config);
+        var result;
 
-        result.ownerCmp = this;
+        if (config) {
+            result = Ext.factory(config);
+            result.ownerCmp = this;
+        }
 
         return result;
     },

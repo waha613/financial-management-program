@@ -361,7 +361,7 @@ Ext.define('Ext.Editor', {
     startEdit: function(el, value, doFocus, isResuming) {
         var me = this,
             field = me.field,
-            dom, ownerCt, renderTo;
+            dom, ownerCt, renderTo, delay;
 
         if (!isResuming) {
             me.completeEdit(true);
@@ -399,13 +399,23 @@ Ext.define('Ext.Editor', {
 
             // temporarily suspend events on field to prevent the "change" event from firing
             // when resetOriginalValue() and setValue() are called
-            field.suspendEvents();
-            field.setValue(value);
-            field.resetOriginalValue();
-            field.resumeEvents();
+            if (!isResuming) {
+                field.suspendEvents();
+                field.setValue(value);
+                field.resetOriginalValue();
+                field.resumeEvents();
+            }
 
             if (doFocus !== false) {
-                field.focus(field.selectOnFocus ? true : [Ext.Number.MAX_SAFE_INTEGER]);
+                // Set a delay parameter to true to prevent the cursor from jumping 
+                // after focus for IE: https://sencha.jira.com/browse/EXTJS-26698
+                delay = Ext.isIE ? true : false;
+
+                // Use maximum 32 bit signed integer for setSelectionRange start value. Any
+                // higher value causes an issue with IE/Edge/Safari by selecting text when 
+                // selectOnFocus is false.
+                // https://sencha.jira.com/browse/EXTJS-26698
+                field.focus(field.selectOnFocus ? true : [Ext.Number.MAX_32BIT_INTEGER], delay);
             }
 
             if (field.autoSize) {

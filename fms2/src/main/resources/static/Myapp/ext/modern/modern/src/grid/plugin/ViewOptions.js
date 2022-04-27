@@ -8,48 +8,161 @@
  * Once the columns are ordered to your liking, you may then close the menu by tapping the
  * "Done" button.
  *
- *     @example
- *     var store = Ext.create('Ext.data.Store', {
- *         fields: ['name', 'email', 'phone'],
- *         data: [{
- *             name: 'Lisa',
- *             email: 'lisa@simpsons.com',
- *             phone: '555-111-1224'
- *         }, {
- *             name: 'Bart',
- *             email: 'bart@simpsons.com',
- *             phone: '555-111-1234'
- *         }, {
- *             name: 'Homer',
- *             email: 'homer@simpsons.com',
- *             phone: '555-222-1244'
- *         }, {
- *             name: 'Marge',
- *             email: 'marge@simpsons.com',
- *             phone: '555-222-1254'
- *         }]
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var store = Ext.create('Ext.data.Store', {
+ *     fields: ['name', 'email', 'phone'],
+ *     data: [{
+ *         name: 'Lisa',
+ *         email: 'lisa@simpsons.com',
+ *         phone: '555-111-1224'
+ *     }, {
+ *         name: 'Bart',
+ *         email: 'bart@simpsons.com',
+ *         phone: '555-111-1234'
+ *     }, {
+ *         name: 'Homer',
+ *         email: 'homer@simpsons.com',
+ *         phone: '555-222-1244'
+ *     }, {
+ *         name: 'Marge',
+ *         email: 'marge@simpsons.com',
+ *         phone: '555-222-1254'
+ *     }]
+ * });
+ *
+ * Ext.create('Ext.grid.Grid', {
+ *     store: store,
+ *     plugins: {
+ *         gridviewoptions: true
+ *     },
+ *     columns: [{
+ *         text: 'Name',
+ *         dataIndex: 'name',
+ *         width: 200
+ *     }, {
+ *         text: 'Email',
+ *         dataIndex: 'email',
+ *         width: 250
+ *     }, {
+ *         text: 'Phone',
+ *         dataIndex: 'phone',
+ *         width: 120
+ *     }],
+ *     fullscreen: true
+ * });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container width="100%" height="100%">
+ *     <ext-grid
+ *         shadow="true"
+ *         height="100%"
+ *         onready="basicgrid.onGridReady"
+ *         plugins='["gridviewoptions"]'
+ *     >
+ *         <ext-column text="Name" dataIndex="name" flex="1" sortable="false"></ext-column>
+ *         <ext-column text="Email" dataIndex="email" flex="1"></ext-column>
+ *         <ext-column text="Phone" dataIndex="phone" flex="1"></ext-column>
+ *     </ext-grid>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-grid.component';
+ * import '@sencha/ext-web-components/dist/ext-column.component';
+ * 
+ * Ext.require('Ext.grid.plugin.ViewOptions');
+ * 
+ * export default class BasicGridComponent {
+ *     constructor() {
+ *        this.store = new Ext.data.Store({
+ *           data: [
+ *               { "name": "Lisa", "email": "lisa@simpsons.com", "phone": "555-111-1224" },
+ *               { "name": "Bart", "email": "bart@simpsons.com", "phone": "555-222-1234" },
+ *               { "name": "Homer", "email": "home@simpsons.com", "phone": "555-222-1244" },
+ *               { "name": "Marge", "email": "marge@simpsons.com", "phone": "555-222-1254" }
+ *           ]
+ *        });
+ *     }
+ * 
+ *     onGridReady(event) {
+ *         this.basicGridCmp = event.detail.cmp;
+ *         this.basicGridCmp.setStore(this.store);
+ *     }
+ * }
+ * 
+ *   window.basicgrid = new BasicGridComponent();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react'
+ * import { ExtGrid, ExtColumn } from '@sencha/ext-react';
+ * 
+ * Ext.require('Ext.grid.plugin.ViewOptions');
+ *
+ * export default class MyExample extends Component {
+ *
+ *     store = new Ext.data.Store({
+ *         data: [
+ *             { "name": "Lisa", "email": "lisa@simpsons.com", "phone": "555-111-1224" },
+ *             { "name": "Bart", "email": "bart@simpsons.com", "phone": "555-222-1234" },
+ *             { "name": "Homer", "email": "home@simpsons.com", "phone": "555-222-1244" },
+ *             { "name": "Marge", "email": "marge@simpsons.com", "phone": "555-222-1254" }
+ *         ]
  *     });
  *
- *     Ext.create('Ext.grid.Grid', {
- *         store: store,
- *         plugins: {
- *             gridviewoptions: true
- *         },
- *         columns: [{
- *             text: 'Name',
- *             dataIndex: 'name',
- *             width: 200
- *         }, {
- *             text: 'Email',
- *             dataIndex: 'email',
- *             width: 250
- *         }, {
- *             text: 'Phone',
- *             dataIndex: 'phone',
- *             width: 120
- *         }],
- *         fullscreen: true
- *     });
+ *     render() {
+ *         return (
+ *             <ExtGrid
+ *                 layout="fit"
+ *                 store={this.store}
+ *                 plugins={[ 'gridviewoptions' ]}
+ *             >
+ *                 <ExtColumn text="Name" dataIndex="name" flex={1} sortable={false} />
+ *                 <ExtColumn text="Email" dataIndex="email" flex={1} />
+ *                 <ExtColumn text="Phone" dataIndex="phone" flex={1} />
+ *             </ExtGrid>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ *  import { Component } from '@angular/core'
+ *  declare var Ext: any;
+ *
+ *  Ext.require('Ext.grid.plugin.ViewOptions');
+ *  @Component({
+ *      selector: 'app-root-1',
+ *      styles: [`
+ *              `],
+ *      template: `
+ *      <ExtContainer layout="fit">
+ *          <ExtGrid
+ *              [height]="'500px'"
+ *              [store]="store"
+ *              plugins="gridviewoptions"
+ *          >
+ *              <ExtColumn text="Name" dataIndex="name" flex="1" [sortable]="false"></ExtColumn>
+ *              <ExtColumn text="Email" dataIndex="email" flex="1"></ExtColumn>
+ *              <ExtColumn text="Phone" dataIndex="phone" flex="1"></ExtColumn>
+ *          </ExtGrid>
+ *      </ExtContainer>
+ *      `
+ *  })
+ *  export class AppComponent {
+ *      store = new Ext.data.Store({
+ *          data: [
+ *              { "name": "Lisa", "email": "lisa@simpsons.com", "phone": "555-111-1224" },
+ *              { "name": "Bart", "email": "bart@simpsons.com", "phone": "555-222-1234" },
+ *              { "name": "Homer", "email": "home@simpsons.com", "phone": "555-222-1244" },
+ *              { "name": "Marge", "email": "marge@simpsons.com", "phone": "555-222-1254" }
+ *          ]
+ *      });
+ *  }
+ * ```
  *
  * Developers may modify the menu and its contents by overriding {@link #sheet} and
  * {@link #columnList} respectively.
@@ -121,6 +234,7 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
                     infinite: true,
                     mode: 'MULTI',
                     variableHeights: true,
+                    scrollToTopOnRefresh: false,
                     plugins: {
                         sortablelist: {
                             source: {
@@ -308,10 +422,13 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
 
     onVisibleIndicatorTap: function(row, record) {
         var hidden = !record.get('hidden'),
-            column = Ext.getCmp(record.get('id'));
+            column = Ext.getCmp(record.get('id')),
+            len = this.getGrid().getVisibleColumns().length;
 
-        column.setHidden(hidden);
-        record.set('hidden', hidden);
+        if (len > 1 || (len && column.isHidden())) {
+            column.setHidden(hidden);
+            record.set('hidden', hidden);
+        }
     },
 
     onGroupIndicatorTap: function(row, record) {

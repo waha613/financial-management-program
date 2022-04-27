@@ -1446,7 +1446,7 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
 
                     if (me.lastOverRecord) {
                         me.select(me.lastOverRecord);
-                        selData.setRangeStart(me.store.indexOf(me.lastOverRecord));
+                        selData.setRangeStart(view.dataSource.indexOf(me.lastOverRecord));
                     }
                 }
             }
@@ -1474,7 +1474,7 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
             me.stopAutoScroller();
 
             record = view.getRecord(cell.parentNode);
-            rowIdx = me.store.indexOf(record);
+            rowIdx = view.dataSource.indexOf(record);
             recChange = record !== me.lastOverRecord;
             colChange = header !== me.lastOverColumn;
 

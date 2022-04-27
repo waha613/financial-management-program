@@ -111,7 +111,7 @@ public class InboundDetailsController {
     }
 
     @RequestMapping("/generateInvoice")
-    public void getInboundsDetailFromExcel(InboundDetailsPage page, HttpServletResponse response) {
+    public synchronized void getInboundsDetailFromExcel(InboundDetailsPage page, HttpServletResponse response) {
         try {
 
             List<InboundDetails> allInboundDetails = inboundDetailsService.getAllInboundDetails(page);

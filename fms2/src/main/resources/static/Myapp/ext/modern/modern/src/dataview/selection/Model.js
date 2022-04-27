@@ -465,6 +465,11 @@ Ext.define('Ext.dataview.selection.Model', {
         }
 
         if (me.getMode() === "single" && records) {
+
+            if (me.getSelected().getCount()) {
+                me.getSelection().clear(true);
+            }
+
             record = records.length ? records[0] : records;
             me.doSingleSelect(record, suppressEvent);
         }
@@ -583,7 +588,15 @@ Ext.define('Ext.dataview.selection.Model', {
     },
 
     fireSelectionChange: function(records, selected) {
-        this.fireEvent('selectionchange', this.getView(), records, selected);
+        var me = this,
+            view = me.getView(),
+            sel = me.getSelection();
+
+        // own event
+        me.fireEvent('selectionchange', this.view, records, selected, sel);
+
+        // Fire dataview's selectionchange event.
+        view.fireEvent('selectionchange', this.view, records, selected, sel);
     },
 
     /**

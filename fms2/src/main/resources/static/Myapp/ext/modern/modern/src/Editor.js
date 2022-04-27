@@ -17,46 +17,48 @@
  *
  * Sample usage:
  *
- *     @example
- *     var form = Ext.create('Ext.form.Panel', {
- *         renderTo: Ext.getBody(),
- *         width: 380,
- *         height: 400,
- *         title: 'User Details',
- *         bodyPadding: 10,
- *         items: [{
- *             html: 'Double-Click on the header title, this, or the field label to edit',
- *             height:30
- *         },{
- *             label: 'First Name',
- *             name: 'firstname',
- *             xtype: 'textfield'
- *         }]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var form = Ext.create('Ext.form.Panel', {
+ *     renderTo: Ext.getBody(),
+ *     width: 380,
+ *     height: 400,
+ *     title: 'User Details',
+ *     bodyPadding: 10,
+ *     items: [{
+ *         html: 'Double-Click on the header title, this, or the field label to edit',
+ *         height:30
+ *     },{
+ *         label: 'First Name',
+ *         name: 'firstname',
+ *         xtype: 'textfield'
+ *     }]
+ * });
  *
- *     var editor = new Ext.Editor({
- *         // update the innerHTML of the bound element 
- *         // when editing completes
- *         updateEl: true,
- *         alignment: 'l-l',
- *         autoSize: {
- *             width: 'boundEl'
- *         },
- *         field: {
- *             xtype: 'textfield'
- *         }
- *     });
+ * var editor = new Ext.Editor({
+ *     // update the innerHTML of the bound element 
+ *     // when editing completes
+ *     updateEl: true,
+ *     alignment: 'l-l',
+ *     autoSize: {
+ *         width: 'boundEl'
+ *     },
+ *     field: {
+ *         xtype: 'textfield'
+ *     }
+ * });
  *
- *     form.header.getTitle().textEl.on('dblclick', function(e, t) {
- *         editor.startEdit(t);
- *     });
+ * form.header.getTitle().textEl.on('dblclick', function(e, t) {
+ *     editor.startEdit(t);
+ * });
  *
- *     form.getTargetEl().on('dblclick', function(e, t) {
- *         editor.startEdit(t);
- *         // Manually focus, since clicking on the label will focus the text field
- *         editor.getField().focus(50, true);
- *     });
+ * form.getTargetEl().on('dblclick', function(e, t) {
+ *     editor.startEdit(t);
+ *     // Manually focus, since clicking on the label will focus the text field
+ *     editor.getField().focus(50, true);
+ * });
  *
+ * ```
  * {@img Ext.Editor/Ext.Editor.png Ext.Editor component}
  *
  */
@@ -349,16 +351,16 @@ Ext.define('Ext.Editor', {
     /**
      * Starts the editing process and shows the editor.
      * @param {String/HTMLElement/Ext.dom.Element} el The element to edit
-     * @param {String} value (optional) A value to initialize the editor with. If a value is not
+     * @param {String} [value] A value to initialize the editor with. If a value is not
      * provided, it defaults to the innerHTML of el.
-     * @param doFocus (private)
+     * @param [doFocus] (private)
      */
     startEdit: function(el, value, doFocus) {
         var me = this,
             field = me.getField(),
             dom, font;
 
-        if (!this.allowBlur && this.editing) {
+        if (!me.allowBlur && me.editing) {
             me.toggleBoundEl(true);
         }
 
@@ -376,7 +378,7 @@ Ext.define('Ext.Editor', {
                 value = me.context.value;
             }
 
-            if (this.matchFont) {
+            if (me.matchFont) {
                 font = el.getStyle('font');
 
                 if (!font) {
@@ -431,8 +433,11 @@ Ext.define('Ext.Editor', {
      * editor.
      * @param {Boolean} [remainVisible=false] Override the default behavior and keep the editor
      * visible after edit
+     * @param {Boolean} [followItem] (private) Pass `true` to ensure the item remains visible,
+     * that is, the component that contains the editor. This is used by grid cell editing to
+     * track the item (i.e., the row component) since it may move due to edit of sorted fields.
      */
-    completeEdit: function(remainVisible) {
+    completeEdit: function(remainVisible, followItem) {
         var me = this,
             field = me.getField(),
             startValue = me.startValue,
@@ -449,14 +454,14 @@ Ext.define('Ext.Editor', {
         // this will prevent the possible overwriting of server set errors
         if (!field.isValid() || !field.validate()) {
             if (me.revertInvalid !== false) {
-                me.cancelEdit(remainVisible);
+                me.cancelEdit(remainVisible, followItem);
             }
 
             return;
         }
 
         if (me.ignoreNoChange && !field.didValueChange(value, startValue)) {
-            me.onEditComplete(remainVisible);
+            me.onEditComplete(remainVisible, false, followItem);
 
             return;
         }
@@ -469,7 +474,7 @@ Ext.define('Ext.Editor', {
                 me.boundEl.setHtml(value);
             }
 
-            me.onEditComplete(remainVisible, cancel);
+            me.onEditComplete(remainVisible, cancel, followItem);
             me.fireEvent('complete', me, value, startValue, me.getLocation());
         }
     },
@@ -493,8 +498,9 @@ Ext.define('Ext.Editor', {
      * value will be reverted to the original starting value.
      * @param {Boolean} [remainVisible=false] Override the default behavior and keep the editor
      * visible after cancel
+     * @param {Boolean} [followItem] (private) Pass `true` to ensure the item remains visible.
      */
-    cancelEdit: function(remainVisible) {
+    cancelEdit: function(remainVisible, followItem) {
         var me = this,
             startValue = me.startValue,
             field = me.getField(),
@@ -510,7 +516,7 @@ Ext.define('Ext.Editor', {
                 field.resumeEvents();
             }
 
-            me.onEditComplete(remainVisible, true);
+            me.onEditComplete(remainVisible, true, followItem);
             me.fireEvent('canceledit', me, value, startValue);
             delete me.editedValue;
         }
@@ -519,13 +525,13 @@ Ext.define('Ext.Editor', {
     /**
      * @private
      */
-    onEditComplete: function(remainVisible, cancelling) {
+    onEditComplete: function(remainVisible /* , cancelling, followItem */) {
         var me = this,
             field = me.getField();
 
         me.editing = false;
 
-        if (remainVisible !== true) {
+        if (!remainVisible) {
             me.hide();
             me.toggleBoundEl(true);
         }

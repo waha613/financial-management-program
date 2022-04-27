@@ -6,44 +6,45 @@
  *
  * ## Example
  *
- *     @example
- *     var form = Ext.create('Ext.form.Panel', {
- *         fullscreen: true,
- *         items: [
- *             {
- *                 xtype: 'checkboxfield',
- *                 name : 'tomato',
- *                 label: 'Tomato',
- *                 value: 'tomato',
- *                 checked: true
- *             },
- *             {
- *                 xtype: 'checkboxfield',
- *                 name : 'salami',
- *                 label: 'Salami'
- *             },
- *             {
- *                 xtype: 'toolbar',
- *                 docked: 'bottom',
- *                 items: [
- *                     { xtype: 'spacer' },
- *                     {
- *                         text: 'getValues',
- *                         handler: function() {
- *                             var form = Ext.ComponentQuery.query('formpanel')[0],
- *                                 values = form.getValues();
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var form = Ext.create('Ext.form.Panel', {
+ *     fullscreen: true,
+ *     items: [
+ *         {
+ *             xtype: 'checkboxfield',
+ *             name : 'tomato',
+ *             label: 'Tomato',
+ *             value: 'tomato',
+ *             checked: true
+ *         },
+ *         {
+ *             xtype: 'checkboxfield',
+ *             name : 'salami',
+ *             label: 'Salami'
+ *         },
+ *         {
+ *             xtype: 'toolbar',
+ *             docked: 'bottom',
+ *             items: [
+ *                 { xtype: 'spacer' },
+ *                 {
+ *                     text: 'getValues',
+ *                     handler: function() {
+ *                         var form = Ext.ComponentQuery.query('formpanel')[0],
+ *                             values = form.getValues();
  *
- *                             Ext.Msg.alert(null,
- *                                 "Tomato: " + ((values.tomato) ? "yes" : "no") +
- *                                 "<br />Salami: " + ((values.salami) ? "yes" : "no")
- *                             );
- *                         }
- *                     },
- *                     { xtype: 'spacer' }
- *                 ]
- *             }
- *         ]
- *     });
+ *                         Ext.Msg.alert(null,
+ *                             "Tomato: " + ((values.tomato) ? "yes" : "no") +
+ *                             "<br />Salami: " + ((values.salami) ? "yes" : "no")
+ *                         );
+ *                     }
+ *                 },
+ *                 { xtype: 'spacer' }
+ *             ]
+ *         }
+ *     ]
+ * });
  *
  *
  * The form above contains two check boxes - one for Tomato, one for Salami. We configured the
@@ -55,6 +56,73 @@
  *     form.getValues(); //contains a key called 'tomato' if the Tomato field is still checked
  *     form.submit(); //will send 'tomato' in the form submission data
  *
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtFormPanel, ExtContainer, ExtCheckBoxField } from '@sencha/ext-react';
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *            <ExtContainer layout="center">
+ *                <ExtFormPanel shadow layout={{type: 'vbox', align: 'left'}}>
+ *                    <ExtCheckBoxField boxLabel="Unchecked"/>
+ *                    <ExtCheckBoxField boxLabel="Checked" checked/>
+ *                    <ExtCheckBoxField boxLabel="Disabled" disabled/>
+ *                    <ExtCheckBoxField boxLabel="Disabled (checked)" disabled checked/>
+ *                </ExtFormPanel>
+ *            </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ * @Component({
+ *    selector: 'app-root-1',
+ *    styles: [``],
+ *    template: `
+ *            <ExtContainer [shadow]="true" [layout]='"center"'>
+ *                <ExtFormPanel [shadow] [layout]="{type: 'vbox', align: 'left'}">
+ *                    <ExtCheckBoxField [boxLabel]='"Unchecked"'>
+ *                    </ExtCheckBoxField>
+ *                    <ExtCheckBoxField [boxLabel]='"Checked"' [checked]="true">
+ *                    </ExtCheckBoxField>
+ *                    <ExtCheckBoxField [boxLabel]='"Disabled"' [disabled]="true">
+ *                    </ExtCheckBoxField>
+ *                    <ExtCheckBoxField [boxLabel]='"Disabled (checked)"'
+ *                       [disabled]="true" [checked]="true">
+ *                    </ExtCheckBoxField>
+ *                </ExtFormPanel>
+ *            </ExtContainer>
+ *    `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ *  @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ *  <ext-container layout="center">
+ *    <ext-formpanel
+ *        shadow="true"
+ *        layout='{"type": "vbox", "align": "left"}'
+ *     >
+ *        <ext-checkboxfield boxLabel="Unchecked"></ext-checkboxfield>
+ *        <ext-checkboxfield boxLabel="Checked" checked></ext-checkboxfield>
+ *        <ext-checkboxfield boxLabel="Disabled" disabled></ext-checkboxfield>
+ *        <ext-checkboxfield boxLabel="Disabled (checked)" disabled checked></ext-checkboxfield>
+ *    </ext-formpanel>
+ *  </ext-container>
+ *```
+ *```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ *import '@sencha/ext-web-components/dist/ext-container.component';
+ *import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ *import '@sencha/ext-web-components/dist/ext-checkboxfield.component';
+ *
+ *export default class CheckBoxFieldComponent {}
+ *```
  */
 Ext.define('Ext.field.Checkbox', {
     extend: 'Ext.field.Input',

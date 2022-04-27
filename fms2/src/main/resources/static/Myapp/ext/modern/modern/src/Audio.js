@@ -19,72 +19,76 @@
  * This example shows the use of the {@link Ext.Audio} component in a fullscreen container--change
  * the url: item for the location of an audio file--note that the audio starts on page load:
  *
- *     @example
- *     Ext.create('Ext.Container', {
- *         fullscreen: true,
- *         layout: {
- *             type : 'vbox',
- *             pack : 'center',
- *             align: 'stretch'
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Container', {
+ *     fullscreen: true,
+ *     layout: {
+ *         type : 'vbox',
+ *         pack : 'center',
+ *         align: 'stretch'
+ *     },
+ *     items: [
+ *         {
+ *             xtype : 'toolbar',
+ *             docked: 'top',
+ *             title : 'Ext.Audio'
  *         },
- *         items: [
- *             {
- *                 xtype : 'toolbar',
- *                 docked: 'top',
- *                 title : 'Ext.Audio'
- *             },
- *             {
- *                 xtype: 'audio',
- *                 url  : 'touch-build/examples/audio/crash.mp3'
- *             }
- *         ]
- *     });
+ *         {
+ *             xtype: 'audio',
+ *             url  : 'touch-build/examples/audio/crash.mp3'
+ *         }
+ *     ]
+ * });
+ * ```
  *
  * You can also set the {@link #hidden} configuration of the {@link Ext.Audio} component to true
  * by default, and then control the audio by using the {@link #method-play}, {@link #method-pause},
  * and {@link #toggle} methods:
  *
- *     @example
- *     Ext.create('Ext.Container', {
- *         fullscreen: true,
- *         layout: {
- *             type: 'vbox',
- *             pack: 'center'
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Container', {
+ *     fullscreen: true,
+ *     layout: {
+ *         type: 'vbox',
+ *         pack: 'center'
+ *     },
+ *     items: [
+ *         {
+ *             xtype : 'toolbar',
+ *             docked: 'top',
+ *             title : 'Ext.Audio'
  *         },
- *         items: [
- *             {
- *                 xtype : 'toolbar',
- *                 docked: 'top',
- *                 title : 'Ext.Audio'
- *             },
- *             {
- *                 xtype: 'toolbar',
- *                 docked: 'bottom',
- *                 defaults: {
- *                     xtype: 'button',
- *                     handler: function() {
- *                         var container = this.getParent().getParent(),
- *                             // use ComponentQuery to get the audio component (using its xtype)
- *                             audio = container.down('audio');
+ *         {
+ *             xtype: 'toolbar',
+ *             docked: 'bottom',
+ *             defaults: {
+ *                 xtype: 'button',
+ *                 handler: function() {
+ *                     var container = this.getParent().getParent(),
+ *                         // use ComponentQuery to get the audio component (using its xtype)
+ *                         audio = container.down('audio');
  *
- *                         audio.toggle();
- *                         this.setText(audio.isPlaying() ? 'Pause' : 'Play');
- *                     }
- *                 },
- *                 items: [
- *                     { text: 'Play', flex: 1 }
- *                 ]
+ *                     audio.toggle();
+ *                     this.setText(audio.isPlaying() ? 'Pause' : 'Play');
+ *                 }
  *             },
- *             {
- *                 html: 'Hidden audio!'
- *             },
- *             {
- *                 xtype : 'audio',
- *                 hidden: true,
- *                 url   : 'touch-build/examples/audio/crash.mp3'
- *             }
- *         ]
- *     });
+ *             items: [
+ *                 { text: 'Play', flex: 1 }
+ *             ]
+ *         },
+ *         {
+ *             html: 'Hidden audio!'
+ *         },
+ *         {
+ *             xtype : 'audio',
+ *             hidden: true,
+ *             url   : 'touch-build/examples/audio/crash.mp3'
+ *         }
+ *     ]
+ * });
+ * ```
  */
 Ext.define('Ext.Audio', {
     extend: 'Ext.Media',

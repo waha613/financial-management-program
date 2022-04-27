@@ -1172,9 +1172,6 @@ Ext.define('Ext.grid.RowEditor', {
             me.body.dom.setAttribute('aria-label', label);
         }
 
-        // Make sure the container el is correctly sized.
-        me.onGridResize();
-
         // Layout the form with the new content if we are already visible.
         // Otherwise, just allow resumption, and the show will update the layout.
         Ext.resumeLayouts(alreadyVisible);
@@ -1190,6 +1187,9 @@ Ext.define('Ext.grid.RowEditor', {
 
             me.show();
         }
+
+        // Make sure the container el is correctly sized.
+        me.onGridResize();
 
         // Reload the record data.
         // After positioning so that any error tip will be aligned correctly.
@@ -1223,7 +1223,8 @@ Ext.define('Ext.grid.RowEditor', {
 
         // If that's the last visible row, buttons should be at the top regardless of scrolling,
         // but not if there is just one row which is both first and last.
-        if (overflow > 0 || (context.rowIdx > 0 && context.isLastRenderedRow())) {
+        // always show the clipping buttons on BOTTOM
+        if (overflow > 0 || (context.rowIdx > 1 && context.isLastRenderedRow())) {
             if (!me._buttonsOnTop) {
                 floatingButtons.setButtonPosition('top');
                 me._buttonsOnTop = true;

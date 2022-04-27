@@ -209,7 +209,6 @@ Ext.define('Ext.grid.locking.Lockable', {
             loadMaskCfg = viewConfig && viewConfig.loadMask,
             loadMask = (loadMaskCfg !== undefined) ? loadMaskCfg : me.loadMask,
             bufferedRenderer = me.bufferedRenderer,
-            Obj = Ext.Object,
 
             // Hash of {lockedFeatures:[],normalFeatures:[]}
             allFeatures,
@@ -332,11 +331,11 @@ Ext.define('Ext.grid.locking.Lockable', {
         normalGrid.flex = 1;
 
         // Chain view configs to avoid mutating user's config
-        lockedGrid.viewConfig = lockedViewConfig =
-            (lockedViewConfig ? Obj.chain(lockedViewConfig) : {});
+        lockedGrid.viewConfig = lockedViewConfig = Ext.apply({
+            usageBitMask: 2
+        }, lockedViewConfig);
 
-        normalGrid.viewConfig = normalViewConfig =
-            (normalViewConfig ? Obj.chain(normalViewConfig) : {});
+        normalGrid.viewConfig = normalViewConfig = Ext.apply({}, normalViewConfig);
 
         lockedViewConfig.loadingUseMsg = false;
         lockedViewConfig.loadMask = false;
@@ -1137,6 +1136,9 @@ Ext.define('Ext.grid.locking.Lockable', {
                 if (me.layout.type === 'border') {
                     locked.region = locked.initialConfig.region;
                 }
+                else {
+                    locked.flex = locked.initialConfig.flex;
+                }
 
                 // The locked grid shrinkwraps the total column width while the normal grid
                 // flexes in what remains UNLESS it has been set to forceFit
@@ -1316,18 +1318,6 @@ Ext.define('Ext.grid.locking.Lockable', {
 
         refreshFlags = me.syncLockedWidth();
 
-        // Clear both views first so that any widgets are cached
-        // before reuse. If we refresh the grid which just had a widget column added
-        // first, the clear of the view which had the widget column in removes the widgets
-        // from their new place.
-        if (refreshFlags.locked) {
-            lockedView.clearViewEl(true);
-        }
-
-        if (refreshFlags.normal) {
-            normalView.clearViewEl(true);
-        }
-
         // Refresh locked view second, so that if it's refreshing from empty (can start
         // with no locked columns), the buffered renderer can look to its partner
         // to get the correct range to refresh.
@@ -1457,7 +1447,9 @@ Ext.define('Ext.grid.locking.Lockable', {
             oldStore = me.store,
             lockedGrid = me.lockedGrid,
             normalGrid = me.normalGrid,
-            view, loadMask;
+            lockedView = lockedGrid.view,
+            normalView = normalGrid.view,
+            hadLockedColumns, loadMask, lockedItems;
 
         if (!store && allowUnbind) {
             store = Ext.StoreManager.lookup('ext-empty-store');
@@ -1470,44 +1462,42 @@ Ext.define('Ext.grid.locking.Lockable', {
             store = Ext.data.StoreManager.lookup(store);
             me.store = store;
 
-            lockedGrid.view.blockRefresh = normalGrid.view.blockRefresh = true;
+            lockedView.blockRefresh = normalView.blockRefresh = true;
 
             lockedGrid.bindStore(store);
 
             // Subsidiary views have their bindStore changed because they must not
             // bind listeners themselves. This view listens and relays calls to each view.
             // BUT the dataSource and store properties must be set
-            view = lockedGrid.view;
-            view.store = store;
+            lockedView.store = store;
 
             // If the dataSource being used by the View is *not* a FeatureStore
             // (a modified view of the base Store injected by a Feature)
             // Then we promote the store to be the dataSource.
             // If it was a FeatureStore, then it must not be changed. A FeatureStore is mutated
             // by the Feature to respond to changes in the underlying Store.
-            if (!view.dataSource.isFeatureStore) {
-                view.dataSource = store;
+            if (!lockedView.dataSource.isFeatureStore) {
+                lockedView.dataSource = store;
             }
 
-            if (view.bufferedRenderer) {
-                view.bufferedRenderer.bindStore(store);
+            if (lockedView.bufferedRenderer) {
+                lockedView.bufferedRenderer.bindStore(store);
             }
 
             normalGrid.bindStore(store);
-            view = normalGrid.view;
-            view.store = store;
+            normalView.store = store;
 
             // If the dataSource being used by the View is *not* a FeatureStore
             // (a modified view of the base Store injected by a Feature)
             // Then we promote the store to be the dataSource.
             // If it was a FeatureStore, then it must not be changed. A FeatureStore is mutated
             // by the Feature to respond to changes in the underlying Store.
-            if (!view.dataSource.isFeatureStore) {
-                view.dataSource = store;
+            if (!normalView.dataSource.isFeatureStore) {
+                normalView.dataSource = store;
             }
 
-            if (view.bufferedRenderer) {
-                view.bufferedRenderer.bindStore(store);
+            if (normalView.bufferedRenderer) {
+                normalView.bufferedRenderer.bindStore(store);
             }
 
             me.view.store = store;
@@ -1519,23 +1509,37 @@ Ext.define('Ext.grid.locking.Lockable', {
                 loadMask.bindStore(store);
             }
 
-            me.view.bindStore(normalGrid.view.dataSource, false, 'dataSource');
-            lockedGrid.view.blockRefresh = normalGrid.view.blockRefresh = false;
+            me.view.bindStore(normalView.dataSource, false, 'dataSource');
+            lockedView.blockRefresh = normalView.blockRefresh = false;
         }
 
         if (columns) {
             // Both grids must not react to the headers being changed
             // (See panel/Table#onHeadersChanged)
             lockedGrid.reconfiguring = normalGrid.reconfiguring = true;
+
+            hadLockedColumns = lockedGrid.getVisibleColumnManager().getColumns().length;
+
             lockedGrid.headerCt.removeAll();
             normalGrid.headerCt.removeAll();
 
             columns = me.processColumns(columns, lockedGrid);
 
-            // Flag to the locked column add listener to do nothing
-            lockedGrid.headerCt.add(columns.locked.items);
+            lockedItems = columns.locked.items;
+
+            if (lockedItems.length) {
+                if (!hadLockedColumns) {
+                    // If we are adding columns for the first time, the view will need to
+                    // be refreshed because it will have skipped this when it had 0 columns
+                    lockedGrid.view.refreshNeeded = true;
+                }
+
+                lockedGrid.headerCt.add(lockedItems);
+            }
+
             normalGrid.headerCt.add(columns.normal.items);
 
+            // Remove flag telling the locked column add listener to do nothing
             lockedGrid.reconfiguring = normalGrid.reconfiguring = false;
 
             // Ensure locked grid is set up correctly with correct width and bottom border,
@@ -1543,7 +1547,7 @@ Ext.define('Ext.grid.locking.Lockable', {
             me.syncLockedWidth();
         }
 
-        me.refreshCounter = normalGrid.view.refreshCounter;
+        me.refreshCounter = normalView.refreshCounter;
     },
 
     afterReconfigureLockable: function() {

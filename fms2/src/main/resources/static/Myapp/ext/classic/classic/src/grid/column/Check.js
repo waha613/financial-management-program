@@ -402,7 +402,8 @@ Ext.define('Ext.grid.column.Check', {
         // after all rows have been rendered.
         me.updateHeaderState();
 
-        return '<span class="' + cls + '" role="' + me.checkboxAriaRole + '"' +
+        return '<span class="' + cls + '" role="' + me.checkboxAriaRole +
+               '" aria-label="' + me.text + '"' +
                 (!me.ariaStaticRoles[me.checkboxAriaRole] ? ' tabIndex="0"' : '') +
                '></span>';
     },

@@ -2,30 +2,31 @@
  * Provides a time input field with a analog time picker and automatic time validation.
  *
  * This field recognizes and uses JavaScript Date objects to validate input from {@link #picker}.
- * In addition, it recognizes string values which are parsed according to 
+ * In addition, it recognizes string values which are parsed according to
  * the {@link #format} config.
  * These may be reconfigured to use time formats appropriate for the user's locale.
  *
  * Example usage:
- *
- *      @example
- *      Ext.create('Ext.form.Panel', {
- *           fullscreen: true,
- *           items: [
- *               {
- *                   xtype: 'fieldset',
- *                   items: [
- *                       {
- *                          xtype: 'timefield',
- *                          itemId: '123',
- *                          label: 'Birthday',
- *                          name: 'birthday',
- *                          value: '12:00 PM'
- *                       }
- *                   ]
- *               }
- *           ]
- *       });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.form.Panel', {
+ *      fullscreen: true,
+ *      items: [
+ *          {
+ *              xtype: 'fieldset',
+ *              items: [
+ *                  {
+ *                     xtype: 'timefield',
+ *                     itemId: '123',
+ *                     label: 'Birthday',
+ *                     name: 'birthday',
+ *                     value: '12:00 PM'
+ *                  }
+ *              ]
+ *          }
+ *      ]
+ * });
+ * ```
  */
 Ext.define('Ext.field.Time', {
     extend: 'Ext.field.Picker',

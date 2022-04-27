@@ -1,6 +1,3 @@
-/* global Ext, jasmine, expect, topSuite */
-/* eslint-disable one-var, vars-on-top, max-len */
-
 topSuite("Ext.grid.Grid", [
     'Ext.data.ArrayStore', 'Ext.layout.Fit', 'Ext.grid.plugin.ColumnResizing',
     'Ext.MessageBox', 'Ext.grid.SummaryRow', 'Ext.app.ViewModel'
@@ -350,6 +347,22 @@ topSuite("Ext.grid.Grid", [
 
                         // hideHeaders causes -ve bottom margin so that HeaderContainer is overlaid
                         expect(parseFloat(headerContainer.el.getStyleValue('margin-bottom'))).toBe(-headerContainer.el.measure('h'));
+                    });
+
+                    it("should set visibility of headers to hidden ", function() {
+                        makeGrid(null, null, {
+                            hideHeaders: true
+                        });
+                        expect(headerContainer.el.getStyleValue('visibility')).toBe('hidden');
+                        grid.setHideHeaders(false);
+                        expect(headerContainer.el.getStyle('visibility')).not.toBe('hidden');
+                    });
+
+                    it("should make headers visible ", function() {
+                        makeGrid(null, null, {
+                            hideHeaders: false
+                        });
+                        expect(headerContainer.el.getStyle('visibility')).not.toBe('hidden');
                     });
                 });
 
@@ -1153,7 +1166,7 @@ topSuite("Ext.grid.Grid", [
                                 columns: [makeCol(parts[0]), makeCol(parts[1])]
                             });
                         }
- else {
+                        else {
                             cols.push(makeCol(key));
                         }
                     });
@@ -2954,28 +2967,6 @@ topSuite("Ext.grid.Grid", [
     describe("misc tests", function() {
         var store, grid, rows, cells;
 
-        function completeWithData(theData) {
-            Ext.Ajax.mockComplete({
-                status: 200,
-                responseText: Ext.encode(theData)
-            });
-        }
-
-        function makeData(n) {
-            var i = 0,
-                recs = [];
-
-            for (n = n || 50; i < n; i++) {
-                recs.push({
-                    name: 'Name ' + i,
-                    email: 'dev_' + i + '@sencha.com',
-                    phone: '1-717-' + i
-                });
-            }
-
-            return recs;
-        }
-
         var createGrid = function(storeCfg, gridCfg) {
             if (!(gridCfg && gridCfg.viewModel && gridCfg.viewModel.stores)) {
                 if (!(storeCfg instanceof Ext.data.Store)) {
@@ -2989,11 +2980,11 @@ topSuite("Ext.grid.Grid", [
                         ]
                     }, storeCfg));
                 }
- else {
+                else {
                     store = storeCfg;
                 }
             }
- else {
+            else {
                 store = null;
             }
 
@@ -3100,11 +3091,11 @@ topSuite("Ext.grid.Grid", [
                 expect(grid.el.contains(document.activeElement)).toBe(false);
                 expect(grid.el.query('.' + grid.focusedCls).length).toBe(0);
             }
- else {
+            else {
                 if (element) {
                     expectedLocation = new Ext.grid.Location(grid, element);
                 }
- else {
+                else {
                     if (Ext.isArray(record)) {
                         column = record[0];
                         record = record[1];
@@ -3428,11 +3419,11 @@ topSuite("Ext.grid.Grid", [
                 expect(grid.el.contains(document.activeElement)).toBe(false);
                 expect(grid.el.query('.' + grid.focusedCls).length).toBe(0);
             }
- else {
+            else {
                 if (element) {
                     expectedLocation = new Ext.grid.Location(grid, element);
                 }
- else {
+                else {
                     if (Ext.isArray(record)) {
                         column = record[0];
                         record = record[1];
@@ -3705,11 +3696,9 @@ topSuite("Ext.grid.Grid", [
                     Ext.testHelper.tap(Ext.Msg.down('#ok').getFocusEl());
                 });
 
-                    // Cleanup for modal
-                    runs(function() {
-                        Ext.Msg.hide();
-                        Ext.Msg.hideModalMask();
-                    });
+                waitsFor(function() {
+                    return Ext.Msg.isHidden();
+                });
 
                 // Automatic focus reversion must send focus back into the grid
                 waitsForSpy(focusEnterSpy);

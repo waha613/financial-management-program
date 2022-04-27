@@ -1,6 +1,6 @@
 /**
  * This is a specialized field which shows a {@link Ext.picker.Date} when tapped.
- * If it has a predefined value, or a value is selected in the {@link Ext.picker.Date}, 
+ * If it has a predefined value, or a value is selected in the {@link Ext.picker.Date},
  * it will be displayed like a normal {@link Ext.field.Text} (but not selectable/changable).
  *
  *     Ext.create('Ext.field.Date', {
@@ -12,11 +12,12 @@
  *
  * ## Examples
  *
- * It can be very useful to set a default {@link #value} configuration on 
- * {@link Ext.field.Date} fields. In this example, we set the {@link #value} to be 
+ * It can be very useful to set a default {@link #value} configuration on
+ * {@link Ext.field.Date} fields. In this example, we set the {@link #value} to be
  * the current date.  You can also use the {@link #setValue} method to update the value at any time.
  *
- *     @example
+ * ```javascript
+ * @example({ framework: 'extjs' })
  *     var form = Ext.create('Ext.form.Panel', {
  *         fullscreen: true,
  *         referenceHolder: true,
@@ -44,42 +45,132 @@
  *             }]
  *         }]
  *     });
- *
- * When you need to retrieve the date from the {@link Ext.field.Date}, you can either use 
+ * ```
+ * When you need to retrieve the date from the {@link Ext.field.Date}, you can either use
  * the {@link #getValue} or {@link #getFormattedValue} methods:
  *
- *     @example
- *     var form = Ext.create('Ext.form.Panel', {
- *         fullscreen: true,
- *         referenceHolder: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var form = Ext.create('Ext.form.Panel', {
+ *     fullscreen: true,
+ *     referenceHolder: true,
+ *     items: [{
+ *         xtype: 'fieldset',
  *         items: [{
- *             xtype: 'fieldset',
- *             items: [{
- *                 xtype: 'datefield',
- *                 label: 'Birthday',
- *                 reference: 'birthday',
- *                 value: new Date()
- *             }]
- *         }, {
- *             xtype: 'toolbar',
- *             docked: 'bottom',
- *             items: [{
- *                 text: 'getValue',
- *                 handler: function() {
- *                     var field = form.lookup('birthday');
- *                     console.log(field.getValue());
- *                 }
- *             }, {
- *                 text: 'getFormattedValue',
- *                 handler: function() {
- *                     var field = form.lookup('birthday');
- *                     console.log(field.getFormattedValue());
- *                 }
- *             }]
+ *             xtype: 'datefield',
+ *             label: 'Birthday',
+ *             reference: 'birthday',
+ *             value: new Date()
  *         }]
- *     });
+ *     }, {
+ *         xtype: 'toolbar',
+ *         docked: 'bottom',
+ *         items: [{
+ *             text: 'getValue',
+ *             handler: function() {
+ *                 var field = form.lookup('birthday');
+ *                 console.log(field.getValue());
+ *             }
+ *         }, {
+ *             text: 'getFormattedValue',
+ *             handler: function() {
+ *                 var field = form.lookup('birthday');
+ *                 console.log(field.getFormattedValue());
+ *             }
+ *         }]
+ *     }]
+ * });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtFormPanel, ExtDatePickerField } from '@sencha/ext-react';
  *
+ * export default class MyExample extends Component {
+ *     render() {
+ *         return (
+ *             <ExtContainer layout="center">
+ *                 <ExtFormPanel shadow>
+ *                     <ExtDatePickerField
+ *                         width={150}
+ *                         value={new Date()}
+ *                         destroyPickerOnHide
+ *                         label="Date"
+ *                         picker={{
+ *                             yearFrom: 1990
+ *                         }}
+ *                     />
+ *                 </ExtFormPanel>
+ *             </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ *  @example({framework: 'ext-angular', packages:['ext-angular']})
+ *  import { Component } from '@angular/core'
+ * declare var Ext: any;
  *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [``],
+ *     template: `
+ *         <ExtContainer [layout]='"center"'>
+ *             <ExtFormPanel [shadow]>
+ *                 <ExtDatePickerField
+ *                     [width]='150'
+ *                     [value]='date'
+ *                     [destroyPickerOnHide]
+ *                     [label]='"Date"'
+ *                     [picker]='{
+ *                         yearFrom: 1990
+ *                     }'
+ *                 >
+ *                 </ExtDatePickerField>
+ *             </ExtFormPanel>
+ *         </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {
+ *     date:Date = new Date();
+ * }
+ * ```
+ * ```html
+ *  @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ *  <ext-container layout="center">
+ *    <ext-formpanel
+ *      layout='{"type": "vbox", "align": "stretch"}'
+ *      width="300"
+ *      height="100"
+ *      bodyPadding="10"
+ *      shadow="true"
+ *     >
+ *      <ext-datepickerfield
+ *        destroyPickerOnHide="true"
+ *        label="Date"
+ *        picker='{
+ *          "yearFrom": "1990"
+ *        }'
+ *        onready="datepickerfield.datePickerFieldReady"
+ *      >
+ *      </ext-datepickerfield>
+ *     </ext-formPanel>
+ *  </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-datepickerfield.component';
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ *
+ * export default class DatePickerFieldComponent {
+ *    datePickerFieldReady(event) {
+ *        this.datepickerfieldView = event.detail.cmp;
+ *        this.datepickerfieldView.setValue(new Date());
+ *    }
+ * }
+ * window.datepickerfield = new DatePickerFieldComponent();
+ *```
  */
 Ext.define('Ext.field.Date', {
     extend: 'Ext.field.Picker',
@@ -256,9 +347,9 @@ Ext.define('Ext.field.Date', {
     },
 
     updateValue: function(value, oldValue) {
-        // Used picker directly instead of using getter as getter will create picker 
-        // if it does not exist. 
-        // We don't want to create the picker in value updater, this might lead to bugs as 
+        // Used picker directly instead of using getter as getter will create picker
+        // if it does not exist.
+        // We don't want to create the picker in value updater, this might lead to bugs as
         // well as performance challenges.
         var picker = this._picker;
 
@@ -316,12 +407,12 @@ Ext.define('Ext.field.Date', {
         }
 
         //<debug>
-        if (!Ext.isDate(minDate)) {
+        if (minDate !== null && !Ext.isDate(minDate)) {
             Ext.raise("Date object or string in dateFormat required");
         }
         //</debug>
 
-        return Ext.Date.clearTime(minDate, true);
+        return minDate ? Ext.Date.clearTime(minDate, true) : null;
     },
 
     applyMaxDate: function(maxDate) {
@@ -330,12 +421,12 @@ Ext.define('Ext.field.Date', {
         }
 
         //<debug>
-        if (!Ext.isDate(maxDate)) {
+        if (maxDate !== null && !Ext.isDate(maxDate)) {
             Ext.raise("Date object or string in dateFormat required");
         }
         //</debug>
 
-        return Ext.Date.clearTime(maxDate, true);
+        return maxDate ? Ext.Date.clearTime(maxDate, true) : null;
     },
 
     /**
@@ -415,7 +506,7 @@ Ext.define('Ext.field.Date', {
             value = value || new Date();
 
             // Ensure the carousel is at the correct position wth no animation.
-            picker.navigateTo(value, false);
+            picker.setValueWithoutAnim(value);
 
             if (fromKeyboard) {
                 picker.focusDate(value);

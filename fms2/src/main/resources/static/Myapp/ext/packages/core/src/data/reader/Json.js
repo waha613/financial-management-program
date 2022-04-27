@@ -507,6 +507,18 @@ Ext.define('Ext.data.reader.Json', {
             this.getRoot = reader.getRoot;
         },
 
+        getGroupRoot: function(data) {
+            this.buildExtractors();
+
+            return this.getGroupRoot(data);
+        },
+
+        getSummaryRoot: function(data) {
+            this.buildExtractors();
+
+            return this.getSummaryRoot(data);
+        },
+
         setupExtractor: function(prop, defaultFn) {
             return prop ? this.getAccessor(prop) : defaultFn;
         }

@@ -31,6 +31,10 @@ Ext.define('Ext.dataview.NavigationModel', {
         disabled: false
     },
 
+    // Regular Expression to find input elements that will cause the virtual keyboard
+    // to be activated when focused
+    virtualKeyboardInputRe: /^(input|textarea)$/i,
+
     bufferableMethods: {
         // buffer response to view's triggerEvent when that event is a focusing gesture
         // to allow focus to be processed before we go into selection.
@@ -280,14 +284,38 @@ Ext.define('Ext.dataview.NavigationModel', {
          * May be overridden in subclasses which do not focus the targets
          */
         doFocus: function(location) {
+            var sourceEl, activeEl, focusEl;
+
             location = location || this.location;
 
-            // getElement returns the focusEl.
-            // So for navigation mode, that's the navigation level element, ie
-            // dataview item or grid cell.
-            // For actionable mode, that's the focused sub-element.
-            if (location && location.getFocusEl()) {
-                location.getFocusEl().focus();
+            if (location) {
+                focusEl = location && location.getFocusEl();
+
+                // On iOS we do not want the virtual keyboard closing and opening if we
+                // are moving focus from an input element to another input element.
+                // If the activeElement is an input that uses the virtual keyboard then
+                // we know the virtual keyboard is already open.
+                if (Ext.os.is.iOS) {
+                    sourceEl = location.sourceElement;
+                    activeEl = document.activeElement;
+
+                    if (
+                        sourceEl &&
+                        activeEl &&
+                        sourceEl.nodeName.match(this.virtualKeyboardInputRe) &&
+                        activeEl.nodeName.match(this.virtualKeyboardInputRe)
+                    ) {
+                        return;
+                    }
+                }
+
+                // getElement returns the focusEl.
+                // So for navigation mode, that's the navigation level element, ie
+                // dataview item or grid cell.
+                // For actionable mode, that's the focused sub-element.
+                if (focusEl) {
+                    focusEl.focus();
+                }
             }
         },
 
@@ -620,6 +648,17 @@ Ext.define('Ext.dataview.NavigationModel', {
             var e = location.event,
                 isFocusingEvent = (e.type ===
                     ((e.pointerType === 'touch') ? 'tap' : 'touchstart'));
+
+            // Works only when the border of a row in a grid is clicked
+            // In this the row doesnot have a focus while the location is for the row itself.
+            // Adding this code adds the focus to the current location.
+            if (event.target.id === location.child.id) {
+                this.handleLocationChange(location, {
+                    event: e
+                });
+
+                return;
+            }
 
             // The selection event handler must run after any navigation caused by the
             // event has been processed.

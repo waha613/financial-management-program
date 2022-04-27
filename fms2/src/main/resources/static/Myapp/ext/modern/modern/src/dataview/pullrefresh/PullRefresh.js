@@ -4,28 +4,30 @@
  *
  * ## Example
  *
- *      @example
- *      Ext.create({
- *          xtype: 'list',
- *          fullscreen: true,
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'list',
+ *     fullscreen: true,
  *
- *          plugins: {
- *              pullrefresh: {
- *                  pullText: 'Pull down for more new Tweets!'
- *              }
- *          },
+ *     plugins: {
+ *         pullrefresh: {
+ *             pullText: 'Pull down for more new Tweets!'
+ *         }
+ *     },
  *
- *          itemTpl: [
- *              '<img src="{img}" alt="{name} photo" />',
- *              '<div class="tweet"><b>{name}:</b> {text}</div>'
- *          ],
+ *     itemTpl: [
+ *         '<img src="{img}" alt="{name} photo" />',
+ *         '<div class="tweet"><b>{name}:</b> {text}</div>'
+ *     ],
  *
- *          store: [{
- *              name: 'Bill',
- *              img: 'https://www.sencha.com/forum/images/statusicon/forum_new-48.png',
- *              text: 'JavaScript development'
- *          }]
- *      });
+ *     store: [{
+ *         name: 'Bill',
+ *         img: 'https://www.sencha.com/forum/images/statusicon/forum_new-48.png',
+ *         text: 'JavaScript development'
+ *     }]
+ * });
+ * ```
  */
 Ext.define('Ext.dataview.pullrefresh.PullRefresh', {
     extend: 'Ext.plugin.Abstract',
@@ -171,7 +173,12 @@ Ext.define('Ext.dataview.pullrefresh.PullRefresh', {
          * @private
          */
         fetchLatest: function() {
-            this.getList().getStore().fetch({
+            var list = this.getList(),
+                store = list.getStore().isGroupStore
+                    ? list.getStore().getSource()
+                    : list.getStore();
+
+            store.fetch({
                 page: 1,
                 start: 0,
                 callback: this.onLatestFetched,
@@ -332,7 +339,9 @@ Ext.define('Ext.dataview.pullrefresh.PullRefresh', {
         onLatestFetched: function(newRecords, operation, success) {
             var me = this,
                 list = me.getList(),
-                store = list.getStore(),
+                store = list.getStore().isGroupStore
+                    ? list.getStore().getSource()
+                    : list.getStore(),
                 length, toInsert,
                 oldRecords, newRecord, oldRecord, i;
 

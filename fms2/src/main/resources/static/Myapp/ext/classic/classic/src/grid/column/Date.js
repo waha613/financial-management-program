@@ -72,6 +72,12 @@ Ext.define('Ext.grid.column.Date', {
      */
     producesHTML: false,
 
+    summaries: {
+        min: true,
+        max: true,
+        count: false
+    },
+
     initComponent: function() {
         if (!this.format) {
             this.format = Ext.Date.defaultFormat;

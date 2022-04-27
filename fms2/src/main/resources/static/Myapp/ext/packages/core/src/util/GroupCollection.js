@@ -13,7 +13,8 @@ Ext.define('Ext.util.GroupCollection', {
         // "requires" of Ext.util.Collection (which cannot pull everything) you instead
         // do a "requires" of Ext.util.GroupCollection and it will.
         'Ext.util.SorterCollection',
-        'Ext.util.FilterCollection'
+        'Ext.util.FilterCollection',
+        'Ext.util.GrouperCollection'
     ],
 
     isGroupCollection: true,
@@ -27,6 +28,8 @@ Ext.define('Ext.util.GroupCollection', {
     observerPriority: -100,
 
     emptyGroupRetainTime: 300000, // Private timer to hang on to emptied groups. Milliseconds.
+
+    rootProperty: '_data', // this is required by the sorter
 
     constructor: function(config) {
         this.emptyGroups = {};
@@ -42,9 +45,82 @@ Ext.define('Ext.util.GroupCollection', {
      * @since 6.5.0
      */
     getItemGroup: function(item) {
-        var key = this.getGrouper().getGroupString(item);
+        var grouper = this.lastMonitoredGrouper,
+            key, group;
 
-        return this.get(key);
+        if (!grouper && this.items.length) {
+            grouper = this.items[0].getGrouper();
+        }
+
+        if (grouper) {
+            key = grouper.getGroupString(item);
+            group = this.get(key);
+        }
+
+        return group;
+    },
+
+    /**
+     * Find the group that matches the specified path or `false` if not found.
+     *
+     * @param {String} path Path to the group
+     * @return {Ext.util.Group}
+     */
+    getByPath: function(path) {
+        var paths = path ? String(path).split(Ext.util.Group.prototype.pathSeparator) : [],
+            len = paths.length,
+            items = this,
+            group = false,
+            i;
+
+        if (!len) {
+            group = items.get(path);
+        }
+
+        for (i = 0; i < len; i++) {
+            if (!items || items.length === 0) {
+                break;
+            }
+
+            group = items.get(paths[i]);
+
+            if (group) {
+                items = group.getGroups();
+            }
+        }
+
+        return group || false;
+    },
+
+    /**
+     * Find all groups that contain the specified item
+     *
+     * @param {Object} item
+     * @return {Ext.util.Group[]}
+     */
+    getGroupsByItem: function(item) {
+        var me = this,
+            groups = [],
+            length = me.items.length,
+            i, group, children;
+
+        if (item) {
+            for (i = 0; i < length; i++) {
+                group = me.items[i];
+
+                if (group.indexOf(item) >= 0) {
+                    groups.push(group);
+                    children = group.getGroups();
+
+                    if (children) {
+                        /* eslint-disable-next-line max-len */
+                        return Ext.Array.insert(groups, groups.length, children.getGroupsByItem(item));
+                    }
+                }
+            }
+        }
+
+        return groups;
     },
 
     //-------------------------------------------------------------------------
@@ -84,9 +160,12 @@ Ext.define('Ext.util.GroupCollection', {
             // eslint-disable-next-line vars-on-top
             var me = this,
                 itemGroupKeys = me.itemGroupKeys = {},
-                groupData = me.createEntries(source, source.items),
-                entries = groupData.entries,
-                groupKey, i, len, entry, j;
+                groupData, entries, groupKey, i, len, entry, j;
+
+            me.groupersChanged = true;
+
+            groupData = me.createEntries(source, source.items);
+            entries = groupData.entries;
 
             // The magic of Collection will automatically update the group with its new
             // members.
@@ -118,14 +197,21 @@ Ext.define('Ext.util.GroupCollection', {
             // autoSort is disabled when adding new groups because
             // it relies on there being at least one record in the group
             me.sortItems();
+
+            me.groupersChanged = false;
         }
     },
 
     onCollectionRemove: function(source, details) {
         var me = this,
+            groupers = source.getGroupers(),
             changeDetails = me.changeDetails,
             itemGroupKeys = me.itemGroupKeys || (me.itemGroupKeys = {}),
             entries, entry, group, i, n, j, removeGroups, item;
+
+        if (!groupers || !groupers.length) {
+            return;
+        }
 
         if (source.getCount()) {
             if (changeDetails) {
@@ -205,8 +291,83 @@ Ext.define('Ext.util.GroupCollection', {
         }
     },
 
+    onCollectionGroupersChanged: function(source) {
+        var me = this,
+            groupers = source.getGroupers(),
+            grouper;
+
+        if (groupers.length > 0) {
+            grouper = groupers.items[0];
+            me.changeSorterFn(grouper);
+
+            if (me.lastMonitoredGrouper) {
+                me.lastMonitoredGrouper.removeObserver(me);
+            }
+
+            me.lastMonitoredGrouper = grouper;
+            grouper.addObserver(me);
+        }
+        else {
+            me.removeAll();
+        }
+    },
+
+    onGrouperDirectionChange: function(grouper) {
+        // if the grouper changes its direction then we need to sort again our groups
+        this.changeSorterFn(grouper);
+        this.onEndUpdateSorters(this.getSorters());
+    },
+
+    onEndUpdateSorters: function(sorters) {
+        var me = this,
+            was = me.sorted,
+            is = (me.grouped && me.getAutoGroup()) ||
+                (me.getAutoSort() && sorters && sorters.length > 0);
+
+        if (was || is) {
+            // ensure flag property is a boolean.
+            // sorters && (sorters.length > 0) may evaluate to null
+            me.sorted = !!is;
+            me.onSortChange(sorters);
+        }
+    },
+
     //-------------------------------------------------------------------------
     // Private
+
+    changeSorterFn: function(grouper) {
+        var me = this,
+            sorters = me.getSorters(),
+            // this group collection needs to be sorted
+            sorter = {
+                root: me.getRootProperty()
+            };
+
+        sorter.direction = grouper.getDirection();
+
+        if (grouper) {
+            sorter.id = grouper.getProperty();
+
+            if (grouper.initialConfig.sorterFn) {
+                sorter.sorterFn = grouper.initialConfig.sorterFn;
+            }
+            else {
+                sorter.property = grouper.getSortProperty() || grouper.getProperty();
+            }
+        }
+
+        if (sorter.property || sorter.sorterFn) {
+            if (sorters.length === 0) {
+                sorters.add(sorter);
+            }
+            else {
+                sorters.items[0].setConfig(sorter);
+            }
+        }
+        else {
+            sorters.clear();
+        }
+    },
 
     addItemsToGroups: function(source, items, at, oldIndex) {
         var me = this,
@@ -264,28 +425,33 @@ Ext.define('Ext.util.GroupCollection', {
     },
 
     createEntries: function(source, items, createGroups) {
-    // Separate the items out into arrays by group
+        // Separate the items out into arrays by group
         var me = this,
             groups = {},
             entries = [],
-            grouper = me.getGrouper(),
-            entry, group, groupKey, i, item, len;
+            groupers = source.getGroupers().getRange(),
+            grouper, entry, group, groupKey, i, item, len;
 
-        for (i = 0, len = items.length; i < len; ++i) {
-            groupKey = grouper.getGroupString(item = items[i]);
+        if (groupers.length) {
+            grouper = groupers.shift();
+            groupers = groupers.length ? Ext.clone(groupers) : null;
 
-            if (!(entry = groups[groupKey])) {
-                group = me.getGroup(source, groupKey, createGroups);
+            for (i = 0, len = items.length; i < len; ++i) {
+                groupKey = grouper.getGroupString(item = items[i]);
 
-                entries.push(groups[groupKey] = entry = {
-                    group: group,
-                    items: []
-                });
+                if (!(entry = groups[groupKey])) {
+                    group = me.getGroup(source, item, grouper, groupers, createGroups);
+
+                    entries.push(groups[groupKey] = entry = {
+                        group: group,
+                        items: []
+                    });
+                }
+
+                // Collect items to add/remove for each group
+                // which has items in the array
+                entry.items.push(item);
             }
-
-            // Collect items to add/remove for each group
-            // which has items in the array
-            entry.items.push(item);
         }
 
         return {
@@ -298,7 +464,19 @@ Ext.define('Ext.util.GroupCollection', {
         var me = this,
             itemGroupKeys = me.itemGroupKeys || (me.itemGroupKeys = {}),
             item = details.item,
-            oldKey, itemKey, oldGroup, group;
+            groupers = source.getGroupers().getRange(),
+            grouper,
+            oldKey,
+            itemKey,
+            oldGroup,
+            group;
+
+        if (!groupers.length) {
+            return;
+        }
+
+        grouper = groupers.shift();
+        groupers = groupers.length ? Ext.clone(groupers) : null;
 
         itemKey = source.getKey(item);
         oldKey = 'oldKey' in details ? details.oldKey : itemKey;
@@ -307,20 +485,21 @@ Ext.define('Ext.util.GroupCollection', {
         oldGroup = itemGroupKeys[oldKey];
 
         // Look up/create the group into which the item now must be added.
-        group = me.getGroup(source, me.getGrouper().getGroupString(item));
+        group = me.getGroup(source, item, grouper, groupers);
 
         details.group = group;
         details.oldGroup = oldGroup;
+        details.groupChanged = (group !== oldGroup);
 
         // The change did not cause a change in group
-        if (!(details.groupChanged = group !== oldGroup)) {
+        if (group === oldGroup) {
             // Inform group about change
             oldGroup.itemChanged(item, details.modified, details.oldKey, details);
         }
         else {
             // Remove from its old group if there was one.
             if (oldGroup) {
-                // Ensure Geoup knows about any unknown key changes, or item will not be removed.
+                // Ensure Group knows about any unknown key changes, or item will not be removed.
                 oldGroup.updateKey(item, oldKey, itemKey);
                 oldGroup.remove(item);
 
@@ -339,30 +518,67 @@ Ext.define('Ext.util.GroupCollection', {
         itemGroupKeys[itemKey] = group;
     },
 
-    getGroup: function(source, key, createGroups) {
+    getGroup: function(source, item, grouper, groupers, createGroups) {
         var me = this,
+            key = grouper.getGroupString(item),
+            prop = grouper.getSortProperty(),
+            root = grouper.getRoot(),
             group = me.get(key),
-            autoSort = me.getAutoSort();
+            autoSort = me.getAutoSort(),
+            label;
 
         if (group) {
             group.setSorters(source.getSorters());
+
+            if (me.groupersChanged) {
+                // if the groupers changed then we need to update the groupers on the existing group
+                label = group.getLabel();
+                group.setLabel(null);
+                group.setGroupers(groupers);
+                group.setGrouper(grouper);
+                group.setParent(source.isGroup ? source : me);
+                group.setLabel(label);
+            }
         }
         else if (createGroups !== false) {
-            group = me.emptyGroups[key] || Ext.create(Ext.apply({
-                xclass: 'Ext.util.Group',
-                //<debug>
-                id: me.getId() + '-group-' + key,
-                //</debug>
-                groupKey: key,
-                rootProperty: me.getItemRoot(),
-                sorters: source.getSorters()
-            }, me.getGroupConfig()));
+            group = me.emptyGroups[key];
 
-            group.ejectTime = null;
+            if (group && group.destroyed) {
+                delete me.emptyGroups[key];
+                group = null;
+            }
+
+            if (group) {
+                group.setLabel(null);
+            }
+            else {
+                group = Ext.create(Ext.apply({
+                    xclass: 'Ext.util.Group',
+                    groupConfig: me.getGroupConfig()
+                }, me.getGroupConfig()));
+            }
 
             me.setAutoSort(false);
+
+            group.setConfig({
+                groupKey: key,
+                grouper: grouper,
+                groupers: groupers,
+                label: key,
+                rootProperty: me.getItemRoot(),
+                sorters: source.getSorters(),
+                autoSort: autoSort,
+                autoGroup: me.getAutoGroup(),
+                parent: source.isGroup ? source : me
+            });
+
+            group.ejectTime = null;
             me.add(group);
             me.setAutoSort(autoSort);
+
+            if (prop) {
+                group.setCustomData(prop, (root ? item[root] : item)[prop]);
+            }
         }
 
         return group;
@@ -373,32 +589,41 @@ Ext.define('Ext.util.GroupCollection', {
     },
 
     createSortFn: function() {
-        var me = this,
-            grouper = me.getGrouper(),
-            sorterFn = me.getSorters().getSortFn();
-
-        if (!grouper) {
-            return sorterFn;
-        }
-
-        return function(lhs, rhs) {
-            // The grouper has come from the collection, so we pass the items in
-            // the group for comparison because the grouper is also used to
-            // sort the data in the collection
-            return grouper.sort(lhs.items[0], rhs.items[0]) || sorterFn(lhs, rhs);
-        };
+        return this.getSorters().getSortFn();
     },
 
-    updateGrouper: function(grouper) {
-        var me = this;
+    // override the collection fn
+    getGrouper: function() {
+        return this.lastMonitoredGrouper;
+    },
 
-        me.grouped = !!(grouper && me.$groupable.getAutoGroup());
-        me.onSorterChange();
-        me.onEndUpdateSorters(me.getSorters());
+    // override the collection fn
+    updateGrouper: Ext.emptyFn,
+
+    updateAutoGroup: function(autoGroup) {
+        var len = this.length,
+            i;
+
+        // the group collection is not grouped but sorting could be
+        // disabled when autoGroup is false in the source Collection
+        this.setAutoSort(autoGroup);
+
+        for (i = 0; i < len; i++) {
+            this.items[i].setAutoGroup(autoGroup);
+        }
+
+        // Important to call this so it can clear the .sorted flag
+        // as needed
+        this.onEndUpdateSorters(this._sorters);
     },
 
     destroy: function() {
-        var me = this;
+        var me = this,
+            grouper = me.lastMonitoredGrouper;
+
+        if (grouper) {
+            grouper.removeObserver(me);
+        }
 
         me.$groupable = null;
 
@@ -414,7 +639,7 @@ Ext.define('Ext.util.GroupCollection', {
             var len = groups.length,
                 i;
 
-            for (i = 0; i < len; ++i) {
+            for (i = len - 1; i >= 0; i--) {
                 groups[i].destroy();
             }
         },
@@ -429,13 +654,13 @@ Ext.define('Ext.util.GroupCollection', {
 
             for (i = 0, len = groups.length; i < len; i++) {
                 group = groups[i];
-                group.setSorters(null);
+
+                group.eject();
                 emptyGroups[group.getGroupKey()] = group;
-                group.ejectTime = Ext.now();
             }
 
-            // Removed empty groups are reclaimable by getGroup
-            // for emptyGroupRetainTime milliseconds
+            // Removed empty groups are reclaimable by getGroup for
+            // emptyGroupRetainTime milliseconds
             me.checkRemoveQueue();
         },
 
@@ -447,8 +672,11 @@ Ext.define('Ext.util.GroupCollection', {
             for (groupKey in emptyGroups) {
                 group = emptyGroups[groupKey];
 
+                if (!group || group.destroyed) {
+                    delete emptyGroups[groupKey];
+                }
                 // If the group's retain time has expired, destroy it.
-                if (!group.getCount() && Ext.now() - group.ejectTime > me.emptyGroupRetainTime) {
+                else if (!group.length && Ext.now() - group.ejectTime > me.emptyGroupRetainTime) {
                     Ext.destroy(group);
                     delete emptyGroups[groupKey];
                 }

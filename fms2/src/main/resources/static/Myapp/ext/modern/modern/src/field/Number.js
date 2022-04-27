@@ -1,10 +1,10 @@
 /**
- * The Number field creates an HTML5 text input that allows the editing of number values, 
- * and is usually created inside a form. Most browsers will show a specialized virtual keyboard 
- * for entering numbers. The Number field only accepts numerical input.  If you want a Number field 
+ * The Number field creates an HTML5 text input that allows the editing of number values,
+ * and is usually created inside a form. Most browsers will show a specialized virtual keyboard
+ * for entering numbers. The Number field only accepts numerical input.  If you want a Number field
  * with up/down spinners, see {@link Ext.field.Spinner}.
- *
- *     @example
+ * ```javascript
+ *  @example({ framework: 'extjs' })
  *     Ext.create('Ext.form.Panel', {
  *         fullscreen: true,
  *         items: [
@@ -23,6 +23,68 @@
  *             }
  *         ]
  *     });
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtNumberField, ExtFormPanel } from '@sencha/ext-react';
+ *
+ * export default class MyExample extends Component {
+ *     render() {
+ *        return (
+ *             <ExtContainer layout="center">
+ *                 <ExtFormPanel shadow>
+ *                     <ExtNumberField
+ *                         label="Number"
+ *                         width="150"
+ *                     />
+ *                 </ExtFormPanel>
+ *             </ExtContainer>
+ *         )
+ *     }
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ * @Component({
+ *  selector: 'app-root-1',
+ *  styles: [``],
+ *  template: `
+ *      <ExtContainer layout="center">
+ *          <ExtFormPanel shadow="true">
+ *              <ExtNumberField
+ *                  label="Number"
+ *                  width="150"
+ *              >
+ *              </ExtNumberField>
+ *          </ExtFormPanel>
+ *      </ExtContainer>
+ *     `
+ * })
+ * export class AppComponent {}
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container layout="center">
+ *    <ext-formpanel shadow="true">
+ *        <ext-numberfield
+ *             label="Number"
+ *             width="150"
+ *         >
+ *        </ext-numberfield>
+ *    </ext-formpanel>
+ * </ext-container>
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 2 })
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ * import '@sencha/ext-web-components/dist/ext-formpanel.component';
+ * import '@sencha/ext-web-components/dist/ext-numberfield.component';
+ *
+ * export default class NumberFieldComponent {}
+ * ```
  *
  * Or on its own, outside of a form:
  *
@@ -33,9 +95,9 @@
  *
  * ## minValue, maxValue
  *
- * The {@link #minValue} and {@link #maxValue} configurations are self-explanatory and 
+ * The {@link #minValue} and {@link #maxValue} configurations are self-explanatory and
  * simply constrain the value
- * For example, to create a salary field that limits entry to between 25,000 and 50,000 
+ * For example, to create a salary field that limits entry to between 25,000 and 50,000
  * we can do this:
  *
  *     @example
@@ -58,12 +120,12 @@
  *         ]
  *     });
  *
- * This creates a field that starts with a value of $30,000 and will not go beneath $25,000 
+ * This creates a field that starts with a value of $30,000 and will not go beneath $25,000
  * or above $50,000.
  *
- * Because number field inherits from {@link Ext.field.Text textfield} it gains all of the 
- * functionality that text fields provide, including getting and setting the value at runtime, 
- * validations and various events that are fired as the user interacts with the component. 
+ * Because number field inherits from {@link Ext.field.Text textfield} it gains all of the
+ * functionality that text fields provide, including getting and setting the value at runtime,
+ * validations and various events that are fired as the user interacts with the component.
  * Check out the {@link Ext.field.Text} docs to see the additional functionality available.
  */
 Ext.define('Ext.field.Number', {

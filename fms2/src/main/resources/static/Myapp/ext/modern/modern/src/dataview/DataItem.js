@@ -4,68 +4,72 @@
  *
  * Consider the following example:
  *
- *      @example
- *      Ext.create({
- *          xtype: 'componentdataview',
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'componentdataview',
  *
- *          store: [
- *              { name: 'Peter', age: 26 },
- *              { name: 'Ray', age: 28 },
- *              { name: 'Egon', age: 24 },
- *              { name: 'Winston', age: 29 }
- *          ],
+ *     store: [
+ *         { name: 'Peter', age: 26 },
+ *         { name: 'Ray', age: 28 },
+ *         { name: 'Egon', age: 24 },
+ *         { name: 'Winston', age: 29 }
+ *     ],
  *
- *          itemConfig: {
- *              layout: 'hbox',
- *              padding: 10,
+ *     itemConfig: {
+ *         layout: 'hbox',
+ *         padding: 10,
  *
- *              items: [{
- *                  xtype: 'component',
- *                  reference: 'textCmp'
- *              }, {
- *                  xtype: 'button',
- *                  margin: '0 0 0 5',
- *                  reference: 'checkBtn',
- *                  text: 'Check'
- *              }]
- *          },
+ *         items: [{
+ *             xtype: 'component',
+ *             reference: 'textCmp'
+ *         }, {
+ *             xtype: 'button',
+ *             margin: '0 0 0 5',
+ *             reference: 'checkBtn',
+ *             text: 'Check'
+ *         }]
+ *     },
  *
- *          itemDataMap: {
- *              textCmp: {
- *                  html: 'name'
- *              }
+ *      itemDataMap: {
+ *          textCmp: {
+ *              html: 'name'
  *          }
- *      });
+ *      }
+ * });
+ * ```
  *
  * If the mapping of records to components is more complex, you can extend this class and
  * provide a custom `updateRecord` method or use {@link Ext.app.ViewModel data binding}.
  *
- *      @example
- *      Ext.create({
- *          xtype: 'componentdataview',
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create({
+ *     xtype: 'componentdataview',
  *
- *          store: [
- *              { name: 'Peter', age: 26 },
- *              { name: 'Ray', age: 28 },
- *              { name: 'Egon', age: 24 },
- *              { name: 'Winston', age: 29 }
- *          ],
+ *     store: [
+ *         { name: 'Peter', age: 26 },
+ *         { name: 'Ray', age: 28 },
+ *         { name: 'Egon', age: 24 },
+ *         { name: 'Winston', age: 29 }
+ *     ],
  *
- *          itemConfig: {
- *              layout: 'hbox',
- *              padding: 10,
- *              viewModel: true, // enable per-item record binding
+ *     itemConfig: {
+ *         layout: 'hbox',
+ *         padding: 10,
+ *         viewModel: true, // enable per-item record binding
  *
- *              items: [{
- *                  xtype: 'component',
- *                  bind: 'Greetings {record.name}!'
- *              }, {
- *                  xtype: 'button',
- *                  margin: '0 0 0 5',
- *                  text: 'Check'
- *              }]
- *          }
- *      });
+ *         items: [{
+ *             xtype: 'component',
+ *             bind: 'Greetings {record.name}!'
+ *         }, {
+ *             xtype: 'button',
+ *             margin: '0 0 0 5',
+ *             text: 'Check'
+ *         }]
+ *      }
+ * });
+ * ```
  */
 Ext.define('Ext.dataview.DataItem', function(DataItem) {
     return {

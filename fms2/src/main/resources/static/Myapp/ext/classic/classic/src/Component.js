@@ -4618,7 +4618,8 @@ Ext.define('Ext.Component', {
      */
     onRemoved: function(destroying) {
         var me = this,
-            focusTarget;
+            focusTarget,
+            floatParent = me.up('[floating]');
 
         // Revert focus to closest sibling or ancestor unless we are being moved
         // In which case Ext.container.Container's move methods will handle
@@ -4642,6 +4643,14 @@ Ext.define('Ext.Component', {
         me.onInheritedRemove(destroying);
 
         me.ownerCt = me.ownerLayout = null;
+
+        // If the component being removed is in child heirarchy
+        // of a floating component and it is not being destroyed,
+        // we need to re-register its floating descendants with
+        // the correct ZIndexManager.
+        if (floatParent && !destroying) {
+            floatParent.moveFloatingDescendants(me);
+        }
     },
 
     /**
@@ -5976,6 +5985,11 @@ Ext.define('Ext.Component', {
         if (me.floating && component) {
             me._lastAlignTarget = component;
             me._lastAlignToPos = position || me.defaultAlign;
+
+            if (!me.alignOffset || me.alignOffset !== offset) {
+                me.alignOffset = offset;
+            }
+
             me._lastAlignToOffsets = offset || me.alignOffset;
 
             me.show();
@@ -7160,7 +7174,8 @@ Ext.define('Ext.Component', {
     Component.createAlias({
         on: 'addListener',
         prev: 'previousSibling',
-        next: 'nextSibling'
+        next: 'nextSibling',
+        setUi: 'setUI'
     });
 
     /**

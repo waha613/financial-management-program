@@ -752,7 +752,8 @@ Ext.define('Ext.util.Format', function() {
                                     '") { fnum="-"+fnum; }';
 
                 if (trimTrailingZeroes) {
-                    code[code.length] = 'fnum=fnum.replace(trailingZeroes,"");';
+                    code[code.length] = 'if(fnum.indexOf("e+") === -1)' +
+                                        'fnum=fnum.replace(trailingZeroes,"");';
                 }
 
                 code[code.length] = 'return ';

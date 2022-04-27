@@ -72,21 +72,71 @@ Ext.define('Ext.grid.feature.GroupStore', {
         this.store.each(fn, scope, includeOptions);
     },
 
-    processStore: function(store) {
+    getGroupedRecords: function(store, collapseAll) {
         var me = this,
-            groupingFeature = me.groupingFeature,
-            collapseAll = groupingFeature.startCollapsed,
-            data = me.data,
+            feature = me.groupingFeature,
             groups = store.getGroups(),
             groupCount = groups ? groups.length : 0,
             groupField = store.getGroupField(),
-            metaGroup, i, featureGrouper, group, key;
+            group, grouper, i, key, metaGroup, records;
 
-        if (data) {
-            data.clear();
+        if (!groupCount) {
+            return store.getRange();
         }
-        else {
-            data = me.data = new Ext.util.Collection({
+
+        for (i = 0, records = []; i < groupCount; i++) {
+            group = groups.getAt(i);
+
+            // Cache group information by group name.
+            key = group.getGroupKey();
+
+            // If there is no store grouper and the groupField looks up a complex data type,
+            // the store will stringify it and the group name will be '[object Object]'.
+            // To fix this, groupers can be defined in the feature config, so we'll
+            // simply do a lookup here and re-group the store.
+            //
+            // Note that if a grouper wasn't defined on the feature that we'll just default
+            // to the old behavior and still try to group.
+            // eslint-disable-next-line max-len
+            if (me.badGrouperKey === key && (grouper = feature.getGrouper(groupField))) {
+                // We must reset the value because store.group() will call
+                // into processStore again!
+                store.getGroups().remove(group);
+                feature.startCollapsed = collapseAll;
+                store.group(grouper);
+
+                return null; // signal processStore to return as well
+            }
+
+            metaGroup = feature.getMetaGroup(group);
+
+            // This is only set at initialization time to handle startCollapsed
+            if (collapseAll) {
+                metaGroup.isCollapsed = collapseAll;
+            }
+
+            // Collapsed group - add the group's placeholder.
+            if (metaGroup.isCollapsed) {
+                records.push(metaGroup.placeholder);
+            }
+            // Expanded group - add the group's child records.
+            else {
+                records.push.apply(records, group.items);
+            }
+        }
+
+        return records;
+    },
+
+    processStore: function(store) {
+        var me = this,
+            feature = me.groupingFeature,
+            data = me.data,
+            refreshed = false,
+            collapseAll, i, records;
+
+        if (!data) {
+            me.data = data = new Ext.util.Collection({
                 rootProperty: 'data',
                 extraKeys: {
                     byInternalId: {
@@ -98,55 +148,44 @@ Ext.define('Ext.grid.feature.GroupStore', {
         }
 
         if (store.getCount()) {
-            // Upon first process of a loaded store, clear the "always" collapse" flag
-            groupingFeature.startCollapsed = false;
+            // When loading or paging, our two counts (store.loadCount and feature.storeLoadCount)
+            // will not match so we apply the startCollapsed setting and use to what was set in the
+            // initial config. After loading/paging our two counts will match so when we change data
+            // on the page (and process the store again) we do not expand or collapse any of the
+            // groups and things look/work as expected.
+            if (store.getId() !== feature.previousStoreId ||
+                feature.storeLoadCount !== store.loadCount) {
+                feature.storeLoadCount = store.loadCount;
+                feature.previousStoreId = store.getId();
+                collapseAll = feature.startCollapsed;
+            }
 
-            if (groupCount > 0) {
-                for (i = 0; i < groupCount; i++) {
-                    group = groups.getAt(i);
+            records = me.getGroupedRecords(store, collapseAll);
 
-                    // Cache group information by group name.
-                    key = group.getGroupKey();
+            // If we have the same number of records that we had before, see if they are
+            // exactly the same records.
+            if (records) {
+                for (i = data.length, refreshed = i !== records.length; !refreshed && i-- > 0;) {
+                    refreshed = data.items[i] !== records[i];
+                }
 
-                    // If there is no store grouper and the groupField looks up a complex data type,
-                    // the store will stringify it and the group name will be '[object Object]'.
-                    // To fix this, groupers can be defined in the feature config, so we'll
-                    // simply do a lookup here and re-group the store.
-                    //
-                    // Note that if a grouper wasn't defined on the feature that we'll just default
-                    // to the old behavior and still try to group.
-                    // eslint-disable-next-line max-len
-                    if (me.badGrouperKey === key && (featureGrouper = groupingFeature.getGrouper(groupField))) {
-                        // We must reset the value because store.group() will call
-                        // into this method again!
-                        store.getGroups().remove(group);
-                        groupingFeature.startCollapsed = collapseAll;
-                        store.group(featureGrouper);
-
-                        return;
+                if (refreshed) {
+                    if (data.length) {
+                        data.clear();
                     }
 
-                    metaGroup = groupingFeature.getMetaGroup(group);
-
-                    // This is only set at initialization time to handle startCollapsed
-                    if (collapseAll) {
-                        metaGroup.isCollapsed = collapseAll;
-                    }
-
-                    // Collapsed group - add the group's placeholder.
-                    if (metaGroup.isCollapsed) {
-                        data.add(metaGroup.placeholder);
-                    }
-                    // Expanded group - add the group's child records.
-                    else {
-                        data.insert(me.data.length, group.items);
+                    if (records.length) {
+                        data.add(records);
                     }
                 }
             }
-            else {
-                data.add(store.getRange());
-            }
         }
+        else if (data.length) {
+            data.clear();
+            refreshed = true;
+        }
+
+        return refreshed;
     },
 
     isCollapsed: function(name) {
@@ -167,6 +206,36 @@ Ext.define('Ext.grid.feature.GroupStore', {
 
     getTotalCount: function() {
         return this.data.getCount();
+    },
+
+    first: function() {
+        var data = this.data,
+            item = null;
+
+        if (data) {
+            item = data.first();
+
+            if (item && item.isCollapsedPlaceholder) {
+                item = this.store.first();
+            }
+        }
+
+        return item;
+    },
+
+    last: function() {
+        var data = this.data,
+            item = null;
+
+        if (data) {
+            item = data.last();
+
+            if (item && item.isCollapsedPlaceholder) {
+                item = this.store.last();
+            }
+        }
+
+        return item;
     },
 
     // This class is only created for fully loaded, non-buffered stores
@@ -456,8 +525,11 @@ Ext.define('Ext.grid.feature.GroupStore', {
     },
 
     onDataChanged: function() {
-        this.processStore(this.store);
-        this.fireEvent('refresh', this);
+        var me = this;
+
+        if (me.processStore(me.store)) {
+            me.fireEvent('refresh', me);
+        }
     },
 
     destroy: function() {

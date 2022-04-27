@@ -7,21 +7,25 @@
  *
  * Here is a Button in it's simplest form:
  *
- *     @example
- *     var button = Ext.create('Ext.Button', {
- *         text: 'Button'
- *     });
- *     Ext.Viewport.add({ xtype: 'container', padding: 10, items: [button] });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var button = Ext.create('Ext.Button', {
+ *     text: 'Button'
+ * });
+ * Ext.Viewport.add({ xtype: 'container', padding: 10, items: [button] });
+ * ```
  *
  * ## Icons
  *
  * You can also create a Button with just an icon using the {@link #iconCls} configuration:
  *
- *     @example
- *     var button = Ext.create('Ext.Button', {
- *         iconCls: 'refresh'
- *     });
- *     Ext.Viewport.add({ xtype: 'container', padding: 10, items: [button] });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * var button = Ext.create('Ext.Button', {
+ *     iconCls: 'x-fa fa-home'
+ * });
+ * Ext.Viewport.add({ xtype: 'container', padding: 10, items: [button] });
+ * ```
  *
  * Sencha provides the "Font" and "PNG" icons packs from http://wwww.pictos.cc.
  * Use icons with the {@link Global_CSS#icon icon} mixin in your Sass.
@@ -30,16 +34,18 @@
  *
  * Buttons can also have a badge on them, by using the {@link #badgeText} configuration:
  *
- *     @example
- *     Ext.create('Ext.Container', {
- *         fullscreen: true,
- *         padding: 10,
- *         items: {
- *             xtype: 'button',
- *             text: 'My Button',
- *             badgeText: '2'
- *         }
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Container', {
+ *     fullscreen: true,
+ *     padding: 10,
+ *     items: {
+ *         xtype: 'button',
+ *         text: 'My Button',
+ *         badgeText: '2'
+ *     }
+ * });
+ * ```
  *
  * ## Menus
  *
@@ -52,18 +58,20 @@
  *
  * Example usage:
  *
- *     @example
- *     Ext.create('Ext.Button', {
- *         text: 'Menu button',
- *         renderTo: Ext.getBody(),
- *         arrowAlign: 'bottom',
- *         menu: [
- *             { text: 'Item 1' },
- *             { text: 'Item 2' },
- *             { text: 'Item 3' },
- *             { text: 'Item 4' }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Button', {
+ *     text: 'Menu button',
+ *     renderTo: Ext.getBody(),
+ *     arrowAlign: 'bottom',
+ *     menu: [
+ *         { text: 'Item 1' },
+ *         { text: 'Item 2' },
+ *         { text: 'Item 3' },
+ *         { text: 'Item 4' }
+ *     ]
+ * });
+ * ```
  *
  * ## UI
  *
@@ -78,11 +86,11 @@
  * - **decline** - shaded using the {@link Global_CSS#$alert-color $alert-color}
  * - **confirm** - shaded using the {@link Global_CSS#$confirm-color $confirm-color}
  *
- * You can also append `-round` to each of the last three UI's to give it a round shape:
+ * You can also append ` round` to each of the last three UI's to give it a round shape:
  *
- * - **action-round**
- * - **decline-round**
- * - **confirm-round**
+ * - **action round**
+ * - **decline round**
+ * - **confirm round**
  *
  * And setting them is very simple:
  *
@@ -93,26 +101,28 @@
  *
  * And how they look:
  *
- *     @example
- *     Ext.create('Ext.Container', {
- *         fullscreen: true,
- *         padding: 4,
- *         defaults: {
- *             xtype: 'button',
- *             margin: 5
- *         },
- *         layout: {
- *             type: 'vbox',
- *             align: 'center'
- *         },
- *         items: [
- *             { ui: 'normal', text: 'normal' },
- *             { ui: 'round', text: 'round' },
- *             { ui: 'action', text: 'action' },
- *             { ui: 'decline', text: 'decline' },
- *             { ui: 'confirm', text: 'confirm' }
- *         ]
- *     });
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.create('Ext.Container', {
+ *     fullscreen: true,
+ *     padding: 4,
+ *     defaults: {
+ *         xtype: 'button',
+ *         margin: 5
+ *     },
+ *     layout: {
+ *         type: 'vbox',
+ *         align: 'center'
+ *     },
+ *     items: [
+ *         { ui: 'normal', text: 'normal' },
+ *         { ui: 'round', text: 'round' },
+ *         { ui: 'action', text: 'action' },
+ *         { ui: 'decline', text: 'decline round' },
+ *         { ui: 'confirm', text: 'confirm' }
+ *     ]
+ * });
+ * ```
  *
  * Note that the default {@link #ui} is **normal**.
  *
@@ -123,86 +133,203 @@
  * This example shows a bunch of icons on the screen in two toolbars. When you click on the center
  * button, it switches the {@link #iconCls} on every button on the page.
  *
- *     @example
- *     Ext.createWidget('container', {
- *         fullscreen: true,
- *         layout: {
- *             type: 'vbox',
- *             pack:'center',
- *             align: 'center'
- *         },
- *         items: [
- *             {
- *                 xtype: 'button',
- *                 text: 'Change iconCls',
- *                 handler: function() {
- *                     // classes for all the icons to loop through.
- *                     var availableIconCls = [
- *                         'action', 'add', 'arrow_down', 'arrow_left',
- *                         'arrow_right', 'arrow_up', 'compose', 'delete',
- *                         'organize', 'refresh', 'reply', 'search',
- *                         'settings', 'star', 'trash', 'maps', 'locate',
- *                         'home'
- *                     ];
- *                     // get the text of this button,
- *                     // so we know which button we don't want to change
- *                     var text = this.getText();
+ * ```javascript
+ * @example({ framework: 'extjs' })
+ * Ext.createWidget('container', {
+ *     fullscreen: true,
+ *     layout: {
+ *         type: 'vbox',
+ *         pack:'center',
+ *         align: 'center'
+ *     },
+ *     items: [
+ *         {
+ *             xtype: 'button',
+ *             text: 'Change iconCls',
+ *             handler: function() {
+ *                 // classes for all the icons to loop through.
+ *                 var availableIconCls = [
+ *                     'action', 'add', 'arrow_down', 'arrow_left',
+ *                     'arrow_right', 'arrow_up', 'compose', 'delete',
+ *                     'organize', 'refresh', 'reply', 'search',
+ *                     'settings', 'star', 'trash', 'maps', 'locate',
+ *                     'home'
+ *                 ];
+ *                 // get the text of this button,
+ *                 // so we know which button we don't want to change
+ *                 var text = this.getText();
  *
- *                     // use ComponentQuery to find all buttons on the page
- *                     // and loop through all of them
- *                     Ext.Array.forEach(Ext.ComponentQuery.query('button'), function(button) {
- *                         // if the button is the change iconCls button, continue
- *                         if (button.getText() === text) {
- *                             return;
- *                         }
+ *                 // use ComponentQuery to find all buttons on the page
+ *                 // and loop through all of them
+ *                 Ext.Array.forEach(Ext.ComponentQuery.query('button'), function(button) {
+ *                     // if the button is the change iconCls button, continue
+ *                     if (button.getText() === text) {
+ *                         return;
+ *                     }
  *
- *                         // get the index of the new available iconCls
- *                         var index = availableIconCls.indexOf(button.getIconCls()) + 1;
+ *                     // get the index of the new available iconCls
+ *                     var index = availableIconCls.indexOf(button.getIconCls()) + 1;
  *
- *                         // update the iconCls of the button with the next iconCls, if one exists.
- *                         // if not, use the first one
- *                         button.setIconCls(availableIconCls[(index === availableIconCls.length)
- *                         ? 0
- *                         : index]);
- *                     });
- *                 }
- *             },
- *             {
- *                 xtype: 'toolbar',
- *                 docked: 'top',
- *                 items: [
- *                     { xtype: 'spacer' },
- *                     { iconCls: 'action' },
- *                     { iconCls: 'add' },
- *                     { iconCls: 'arrow_down' },
- *                     { iconCls: 'arrow_left' },
- *                     { iconCls: 'arrow_up' },
- *                     { iconCls: 'compose' },
- *                     { iconCls: 'delete' },
- *                     { iconCls: 'organize' },
- *                     { iconCls: 'refresh' },
- *                     { xtype: 'spacer' }
- *                 ]
- *             },
- *             {
- *                 xtype: 'toolbar',
- *                 docked: 'bottom',
- *                 ui: 'light',
- *                 items: [
- *                     { xtype: 'spacer' },
- *                     { iconCls: 'reply' },
- *                     { iconCls: 'search' },
- *                     { iconCls: 'settings' },
- *                     { iconCls: 'star' },
- *                     { iconCls: 'trash' },
- *                     { iconCls: 'maps' },
- *                     { iconCls: 'locate' },
- *                     { iconCls: 'home' },
- *                     { xtype: 'spacer' }
- *                 ]
+ *                     // update the iconCls of the button with the next iconCls, if one exists.
+ *                     // if not, use the first one
+ *                     button.setIconCls(availableIconCls[(index === availableIconCls.length)
+ *                     ? 0
+ *                     : index]);
+ *                 });
  *             }
- *         ]
- *     });
+ *         },
+ *         {
+ *             xtype: 'toolbar',
+ *             docked: 'top',
+ *             items: [
+ *                 { xtype: 'spacer' },
+ *                 { iconCls: 'action' },
+ *                 { iconCls: 'add' },
+ *                 { iconCls: 'arrow_down' },
+ *                 { iconCls: 'arrow_left' },
+ *                 { iconCls: 'arrow_up' },
+ *                 { iconCls: 'compose' },
+ *                 { iconCls: 'delete' },
+ *                 { iconCls: 'organize' },
+ *                 { iconCls: 'refresh' },
+ *                 { xtype: 'spacer' }
+ *             ]
+ *         },
+ *         {
+ *             xtype: 'toolbar',
+ *             docked: 'bottom',
+ *             ui: 'light',
+ *             items: [
+ *                 { xtype: 'spacer' },
+ *                 { iconCls: 'reply' },
+ *                 { iconCls: 'search' },
+ *                 { iconCls: 'settings' },
+ *                 { iconCls: 'star' },
+ *                 { iconCls: 'trash' },
+ *                 { iconCls: 'maps' },
+ *                 { iconCls: 'locate' },
+ *                 { iconCls: 'home' },
+ *                 { xtype: 'spacer' }
+ *             ]
+ *         }
+ *     ]
+ * });
+ * ```
+ * ```html
+ * @example({framework: 'ext-web-components', packages:['ext-web-components'], tab: 1 })
+ * <ext-container padding="10">
+ *     <ext-button
+ *         text="Say Hello" 
+ *         handler="button.sayHello"
+ *         ui="action raised">
+ *     </ext-button>
+ *     <ext-button 
+ *         text="Say Goodbye" 
+ *         handler="button.sayGoodbye"
+ *         ui="action raised">
+ *     </ext-button>
+ *     <ext-container onready="button.resultContainerReady"></ext-container>
+ * </ext-container>
+ * ```
+ *
+ * ```javascript
+ * @example({framework: 'ext-web-components', tab: 2, packages: ['ext-web-components']})
+ * import '@sencha/ext-web-components/dist/ext-button.component';
+ * import '@sencha/ext-web-components/dist/ext-container.component';
+ *
+ * export default class ButtonComponent {
+ *     resultContainerReady(event) {
+ *         this.resultContainer = event.detail.cmp;
+ *     }
+ *
+ *     sayHello = () => {
+ *         this.resultContainer.setHtml('Hello world!');
+ *     }
+ *      
+ *     sayGoodbye = () => {
+ *         this.resultContainer.setHtml('Goodbye cruel world.');
+ *     }
+ * }
+ *
+ * window.button = new ButtonComponent();
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-react', packages:['ext-react']})
+ * import React, { Component } from 'react';
+ * import { ExtContainer, ExtButton } from '@sencha/ext-react';
+ * 
+ * export default class MyExample extends Component {
+ *
+ *     state = { message: null }
+ * 
+ *     render() {
+ *         return (
+ *                 <ExtContainer padding="10">
+ *                     <ExtButton 
+ *                         text="Say Hello" 
+ *                         handler={this.sayHello}
+ *                         ui="action raised" 
+ *                     />
+ *                     <ExtButton 
+ *                         text="Say Goodbye" 
+ *                         handler={this.sayGoodbye}
+ *                     />
+ *                     { this.state.message }
+ *                 </ExtContainer>
+ *         )
+ *     }
+ * 
+ *     sayHello = () => {
+ *         this.setState({ message: 'Hello world!' });  
+ *     }
+ * 
+ *     sayGoodbye = () => {
+ *         this.setState({ message: 'Goodbye cruel world.' });  
+ *     }
+ * 
+ * }
+ * ```
+ * ```javascript
+ * @example({framework: 'ext-angular', packages:['ext-angular']})
+ * import { Component } from '@angular/core'
+ * declare var Ext: any;
+ *
+ * @Component({
+ *     selector: 'app-root-1',
+ *     styles: [`
+ *             `],
+ *     template: `
+ *         <ExtContainer padding="10">
+ *             <ExtButton 
+ *                 text="Say Hello" 
+ *                 [handler]="this.sayHello"
+ *                 ui="action raised" 
+ *             ></ExtButton>
+ *             <ExtButton 
+ *                 text="Say Goodbye" 
+ *                 [handler]="this.sayGoodbye"
+ *             ></ExtButton>
+ *             <div>
+ *             {{ this.message }}
+ *             </div>
+ *         </ExtContainer>
+ *             `
+ * })
+ * export class AppComponent {
+ *     message: string;
+ *
+ *     sayHello = () => {
+ *         this.message = 'Hello world!';
+ *     }
+ *        
+ *     sayGoodbye = () => {
+ *         this.message = 'Goodbye cruel world.';
+ *     }
+ *            
+ * }
+ * ```
+ *
+ *
  *
  */
 Ext.define('Ext.Button', {
@@ -430,9 +557,9 @@ Ext.define('Ext.Button', {
          *
          * You can also append `-round` to each of the last three UI's to give it a round shape:
          *
-         * - **action-round**
-         * - **decline-round**
-         * - **confirm-round**
+         * - **action round**
+         * - **decline round**
+         * - **confirm round**
          *
          * @accessor
          */

@@ -470,6 +470,7 @@ Ext.define('Ext.grid.rowedit.Editor', {
         copy.editor = me;
 
         me.setRecord(location.record);
+        me.setHeight(me.activeLocation.item.measure('h'));
 
         if (me.getHidden()) {
             me.show();
@@ -580,7 +581,7 @@ Ext.define('Ext.grid.rowedit.Editor', {
                 ownerGrid = plugin.grid,
                 grid = plugin.pickGrid(),
                 top = me.getTop(),
-                height = me.$height,
+                height = me.activeLocation.item.measure('h'),
                 delta = el.getBorderWidth('tb'),
                 btnTop, cls;
 

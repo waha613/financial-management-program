@@ -263,7 +263,7 @@ Ext.define('Ext.app.Application', {
          *         // mainView: { xtype: 'mainview' }
          *     });
          *
-         * **Note:** You may also call {@link #setMainView} at runtime if you require
+         * **Note:** You may also call {@link #method-setMainView} at runtime if you require
          * logic within the application's {@link #launch} method to be processed prior to
          * the creation of the main view.
          */
@@ -367,9 +367,14 @@ Ext.define('Ext.app.Application', {
      * @param {Object} [config] Config object.
      */
     constructor: function(config) {
-        var me = this;
+        var me = this,
+            App = Ext.app.Application;
 
         Ext.route.Router.application = me;
+
+        if (!App.instance) {
+            App.instance = me;
+        }
 
         me.callParent([config]);
 
@@ -435,6 +440,8 @@ Ext.define('Ext.app.Application', {
         me.initControllers();
         me.onBeforeLaunch();
         me.finishInitControllers();
+
+        Ext.fireEvent('applaunch', me);
     },
 
     doInit: function(app) {
